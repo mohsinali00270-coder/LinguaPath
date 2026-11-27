@@ -1,0 +1,265 @@
+@model LearnerDetails
+@{
+    ViewData["Title"] = Model.FullName;
+    var canModerate = User.IsInRole(Roles.SuperAdmin) || User.IsInRole(Roles.Moderator);
+}
+<a asp-action="Index" class="small">&larr; All learners</a>
+
+<div class="row g-3 mt-1">
+    <div class="col-lg-7">
+        <div class="card lp-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h2 class="h6">Profile</h2>
+                    <partial name="_LearnerStatus" model="(Model.EmailConfirmed, Model.IsActive, Model.IsBlocked)" />
+                </div>
+                <dl class="row small mb-0">
+                    <dt class="col-sm-4">Email</dt><dd class="col-sm-8">@Model.Email</dd>
+                    <dt class="col-sm-4">Display name</dt><dd class="col-sm-8">@(Model.DisplayName ?? "—")</dd>
+                    <dt class="col-sm-4">Native language</dt><dd class="col-sm-8">@(Model.NativeLanguage ?? "—")</dd>
+                    <dt class="col-sm-4">App language</dt><dd class="col-sm-8">@Model.UiLanguage</dd>
+                    <dt class="col-sm-4">Time zone</dt><dd class="col-sm-8">@Model.TimeZone</dd>
+                    <dt class="col-sm-4">Sign-in methods</dt>
+                    <dd class="col-sm-8">Email@(Model.ExternalLogins.Count > 0 ? ", " + string.Join(", ", Model.ExternalLogins) : "")</dd>
+                    <dt class="col-sm-4">Joined</dt><dd class="col-sm-8">@Model.CreatedAt.ToLocalTime().ToString("f")</dd>
+                    <dt class="col-sm-4">Last sign-in</dt><dd class="col-sm-8">@(Model.LastLoginAt?.ToLocalTime().ToString("f") ?? "Never")</dd>
+                    <dt class="col-sm-4">Active sessions</dt><dd class="col-sm-8">@Model.ActiveSessions</dd>
+                    @if (Model.IsBlocked)
+                    {
+                        <dt class="col-sm-4 text-danger">Blocked</dt>
+                        <dd class="col-sm-8 text-danger">@Model.BlockedAt?.ToLocalTime().ToString("f") — @Model.BlockReason</dd>
+                    }
+                </dl>
+            </div>
+        </div>
+
+        <div class="card lp-card mt-3">
+            <div class="card-body">
+                <h2 class="h6">Devices</h2>
+                @if (Model.Devices.Count == 0)
+                {
+                    <p class="small text-muted mb-0">No devices registered yet.</p>
+                }
+                else
+                {
+                    <table class="table table-sm small mb-0">
+                        <thead><tr><th>Platform</th><th>App version</th><th>Last seen</th><th>Device id</th></tr></thead>
+                        <tbody>
+                        @foreach (var d in Model.Devices)
+                        {
+                            <tr><td>@d.Platform</td><td>@(d.AppVersion ?? "—")</td><td>@d.LastSeenAt.ToLocalTime().ToString("g")</td><td class="text-muted">@d.DeviceId</td></tr>
+                        }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card lp-card">
+            <div class="card-body">
+                <h2 class="h6">Courses</h2>
+                @if (Model.Courses is null || Model.Courses.Count == 0)
+                {
+                    <p class="small text-muted mb-0">Not enrolled in any course yet.</p>
+                }
+                else
+                {
+                    @foreach (var c in Model.Courses)
+                    {
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between"><b>@c.Language</b><span class="badge text-bg-light border">@c.Status</span></div>
+                            <div class="small text-muted">@c.Course · @c.Levels · ends @c.EndDate.ToString("d MMM yyyy")</div>
+                            <div class="progress mt-1" style="height:6px"><div class="progress-bar" style="width:@(c.ProgressPercent)%"></div></div>
+                            @if (c.Id > 0 && User.IsInRole(LinguaPath.Domain.Constants.Roles.SuperAdmin))
+                            {
+                                <a class="small" asp-controller="Certificates" asp-action="Eligibility" asp-route-learnerCourseId="@c.Id" asp-route-learnerId="@Model.Id">Certificate rule</a>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        @{
+            var wallet = ViewBag.Points as LinguaPath.Shared.Contracts.Progress.PointsSummaryDto;
+            var transactions = ViewBag.Transactions as IReadOnlyList<LinguaPath.Shared.Contracts.Progress.PointTransactionDto> ?? [];
+            var certs = ViewBag.Certificates as IReadOnlyList<CertificateListItem> ?? [];
+            var isSuper = User.IsInRole(LinguaPath.Domain.Constants.Roles.SuperAdmin);
+        }
+        @if (wallet is not null)
+        {
+            <div class="card lp-card mt-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h2 class="h6">Points and streak</h2>
+                        <span class="badge text-bg-light border">@wallet.Tier</span>
+                    </div>
+                    <div class="d-flex gap-4 mb-2">
+                        <div><div class="h4 mb-0">@wallet.Total.ToString("N0")</div><div class="small text-muted">total</div></div>
+                        <div><div class="h4 mb-0">@wallet.WeeklyPoints</div><div class="small text-muted">this week</div></div>
+                        <div><div class="h4 mb-0">🔥 @wallet.Streak.Current</div><div class="small text-muted">streak (best @wallet.Streak.Longest)</div></div>
+                    </div>
+                    <div class="small text-muted mb-2">
+                        @string.Join(" · ", wallet.ByLanguage.Select(l => $"{l.Name} {l.Points}"))
+                    </div>
+                    <div class="mb-2">
+                        @foreach (var b in wallet.Badges.Where(b => b.Earned))
+                        {
+                            <span class="badge text-bg-light border me-1" title="@b.Description">@b.Icon @b.Title</span>
+                        }
+                    </div>
+                    @if (!wallet.ShowOnLeaderboard) { <div class="small text-muted mb-2">Hidden on leaderboards (learner's choice).</div> }
+
+                    @if (isSuper)
+                    {
+                        <details class="mb-2">
+                            <summary class="small">Add or deduct points</summary>
+                            <form asp-controller="Points" asp-action="Adjust" method="post" class="row g-2 mt-1">
+                                <input type="hidden" name="userId" value="@Model.Id" />
+                                <div class="col-4"><input type="number" name="amount" class="form-control form-control-sm" placeholder="+50 or -50" required /></div>
+                                <div class="col-8"><select name="languageId" class="form-select form-select-sm" asp-items="ViewBag.LanguageOptions"><option value="">General</option></select></div>
+                                <div class="col-12"><input name="reason" class="form-control form-control-sm" placeholder="Reason (required, audited)" required minlength="3" /></div>
+                                <div class="col-12"><button class="btn btn-sm btn-outline-primary">Apply</button></div>
+                            </form>
+                        </details>
+                    }
+
+                    <div style="max-height:260px;overflow:auto">
+                        @foreach (var t in transactions)
+                        {
+                            <div class="d-flex justify-content-between align-items-center small border-bottom py-1 @(t.IsRevoked ? "text-decoration-line-through text-muted" : "")">
+                                <span>@t.CreatedAt.ToLocalTime().ToString("d MMM HH:mm") · @t.Description @(t.LanguageName is null ? "" : "· " + t.LanguageName)</span>
+                                <span>
+                                    <b class="@(t.Points < 0 ? "text-danger" : "")">@(t.Points > 0 ? "+" : "")@t.Points</b>
+                                    @if (isSuper && !t.IsRevoked)
+                                    {
+                                        <form asp-controller="Points" asp-action="Revoke" method="post" class="d-inline" data-confirm="Revoke these points?">
+                                            <input type="hidden" name="id" value="@t.Id" /><input type="hidden" name="userId" value="@Model.Id" />
+                                            <input type="hidden" name="reason" value="Revoked by admin" />
+                                            <button class="btn btn-link btn-sm p-0 ms-1 text-danger" title="Revoke">✕</button>
+                                        </form>
+                                    }
+                                </span>
+                            </div>
+                        }
+                        @if (transactions.Count == 0) { <p class="small text-muted mb-0">No points yet.</p> }
+                    </div>
+                </div>
+            </div>
+        }
+
+        @{
+            var mod = ViewBag.Moderation as LinguaPath.Application.Features.Moderation.LearnerModerationSummary;
+        }
+        @if (mod is not null)
+        {
+            <div class="card lp-card mt-3">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between">
+                        <h2 class="h6">Moderation</h2>
+                        <span class="small">
+                            <span class="badge @(mod.ActiveStrikes >= 2 ? "text-bg-danger" : mod.ActiveStrikes == 1 ? "text-bg-warning" : "text-bg-light border")">@mod.ActiveStrikes active strike(s)</span>
+                            @if (mod.SuspendedUntil is { } su) { <span class="badge text-bg-warning">chat suspended until @su.ToLocalTime().ToString("g")</span> }
+                            @if (mod.ReportsAgainst > 0) { <span class="badge text-bg-light border">@mod.ReportsAgainst report(s)</span> }
+                        </span>
+                    </div>
+                    @if (mod.Blocked && User.IsInRole(Roles.SuperAdmin))
+                    {
+                        <form asp-controller="Moderation" asp-action="Unblock" method="post" class="d-flex gap-2 my-2">
+                            <input type="hidden" name="userId" value="@Model.Id" />
+                            <input name="reason" class="form-control form-control-sm" placeholder="Reason for unblocking (required, audited)" required />
+                            <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Unblock this account? Their strikes are cleared.')">Unblock</button>
+                        </form>
+                    }
+                    @foreach (var st in mod.Strikes.Take(10))
+                    {
+                        <div class="small border-bottom py-1 @(st.IsActive ? "" : "text-muted")">
+                            <b>@st.Severity</b> · @st.Reason · @st.CreatedAt.ToLocalTime().ToString("d MMM yyyy")
+                            @if (st.RemovedBy is not null) { <span>— removed by @st.RemovedBy: @st.RemovedReason</span> }
+                            else if (!st.IsActive) { <span>— expired</span> }
+                        </div>
+                    }
+                    @if (mod.RecentEvents.Count > 0)
+                    {
+                        <div class="small text-muted mt-2">Recent events</div>
+                        @foreach (var e in mod.RecentEvents)
+                        {
+                            <div class="small"><a asp-controller="Moderation" asp-action="Details" asp-route-id="@e.Id">#@e.Id</a>
+                                @e.DetectedBy · @e.ActionTaken · @e.CreatedAt.ToLocalTime().ToString("d MMM HH:mm")</div>
+                        }
+                    }
+                    @if (mod.Strikes.Count == 0 && mod.RecentEvents.Count == 0) { <p class="small text-muted mb-0">Nothing on record.</p> }
+                </div>
+            </div>
+        }
+
+        @if (certs.Count > 0)
+        {
+            <div class="card lp-card mt-3">
+                <div class="card-body">
+                    <h2 class="h6">Certificates</h2>
+                    @foreach (var c in certs)
+                    {
+                        <div class="d-flex justify-content-between small border-bottom py-1">
+                            @if (isSuper) { <a asp-controller="Certificates" asp-action="Details" asp-route-id="@c.Id" class="font-monospace">@c.Number</a> } else { <span class="font-monospace">@c.Number</span> }
+                            <span>@c.Language @c.Level · @c.Grade% @if (c.IsRevoked) { <span class="badge text-bg-danger">revoked</span> }</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        @{
+            var attempts = ViewBag.Attempts as IReadOnlyList<AttemptListItem> ?? [];
+        }
+        <div class="card lp-card mt-3">
+            <div class="card-body">
+                <h2 class="h6">Quizzes and exams</h2>
+                @if (attempts.Count == 0)
+                {
+                    <p class="small text-muted mb-0">No attempts yet.</p>
+                }
+                @foreach (var a in attempts.Take(25))
+                {
+                    <div class="d-flex justify-content-between small border-bottom py-1">
+                        <a asp-controller="Grading" asp-action="Attempt" asp-route-id="@a.Id">@a.Title</a>
+                        <span>
+                            @if (a.Status == AttemptStatus.InProgress) { <span class="text-muted">in progress</span> }
+                            else if (a.Status == AttemptStatus.Expired) { <span class="text-muted">missed</span> }
+                            else { <b>@a.Percentage%</b> }
+                            @if (a.Status == AttemptStatus.PendingReview) { <span class="badge text-bg-info">grading</span> }
+                            @if (a.IsPractice) { <span class="badge text-bg-light border">practice</span> }
+                            @if (a.BackgroundEvents > 0) { <span class="badge text-bg-warning" title="App left during the exam">left ×@a.BackgroundEvents</span> }
+                        </span>
+                    </div>
+                }
+            </div>
+        </div>
+
+        @if (canModerate && !Model.IsBlocked)
+        {
+            <div class="card lp-card mt-3">
+                <div class="card-body">
+                    <h2 class="h6">Account status</h2>
+                    @if (Model.IsActive)
+                    {
+                        <form asp-action="Suspend" asp-route-id="@Model.Id" method="post" data-confirm="Suspend this learner and sign them out everywhere?">
+                            <label class="form-label small" for="reason">Reason (required)</label>
+                            <textarea id="reason" name="reason" class="form-control form-control-sm mb-2" rows="2" required></textarea>
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Suspend learner</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <form asp-action="Reactivate" asp-route-id="@Model.Id" method="post">
+                            <button type="submit" class="btn btn-outline-success btn-sm">Reactivate learner</button>
+                        </form>
+                    }
+                    <p class="small text-muted mt-3 mb-0">Permanent blocking for abuse is handled in Moderation (Phase 8).</p>
+                </div>
+            </div>
+        }
+    </div>
+</div>

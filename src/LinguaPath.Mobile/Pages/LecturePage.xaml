@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                x:Class="LinguaPath.Mobile.Pages.LecturePage"
+                x:DataType="vm:LectureViewModel"
+                Title="{Binding Header}">
+    <pages:BasePage.Resources>
+        <pages:RatingStarConverter x:Key="Star" />
+        <pages:DownloadTextConverter x:Key="DownloadText" />
+        <pages:RtlConverter x:Key="Rtl" />
+    </pages:BasePage.Resources>
+
+    <pages:BasePage.ToolbarItems>
+        <ToolbarItem Text="{Binding BookmarkText}" Command="{Binding ToggleBookmarkCommand}" />
+    </pages:BasePage.ToolbarItems>
+
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="16,8,16,24" Spacing="12">
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+
+                <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+                    <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+                </Border>
+
+                <VerticalStackLayout IsVisible="{Binding HasLecture}" Spacing="12">
+                    <Border StrokeThickness="0" StrokeShape="RoundRectangle 22" IsVisible="{Binding HasCover}" Shadow="{StaticResource CardShadow}">
+                        <Image AutomationProperties.IsInAccessibleTree="False" Source="{Binding Lecture.CoverUrl}" HeightRequest="180" Aspect="AspectFill" />
+                    </Border>
+                    <Label Text="{Binding Header}" Style="{StaticResource Title}" />
+                    <Label Text="{Binding Subtitle}" Style="{StaticResource Subtitle}" />
+                    <Label Text="{Binding OfflineText}" IsVisible="{Binding OfflineText, Converter={StaticResource HasText}}"
+                           FontSize="13" TextColor="{AppThemeBinding Light={StaticResource Warning}, Dark={StaticResource WarningDark}}" />
+
+                    <Border Style="{StaticResource TintCard}" IsVisible="{Binding HasObjectives}">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <Border Style="{StaticResource IconTile}" BackgroundColor="{AppThemeBinding Light={StaticResource Surface}, Dark={StaticResource SurfaceDark}}"
+                                    WidthRequest="38" HeightRequest="38" StrokeShape="RoundRectangle 12" VerticalOptions="Start">
+                                <Path Style="{StaticResource Icon}" Data="{StaticResource IconTarget}" WidthRequest="18" HeightRequest="18" />
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" Spacing="4">
+                                <Label Text="{l:Tr InThisLecture}" Style="{StaticResource Overline}" />
+                                <Label Text="{Binding Lecture.Objectives}" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Button Text="{l:Tr ReadAloud2}" Style="{StaticResource TonalButton}" Command="{Binding ReadAloudCommand}" />
+                        <Button Grid.Column="1" Text="{Binding IsDownloaded, Converter={StaticResource DownloadText}}"
+                                Style="{StaticResource TonalButton}" Command="{Binding ToggleDownloadCommand}" />
+                    </Grid>
+                    <Border Style="{StaticResource InfoBanner}" Padding="12,8">
+                        <Label Text="{l:Tr TapAnyWordInTheText}" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}" />
+                    </Border>
+
+                    <!-- Lesson text (FR-L32). Height is set from the page content after it loads. -->
+                    <WebView x:Name="Reader" HeightRequest="400" />
+
+                    <!-- Examples -->
+                    <VerticalStackLayout IsVisible="{Binding HasExamples}" Spacing="6">
+                        <Label Text="{l:Tr Examples}" Style="{StaticResource SectionHeader}" />
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Examples}" Spacing="6">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="vm:ExampleRow">
+                                    <Border Style="{StaticResource CardFlat}">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <VerticalStackLayout Spacing="2">
+                                                <Label Text="{Binding TargetText}" FontAttributes="Bold" FontSize="16"
+                                                       TextColor="{AppThemeBinding Light={StaticResource SecondaryText}, Dark={StaticResource SecondaryTextDark}}"
+                                                       FlowDirection="{Binding Source={RelativeSource AncestorType={x:Type vm:LectureViewModel}}, Path=IsRtl, Converter={StaticResource Rtl}}" />
+                                                <Label Text="{Binding Translation}" Style="{StaticResource Subtitle}" />
+                                                <Label Text="{Binding Note}" IsVisible="{Binding HasNote}" FontSize="12" Style="{StaticResource Subtitle}" />
+                                            </VerticalStackLayout>
+                                            <Button SemanticProperties.Description="{l:Tr ReadAloud}" Grid.Column="1" Text="🔊" Style="{StaticResource LinkButton}" VerticalOptions="Center"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:LectureViewModel}}, Path=SpeakExampleCommand}"
+                                                    CommandParameter="{Binding .}" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+
+                    <!-- Vocabulary (FR-L33) -->
+                    <VerticalStackLayout IsVisible="{Binding HasVocabulary}" Spacing="6">
+                        <Label Text="{l:Tr Vocabulary}" Style="{StaticResource SectionHeader}" />
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Vocabulary}" Spacing="4">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="vm:VocabularyRow">
+                                    <Border Style="{StaticResource CardFlat}" Padding="14,10">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <VerticalStackLayout Spacing="2">
+                                                <Label FontAttributes="Bold" Text="{Binding Word}" FontSize="16"
+                                                       TextColor="{AppThemeBinding Light={StaticResource SecondaryText}, Dark={StaticResource SecondaryTextDark}}"
+                                                       FlowDirection="{Binding Source={RelativeSource AncestorType={x:Type vm:LectureViewModel}}, Path=IsRtl, Converter={StaticResource Rtl}}" />
+                                                <Label Text="{Binding Meaning}" />
+                                                <Label Text="{Binding Detail}" IsVisible="{Binding HasDetail}" FontSize="12" Style="{StaticResource Subtitle}" />
+                                            </VerticalStackLayout>
+                                            <Button SemanticProperties.Description="{l:Tr ReadAloud}" Grid.Column="1" Text="🔊" Style="{StaticResource LinkButton}" VerticalOptions="Center"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:LectureViewModel}}, Path=SpeakWordCommand}"
+                                                    CommandParameter="{Binding .}" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+
+                    <!-- Links (videos, articles, PDFs) -->
+                    <VerticalStackLayout IsVisible="{Binding HasLinks}" Spacing="6">
+                        <Label Text="{l:Tr WatchAndReadMore}" Style="{StaticResource SectionHeader}" />
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Links}" Spacing="4">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="vm:LinkRow">
+                                    <Border Style="{StaticResource CardFlat}" Padding="14,12">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:LectureViewModel}}, Path=OpenLinkCommand}"
+                                                                  CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                                            <Border Style="{StaticResource Pill}" Padding="8,3">
+                                                <Label Text="{Binding Kind}" Style="{StaticResource PillText}" FontSize="11" />
+                                            </Border>
+                                            <Label Grid.Column="1" Text="{Binding Title}" FontAttributes="Bold" VerticalOptions="Center" />
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+
+                    <!-- Related posts (FR-L41) -->
+                    <VerticalStackLayout IsVisible="{Binding HasRelatedPosts}" Spacing="6">
+                        <Label Text="{l:Tr TipsForThisLecture}" Style="{StaticResource SectionHeader}" />
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding RelatedPosts}" Spacing="6">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="vm:PostItem">
+                                    <Border Style="{StaticResource Card}">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:LectureViewModel}}, Path=OpenPostCommand}"
+                                                                  CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                        <VerticalStackLayout Spacing="4">
+                                            <Label Text="{Binding Title}" FontAttributes="Bold" />
+                                            <Label Text="{Binding Body}" MaxLines="3" LineBreakMode="TailTruncation" />
+                                            <Button Text="{Binding LikeText}" Style="{StaticResource LinkButton}" HorizontalOptions="Start"
+                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:LectureViewModel}}, Path=LikePostCommand}"
+                                                    CommandParameter="{Binding .}" />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+
+                    <!-- My note (FR-L36) -->
+                    <Label Text="{l:Tr MyNote}" Style="{StaticResource SectionHeader}" />
+                    <Border Style="{StaticResource InputBox}">
+                        <Editor Text="{Binding NoteText}" Placeholder="{l:Tr WriteAnythingYouWantToRemember}" AutoSize="TextChanges"
+                                MinimumHeightRequest="80" MaxLength="2000" />
+                    </Border>
+                    <Label Text="{Binding Errors[Text]}" Style="{StaticResource FieldError}"
+                           IsVisible="{Binding Errors[Text], Converter={StaticResource HasText}}" />
+                    <Button Text="{l:Tr SaveNote}" Style="{StaticResource TonalButton}" Command="{Binding SaveNoteCommand}" />
+
+                    <!-- Rating (FR-L37) -->
+                    <Label Text="{l:Tr RateThisLecture}" Style="{StaticResource SectionHeader}" />
+                    <HorizontalStackLayout Spacing="2">
+                        <Button Text="{Binding MyRating, Converter={StaticResource Star}, ConverterParameter=1}" Style="{StaticResource LinkButton}" TextColor="{StaticResource Accent}" FontSize="28" Command="{Binding RateCommand}" CommandParameter="1" />
+                        <Button Text="{Binding MyRating, Converter={StaticResource Star}, ConverterParameter=2}" Style="{StaticResource LinkButton}" TextColor="{StaticResource Accent}" FontSize="28" Command="{Binding RateCommand}" CommandParameter="2" />
+                        <Button Text="{Binding MyRating, Converter={StaticResource Star}, ConverterParameter=3}" Style="{StaticResource LinkButton}" TextColor="{StaticResource Accent}" FontSize="28" Command="{Binding RateCommand}" CommandParameter="3" />
+                        <Button Text="{Binding MyRating, Converter={StaticResource Star}, ConverterParameter=4}" Style="{StaticResource LinkButton}" TextColor="{StaticResource Accent}" FontSize="28" Command="{Binding RateCommand}" CommandParameter="4" />
+                        <Button Text="{Binding MyRating, Converter={StaticResource Star}, ConverterParameter=5}" Style="{StaticResource LinkButton}" TextColor="{StaticResource Accent}" FontSize="28" Command="{Binding RateCommand}" CommandParameter="5" />
+                    </HorizontalStackLayout>
+                    <Label Text="{Binding RatingText}" Style="{StaticResource Subtitle}" FontSize="12" />
+
+                    <Button Text="{l:Tr ReportAMistake}" Style="{StaticResource LinkButton}" HorizontalOptions="Start" Command="{Binding ReportCommand}" />
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Mark complete (FR-L35) stays visible at the bottom. -->
+        <Border Grid.Row="1" Padding="16,12,16,14" StrokeThickness="0" StrokeShape="RoundRectangle 24,24,0,0" Shadow="{StaticResource LiftShadow}"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Surface}, Dark={StaticResource SurfaceDark}}"
+                IsVisible="{Binding HasLecture}">
+            <Button Text="{Binding CompleteText}" Style="{StaticResource GradientButton}" Command="{Binding CompleteCommand}" IsEnabled="{Binding CanComplete}" />
+        </Border>
+    </Grid>
+</pages:BasePage>

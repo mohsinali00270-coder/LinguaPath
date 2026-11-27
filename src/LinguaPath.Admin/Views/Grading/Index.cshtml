@@ -1,0 +1,60 @@
+﻿@model IReadOnlyList<GradingQueueItem>
+@{
+    ViewData["Title"] = "Grading queue";
+}
+<p class="small text-muted">Writing and speaking answers from monthly exams wait here. The learner's mark updates as soon as the last answer of an attempt is graded. AI pre-grades writing first: confident grades are applied automatically, the rest show the AI suggestion here.</p>
+
+@if (Model.Count == 0)
+{
+    <div class="card lp-card"><div class="card-body text-center text-muted py-5">Nothing to grade right now.</div></div>
+}
+@foreach (var a in Model)
+{
+    <div class="card lp-card mb-3">
+        <div class="card-body">
+            <div class="d-flex flex-wrap justify-content-between gap-2">
+                <div>
+                    <span class="badge text-bg-light border">@a.QuestionType</span>
+                    <b class="ms-1">@a.LearnerName</b> <span class="small text-muted">@a.LearnerEmail</span>
+                    <div class="small text-muted">@a.CourseTitle · <a asp-action="Attempt" asp-route-id="@a.AttemptId">@a.AttemptTitle</a> · submitted @a.SubmittedAt?.ToLocalTime().ToString("g")</div>
+                </div>
+            </div>
+            <div class="mt-2"><b>Task:</b> @a.Stem</div>
+            @if (!string.IsNullOrEmpty(a.Prompt)) { <div class="small text-muted">Sentence: @a.Prompt</div> }
+            <div class="mt-2 p-2 bg-light rounded">
+                @if (a.QuestionType == QuestionType.Speak)
+                {
+                    @if (a.AudioUrl is not null)
+                    {
+                        <audio controls preload="none" src="@a.AudioUrl" class="w-100"></audio>
+                    }
+                    else { <span class="text-muted">No recording.</span> }
+                }
+                else
+                {
+                    <div style="white-space:pre-wrap">@a.AnswerText</div>
+                }
+            </div>
+            @if (a.AiScore is not null)
+            {
+                <div class="mt-2 p-2 border border-info rounded small">
+                    <b>AI suggestion:</b> @a.AiScore / @a.MaxScore points · confidence @((int)((a.AiConfidence ?? 0) * 100))%
+                    <span class="text-muted">(below the auto-grade threshold, so a reviewer decides)</span>
+                    @if (!string.IsNullOrEmpty(a.AiFeedback)) { <div style="white-space:pre-wrap" class="mt-1">@a.AiFeedback</div> }
+                </div>
+            }
+            <form asp-action="Grade" method="post" class="row g-2 mt-2 align-items-end">
+                <input type="hidden" name="answerId" value="@a.AnswerId" />
+                <div class="col-md-2">
+                    <label class="form-label small">Points (0–@a.MaxScore)</label>
+                    <input name="score" type="number" min="0" max="@a.MaxScore" step="0.5" value="@a.AiScore" class="form-control form-control-sm" required />
+                </div>
+                <div class="col-md-8">
+                    <label class="form-label small">Feedback for the learner (optional)</label>
+                    <input name="feedback" maxlength="1000" class="form-control form-control-sm" value="@(a.AiFeedback?.Split('\n')[0])" />
+                </div>
+                <div class="col-md-2"><button class="btn btn-sm btn-success w-100">Save grade</button></div>
+            </form>
+        </div>
+    </div>
+}

@@ -1,0 +1,76 @@
+# Build and test on every push and pull request (Phase 10).
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  server:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: Restore
+        run: dotnet restore LinguaPath.Server.slnf
+      - name: Build
+        run: dotnet build LinguaPath.Server.slnf --no-restore -c Release
+      - name: Unit tests
+        run: dotnet test tests/LinguaPath.UnitTests --no-build -c Release --logger trx --results-directory TestResults
+      - name: Integration tests (SQLite)
+        run: dotnet test tests/LinguaPath.IntegrationTests --no-build -c Release --logger trx --results-directory TestResults
+      - name: Vulnerable packages
+        run: dotnet list LinguaPath.Server.slnf package --vulnerable --include-transitive
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: TestResults
+
+  android:
+    runs-on: ubuntu-latest
+    needs: server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - uses: actions/setup-java@v4
+        with:
+          distribution: microsoft
+          java-version: '17'
+      - name: MAUI workload
+        run: dotnet workload install maui-android
+      - name: Build Android (unsigned, Release)
+        run: dotnet build src/LinguaPath.Mobile -f net10.0-android -c Release
+
+  ios:
+    runs-on: macos-15
+    needs: server
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+      - name: MAUI workload
+        run: dotnet workload install maui-ios
+      - name: Build iOS simulator (no signing)
+        run: dotnet build src/LinguaPath.Mobile -f net10.0-ios -c Debug -p:RuntimeIdentifier=iossimulator-arm64
+
+  images:
+    runs-on: ubuntu-latest
+    needs: server
+    if: github.event_name == 'push'
+    steps:
+      - uses: actions/checkout@v4
+      - name: API image
+        run: docker build -f deploy/Dockerfile.api -t linguapath-api:${{ github.sha }} .
+      - name: Admin image
+        run: docker build -f deploy/Dockerfile.admin -t linguapath-admin:${{ github.sha }} .

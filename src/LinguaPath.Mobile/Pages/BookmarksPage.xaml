@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                xmlns:content="clr-namespace:LinguaPath.Shared.Contracts.Content;assembly=LinguaPath.Shared"
+                x:Class="LinguaPath.Mobile.Pages.BookmarksPage"
+                x:DataType="vm:BookmarksViewModel"
+                Title="{l:Tr Bookmarks}">
+    <Grid RowDefinitions="Auto,*" Padding="16,8,16,0" RowSpacing="8">
+        <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+            <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+        </Border>
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Items}">
+            <CollectionView.EmptyView>
+                <Label Text="{l:Tr BookmarkALectureToFindIt}" IsVisible="{Binding IsEmpty}"
+                       HorizontalTextAlignment="Center" Margin="0,40" Style="{StaticResource Subtitle}" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="content:BookmarkDto">
+                    <Border Style="{StaticResource Card}" Margin="0,0,0,8">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BookmarksViewModel}}, Path=OpenCommand}"
+                                                  CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="{Binding Title}" FontAttributes="Bold" />
+                            <Label Text="{Binding CourseTitle}" Style="{StaticResource Subtitle}" FontSize="13" />
+                            <Label Text="{Binding Topic}" Style="{StaticResource Subtitle}" FontSize="12" />
+                        </VerticalStackLayout>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</pages:BasePage>

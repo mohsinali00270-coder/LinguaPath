@@ -1,0 +1,30 @@
+@model CreateAdminUserInput
+@{
+    ViewData["Title"] = "Add admin";
+}
+<div class="card lp-card" style="max-width:640px">
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small"></div>
+            <div class="mb-3">
+                <label asp-for="FullName" class="form-label"></label>
+                <input asp-for="FullName" class="form-control" />
+                <span asp-validation-for="FullName" class="text-danger small"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" autocomplete="off" />
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label"></label>
+                <input asp-for="Password" class="form-control" autocomplete="new-password" />
+                <div class="form-text">At least 8 characters with a capital letter, a small letter and a number. The new admin should change it after signing in.</div>
+                <span asp-validation-for="Password" class="text-danger small"></span>
+            </div>
+            <partial name="_RolePicker" model="Model.Roles" />
+            <button type="submit" class="btn btn-primary">Create admin</button>
+            <a asp-action="Index" class="btn btn-link">Cancel</a>
+        </form>
+    </div>
+</div>

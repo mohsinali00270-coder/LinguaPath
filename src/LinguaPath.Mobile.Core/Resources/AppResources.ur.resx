@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="A11y_Notifications" xml:space="preserve"><value>اطلاعات</value></data>
+  <data name="AboutYou" xml:space="preserve"><value>آپ کے بارے میں</value></data>
+  <data name="Accept" xml:space="preserve"><value>قبول کریں</value></data>
+  <data name="AcceptFriendRequest" xml:space="preserve"><value>✅ دوستی کی درخواست قبول کریں</value></data>
+  <data name="Account" xml:space="preserve"><value>اکاؤنٹ</value></data>
+  <data name="Add" xml:space="preserve"><value>➕ شامل کریں</value></data>
+  <data name="Add2" xml:space="preserve"><value>شامل کریں</value></data>
+  <data name="AddFriend" xml:space="preserve"><value>➕ دوست بنائیں</value></data>
+  <data name="AddFriends" xml:space="preserve"><value>دوست شامل کریں</value></data>
+  <data name="Again" xml:space="preserve"><value>دوبارہ</value></data>
+  <data name="All" xml:space="preserve"><value>سب</value></data>
+  <data name="AllResults" xml:space="preserve"><value>تمام نتائج</value></data>
+  <data name="AllTime" xml:space="preserve"><value>ہمیشہ</value></data>
+  <data name="AlreadyHaveAnAccount" xml:space="preserve"><value>پہلے سے اکاؤنٹ ہے؟</value></data>
+  <data name="AnswersSaveAutomaticallyIfYouLeave" xml:space="preserve"><value>جوابات خود بخود محفوظ ہوتے ہیں۔ باہر جانے پر بھی ٹائمر چلتا رہے گا؛ جاری رکھنے کے لیے امتحان دوبارہ کھولیں۔</value></data>
+  <data name="AnyoneCanFindAndJoinIt" xml:space="preserve"><value>کوئی بھی اسے تلاش کر کے شامل ہو سکتا ہے</value></data>
+  <data name="App" xml:space="preserve"><value>ایپ</value></data>
+  <data name="AppLanguage" xml:space="preserve"><value>ایپ کی زبان</value></data>
+  <data name="Archived" xml:space="preserve"><value>محفوظ شدہ</value></data>
+  <data name="Back" xml:space="preserve"><value>واپس</value></data>
+  <data name="Back2" xml:space="preserve"><value>› واپس</value></data>
+  <data name="Badges" xml:space="preserve"><value>بیجز</value></data>
+  <data name="BeHonestYourRoadmapStartsFrom" xml:space="preserve"><value>ایمان داری سے بتائیں — آپ کا روڈ میپ یہیں سے شروع ہوگا۔</value></data>
+  <data name="Bio" xml:space="preserve"><value>تعارف</value></data>
+  <data name="Block" xml:space="preserve"><value>🚫 بلاک کریں</value></data>
+  <data name="BlockedLearners" xml:space="preserve"><value>بلاک شدہ سیکھنے والے</value></data>
+  <data name="BlueDailyQuizOrangeMonthlyExam" xml:space="preserve"><value>نیلا = روزانہ کوئز · نارنجی = ماہانہ امتحان</value></data>
+  <data name="BookmarkALectureToFindIt" xml:space="preserve"><value>کسی لیکچر کو بُک مارک کریں تاکہ وہ یہاں جلدی مل جائے۔</value></data>
+  <data name="Bookmarks" xml:space="preserve"><value>بُک مارکس</value></data>
+  <data name="Bookmarks2" xml:space="preserve"><value>☆ بُک مارکس</value></data>
+  <data name="ByLanguage" xml:space="preserve"><value>زبان کے لحاظ سے</value></data>
+  <data name="BySkill" xml:space="preserve"><value>مہارت کے لحاظ سے</value></data>
+  <data name="CanTFindItCheckYour" xml:space="preserve"><value>نہیں ملا؟ اسپام فولڈر دیکھیں۔</value></data>
+  <data name="Cancel" xml:space="preserve"><value>منسوخ کریں</value></data>
+  <data name="CancelFriendRequest" xml:space="preserve"><value>دوستی کی درخواست واپس لیں</value></data>
+  <data name="Certificates" xml:space="preserve"><value>سرٹیفکیٹ</value></data>
+  <data name="Challenge" xml:space="preserve"><value>⚔️ چیلنج</value></data>
+  <data name="ChallengeAFriend" xml:space="preserve"><value>⚔️ دوست کو چیلنج کریں</value></data>
+  <data name="ChangePassword" xml:space="preserve"><value>پاس ورڈ بدلیں</value></data>
+  <data name="ChangePhoto" xml:space="preserve"><value>تصویر بدلیں</value></data>
+  <data name="ChangeTopic" xml:space="preserve"><value>موضوع بدلیں</value></data>
+  <data name="ChangingYourPlanRePacesThe" xml:space="preserve"><value>پلان بدلنے سے باقی لیکچرز کی رفتار دوبارہ طے ہوتی ہے۔ مکمل لیکچرز مکمل ہی رہیں گے۔</value></data>
+  <data name="Chats" xml:space="preserve"><value>💬 چیٹس</value></data>
+  <data name="Check" xml:space="preserve"><value>جانچیں</value></data>
+  <data name="CheckAgain" xml:space="preserve"><value>دوبارہ دیکھیں</value></data>
+  <data name="CheckAnswers" xml:space="preserve"><value>جوابات جانچیں</value></data>
+  <data name="CheckMyWriting" xml:space="preserve"><value>میری تحریر جانچیں</value></data>
+  <data name="CheckYourEmail" xml:space="preserve"><value>اپنی ای میل دیکھیں</value></data>
+  <data name="Choose" xml:space="preserve"><value>منتخب کریں…</value></data>
+  <data name="ChooseAFriend" xml:space="preserve"><value>دوست منتخب کریں</value></data>
+  <data name="ChooseALanguage" xml:space="preserve"><value>زبان منتخب کریں</value></data>
+  <data name="ChooseALanguageAndWeLl" xml:space="preserve"><value>زبان منتخب کریں، ہم آپ کے وقت کے مطابق پلان بنائیں گے۔</value></data>
+  <data name="ChooseALanguageFirst" xml:space="preserve"><value>پہلے زبان منتخب کریں</value></data>
+  <data name="ChooseANewPassword" xml:space="preserve"><value>نیا پاس ورڈ منتخب کریں</value></data>
+  <data name="Clear" xml:space="preserve"><value>صاف کریں</value></data>
+  <data name="Close" xml:space="preserve"><value>بند کریں</value></data>
+  <data name="Code" xml:space="preserve"><value>کوڈ</value></data>
+  <data name="ComingSoon" xml:space="preserve"><value>جلد آ رہا ہے</value></data>
+  <data name="Compete" xml:space="preserve"><value>مقابلہ</value></data>
+  <data name="Compete2" xml:space="preserve"><value>⚔️ مقابلہ</value></data>
+  <data name="CompleteALectureOrADaily" xml:space="preserve"><value>پہلے پوائنٹس کے لیے کوئی لیکچر یا روزانہ کوئز مکمل کریں۔</value></data>
+  <data name="ConfirmNewPassword" xml:space="preserve"><value>نئے پاس ورڈ کی تصدیق کریں</value></data>
+  <data name="ConfirmPassword" xml:space="preserve"><value>پاس ورڈ کی تصدیق کریں</value></data>
+  <data name="ContinueWithApple" xml:space="preserve"><value>Apple کے ساتھ جاری رکھیں</value></data>
+  <data name="ContinueWithGoogle" xml:space="preserve"><value>Google کے ساتھ جاری رکھیں</value></data>
+  <data name="Course" xml:space="preserve"><value>کورس</value></data>
+  <data name="CourseGrade" xml:space="preserve"><value>کورس گریڈ</value></data>
+  <data name="CoursePlan" xml:space="preserve"><value>کورس پلان</value></data>
+  <data name="CreateAccount" xml:space="preserve"><value>اکاؤنٹ بنائیں</value></data>
+  <data name="CreateAnAccount" xml:space="preserve"><value>اکاؤنٹ بنائیں</value></data>
+  <data name="CreateGroup" xml:space="preserve"><value>گروپ بنائیں</value></data>
+  <data name="CreateYourAccount" xml:space="preserve"><value>اپنا اکاؤنٹ بنائیں</value></data>
+  <data name="CurrentPassword" xml:space="preserve"><value>موجودہ پاس ورڈ</value></data>
+  <data name="DailyQuiz" xml:space="preserve"><value>📝 روزانہ کوئز</value></data>
+  <data name="DailyQuizIsReady" xml:space="preserve"><value>روزانہ کوئز تیار ہے</value></data>
+  <data name="DailyQuizzes" xml:space="preserve"><value>روزانہ کوئز</value></data>
+  <data name="DailyReminder" xml:space="preserve"><value>روزانہ یاد دہانی</value></data>
+  <data name="DailyStudyReminders" xml:space="preserve"><value>روزانہ پڑھائی کی یاد دہانی</value></data>
+  <data name="DayStreak" xml:space="preserve"><value>دن کا تسلسل</value></data>
+  <data name="Decline" xml:space="preserve"><value>مسترد کریں</value></data>
+  <data name="Delete" xml:space="preserve"><value>حذف کریں</value></data>
+  <data name="DeleteAccount" xml:space="preserve"><value>اکاؤنٹ حذف کریں</value></data>
+  <data name="DescriptionOptional" xml:space="preserve"><value>تفصیل (اختیاری)</value></data>
+  <data name="DisplayNameShownToOtherLearners" xml:space="preserve"><value>ظاہری نام (دوسرے سیکھنے والوں کو نظر آتا ہے)</value></data>
+  <data name="Dob_Hint" xml:space="preserve"><value>18 سال سے کم؟ آپ صرف دوستوں کے ساتھ چیٹ اور مقابلہ کر سکتے ہیں۔</value></data>
+  <data name="Dob_Label" xml:space="preserve"><value>تاریخِ پیدائش (اختیاری)</value></data>
+  <data name="DonTSeeYourLanguageRequest" xml:space="preserve"><value>آپ کی زبان نظر نہیں آ رہی؟ درخواست دیں</value></data>
+  <data name="Done" xml:space="preserve"><value>✓ مکمل</value></data>
+  <data name="Done2" xml:space="preserve"><value>مکمل</value></data>
+  <data name="DownloadMyData" xml:space="preserve"><value>میرا ڈیٹا ڈاؤن لوڈ کریں</value></data>
+  <data name="DueOnly" xml:space="preserve"><value>صرف باقی</value></data>
+  <data name="EGDELEA2" xml:space="preserve"><value>مثلاً DELE A2</value></data>
+  <data name="EGSpanishB1Practice" xml:space="preserve"><value>مثلاً ہسپانوی B1 مشق</value></data>
+  <data name="Easy" xml:space="preserve"><value>آسان</value></data>
+  <data name="EditDescription" xml:space="preserve"><value>تفصیل میں ترمیم</value></data>
+  <data name="EditProfile" xml:space="preserve"><value>پروفائل میں ترمیم</value></data>
+  <data name="Email" xml:space="preserve"><value>ای میل</value></data>
+  <data name="EnterYourAccountEmailAndWe" xml:space="preserve"><value>اپنے اکاؤنٹ کی ای میل درج کریں، ہم آپ کو کوڈ بھیجیں گے۔</value></data>
+  <data name="Err_Forbidden" xml:space="preserve"><value>آپ یہ نہیں کر سکتے۔</value></data>
+  <data name="Err_Generic" xml:space="preserve"><value>کچھ غلط ہو گیا۔ دوبارہ کوشش کریں۔</value></data>
+  <data name="Err_Network" xml:space="preserve"><value>سرور سے رابطہ نہیں ہو سکا۔ انٹرنیٹ کنکشن دیکھ کر دوبارہ کوشش کریں۔</value></data>
+  <data name="Err_NotFound" xml:space="preserve"><value>نہیں ملا۔</value></data>
+  <data name="Err_Server" xml:space="preserve"><value>سرور میں مسئلہ ہے۔ تھوڑی دیر بعد کوشش کریں۔</value></data>
+  <data name="Err_SessionExpired" xml:space="preserve"><value>آپ کا سیشن ختم ہو گیا ہے۔ دوبارہ سائن اِن کریں۔</value></data>
+  <data name="Err_SignInAgain" xml:space="preserve"><value>دوبارہ سائن اِن کریں۔</value></data>
+  <data name="Err_TooMany" xml:space="preserve"><value>بہت زیادہ کوششیں۔ تھوڑا انتظار کر کے دوبارہ کوشش کریں۔</value></data>
+  <data name="ExamReminders" xml:space="preserve"><value>امتحان کی یاد دہانیاں</value></data>
+  <data name="Examples" xml:space="preserve"><value>مثالیں</value></data>
+  <data name="FindGroups" xml:space="preserve"><value>گروپ تلاش کریں</value></data>
+  <data name="FindLearnersInPeopleOrJoin" xml:space="preserve"><value>لوگ میں سیکھنے والوں کو تلاش کریں، یا مل کر مشق کے لیے کسی عوامی گروپ میں شامل ہوں۔</value></data>
+  <data name="Finish" xml:space="preserve"><value>ختم کریں</value></data>
+  <data name="FinishBy" xml:space="preserve"><value>مکمل کرنے کی تاریخ</value></data>
+  <data name="FinishEveryCoreLecturePassEvery" xml:space="preserve"><value>سرٹیفکیٹ کے لیے تمام بنیادی لیکچر مکمل کریں، ہر ماہانہ امتحان پاس کریں اور کورس کا مطلوبہ گریڈ حاصل کریں۔ یہ خود بخود یہاں آ جائے گا۔</value></data>
+  <data name="FinishIn" xml:space="preserve"><value>مکمل ہونے کا وقت</value></data>
+  <data name="FocusOn" xml:space="preserve"><value>توجہ</value></data>
+  <data name="ForgotPassword" xml:space="preserve"><value>پاس ورڈ بھول گئے</value></data>
+  <data name="ForgotPassword2" xml:space="preserve"><value>پاس ورڈ بھول گئے؟</value></data>
+  <data name="FriendRequests" xml:space="preserve"><value>دوستی کی درخواستیں</value></data>
+  <data name="Friends" xml:space="preserve"><value>دوست</value></data>
+  <data name="From" xml:space="preserve"><value>سے</value></data>
+  <data name="FullName" xml:space="preserve"><value>پورا نام</value></data>
+  <data name="GetStarted" xml:space="preserve"><value>شروع کریں</value></data>
+  <data name="Goal" xml:space="preserve"><value>مقصد</value></data>
+  <data name="Good" xml:space="preserve"><value>اچھا</value></data>
+  <data name="GroupInfo" xml:space="preserve"><value>گروپ کی معلومات</value></data>
+  <data name="GroupSettings" xml:space="preserve"><value>گروپ کی ترتیبات</value></data>
+  <data name="Hard" xml:space="preserve"><value>مشکل</value></data>
+  <data name="History" xml:space="preserve"><value>تاریخچہ</value></data>
+  <data name="Home" xml:space="preserve"><value>ہوم</value></data>
+  <data name="IAcceptThe" xml:space="preserve"><value>میں قبول کرتا/کرتی ہوں</value></data>
+  <data name="Icon" xml:space="preserve"><value>آئیکن</value></data>
+  <data name="IfAnAccountExistsFor" xml:space="preserve"><value>اگر </value></data>
+  <data name="InThisLecture" xml:space="preserve"><value>اس لیکچر میں</value></data>
+  <data name="Inbox_Delete" xml:space="preserve"><value>حذف کریں</value></data>
+  <data name="Inbox_Empty" xml:space="preserve"><value>ابھی کوئی اطلاع نہیں۔ یاد دہانیاں، سرٹیفکیٹ اور نئی پوسٹس یہاں نظر آئیں گی۔</value></data>
+  <data name="Inbox_MarkAllRead" xml:space="preserve"><value>سب کو پڑھا ہوا کریں</value></data>
+  <data name="Inbox_Title" xml:space="preserve"><value>اطلاعات</value></data>
+  <data name="Inbox_UnreadFormat" xml:space="preserve"><value>{0} بغیر پڑھی</value></data>
+  <data name="ItExpiresIn10Minutes" xml:space="preserve"><value>۔ یہ 10 منٹ میں ختم ہو جائے گا۔</value></data>
+  <data name="JoinTheBattle" xml:space="preserve"><value>مقابلے میں شامل ہوں</value></data>
+  <data name="JoinTheTournament" xml:space="preserve"><value>ٹورنامنٹ میں شامل ہوں</value></data>
+  <data name="Language" xml:space="preserve"><value>زبان</value></data>
+  <data name="Languages" xml:space="preserve"><value>زبانیں</value></data>
+  <data name="Leaderboard" xml:space="preserve"><value>لیڈر بورڈ</value></data>
+  <data name="Leaderboard2" xml:space="preserve"><value>🏆 لیڈر بورڈ</value></data>
+  <data name="Learn" xml:space="preserve"><value>سیکھیں</value></data>
+  <data name="LearnALanguageAtYourOwn" xml:space="preserve"><value>اپنی رفتار سے زبان سیکھیں</value></data>
+  <data name="LearnAnotherLanguage" xml:space="preserve"><value>ایک اور زبان سیکھیں</value></data>
+  <data name="LeaveGroup" xml:space="preserve"><value>گروپ چھوڑیں</value></data>
+  <data name="LeaveMatch" xml:space="preserve"><value>مقابلہ چھوڑیں</value></data>
+  <data name="LevelYouWantToReach" xml:space="preserve"><value>جس سطح تک پہنچنا ہے</value></data>
+  <data name="LinksPhoneNumbersAndSocialAccounts" xml:space="preserve"><value>چیٹ میں لنکس، فون نمبر اور سوشل اکاؤنٹس کی اجازت نہیں۔</value></data>
+  <data name="Listen" xml:space="preserve"><value>🔊 سنیں</value></data>
+  <data name="ListenAndTypeWhatYouHear" xml:space="preserve"><value>سنیں اور جو سنا وہ لکھیں۔</value></data>
+  <data name="ListenFirst" xml:space="preserve"><value>🔊 پہلے سنیں</value></data>
+  <data name="LoadEarlierMessages" xml:space="preserve"><value>پرانے پیغامات دکھائیں</value></data>
+  <data name="MainGoal" xml:space="preserve"><value>بنیادی مقصد</value></data>
+  <data name="Message" xml:space="preserve"><value>پیغام</value></data>
+  <data name="Message2" xml:space="preserve"><value>💬 پیغام</value></data>
+  <data name="MessageDoubleTapAMessageFor" xml:space="preserve"><value>پیغام… (اختیارات کے لیے پیغام پر دو بار ٹیپ کریں)</value></data>
+  <data name="Month" xml:space="preserve"><value>مہینہ</value></data>
+  <data name="MonthlyExams" xml:space="preserve"><value>ماہانہ امتحانات</value></data>
+  <data name="MonthlyExams2" xml:space="preserve"><value>🎓 ماہانہ امتحانات</value></data>
+  <data name="MoreOptions" xml:space="preserve"><value>مزید اختیارات</value></data>
+  <data name="MyCertificates" xml:space="preserve"><value>میرے سرٹیفکیٹ</value></data>
+  <data name="MyCertificates2" xml:space="preserve"><value>📜 میرے سرٹیفکیٹ</value></data>
+  <data name="MyLeague" xml:space="preserve"><value>🥇 میری لیگ</value></data>
+  <data name="MyLeague2" xml:space="preserve"><value>میری لیگ</value></data>
+  <data name="MyLearning" xml:space="preserve"><value>میری پڑھائی</value></data>
+  <data name="MyMarks" xml:space="preserve"><value>📊 میرے نمبر</value></data>
+  <data name="MyMarks2" xml:space="preserve"><value>میرے نمبر</value></data>
+  <data name="MyNote" xml:space="preserve"><value>میرا نوٹ</value></data>
+  <data name="MyWords" xml:space="preserve"><value>⭐ میرے الفاظ</value></data>
+  <data name="MyWords2" xml:space="preserve"><value>میرے الفاظ</value></data>
+  <data name="Name" xml:space="preserve"><value>نام</value></data>
+  <data name="NativeLanguage" xml:space="preserve"><value>مادری زبان</value></data>
+  <data name="NewChallenge" xml:space="preserve"><value>نیا چیلنج</value></data>
+  <data name="NewChat" xml:space="preserve"><value>✏️ نئی چیٹ</value></data>
+  <data name="NewGroup" xml:space="preserve"><value>👥 نیا گروپ</value></data>
+  <data name="NewGroup2" xml:space="preserve"><value>نیا گروپ</value></data>
+  <data name="NewHere" xml:space="preserve"><value>نئے ہیں؟</value></data>
+  <data name="NewPassword" xml:space="preserve"><value>نیا پاس ورڈ</value></data>
+  <data name="NewPostsInMyLanguage" xml:space="preserve"><value>میری زبان میں نئی پوسٹس</value></data>
+  <data name="NextExercise" xml:space="preserve"><value>اگلی مشق ←</value></data>
+  <data name="NoChatsYet" xml:space="preserve"><value>ابھی کوئی چیٹ نہیں</value></data>
+  <data name="NoExamsForThisCourseYet" xml:space="preserve"><value>اس کورس کے لیے ابھی کوئی امتحان نہیں۔</value></data>
+  <data name="NoFriendsYetSearchForLearners" xml:space="preserve"><value>ابھی کوئی دوست نہیں۔ اوپر سیکھنے والوں کو تلاش کر کے درخواست بھیجیں۔</value></data>
+  <data name="NoMatchesYetTryAQuick" xml:space="preserve"><value>ابھی کوئی مقابلہ نہیں۔ فوری مقابلہ آزمائیں!</value></data>
+  <data name="NoMessagesYetSayHello" xml:space="preserve"><value>ابھی کوئی پیغام نہیں۔ سلام کہیں! 👋</value></data>
+  <data name="NoPointsYetInThisPeriod" xml:space="preserve"><value>اس مدت میں ابھی کوئی پوائنٹس نہیں۔ پہلے بنیں!</value></data>
+  <data name="NoPublicGroupsFoundCreateOne" xml:space="preserve"><value>کوئی عوامی گروپ نہیں ملا۔ چیٹس سے ایک بنائیں!</value></data>
+  <data name="NoRoadmapYet" xml:space="preserve"><value>ابھی کوئی روڈ میپ نہیں</value></data>
+  <data name="NoTournamentsScheduledRightNowCheck" xml:space="preserve"><value>ابھی کوئی ٹورنامنٹ طے نہیں۔ جلد دوبارہ دیکھیں!</value></data>
+  <data name="NoWordsYetTapAWord" xml:space="preserve"><value>ابھی کوئی لفظ نہیں۔ لیکچر یا پڑھائی کے متن میں کسی لفظ پر ٹیپ کریں، یا کوئی ترجمہ محفوظ کریں۔</value></data>
+  <data name="NotSureTakeA10Question" xml:space="preserve"><value>یقین نہیں؟ 10 سوالوں کا پلیسمنٹ ٹیسٹ دیں</value></data>
+  <data name="NothingLeftToReviewRightNow" xml:space="preserve"><value>ابھی دہرانے کو کچھ نہیں بچا۔</value></data>
+  <data name="Notifications" xml:space="preserve"><value>اطلاعات</value></data>
+  <data name="Now" xml:space="preserve"><value>ابھی</value></data>
+  <data name="OffEachOfYouPlaysThe" xml:space="preserve"><value>بند: دونوں ایک جیسے سوال اپنے اپنے وقت پر کھیلیں گے</value></data>
+  <data name="Offline_Queued" xml:space="preserve"><value>آپ آف لائن ہیں۔ آن لائن ہوتے ہی ہم اسے محفوظ کر دیں گے۔</value></data>
+  <data name="Offline_Synced" xml:space="preserve"><value>دوبارہ آن لائن: آپ کی آف لائن پیش رفت محفوظ ہو گئی۔</value></data>
+  <data name="OnTheWay" xml:space="preserve"><value>راستے میں</value></data>
+  <data name="OneExamPerMonthOfYour" xml:space="preserve"><value>روڈ میپ کے ہر مہینے کا ایک امتحان۔ یہ اس مہینے کے زیادہ تر لیکچر مکمل ہونے پر یا مقررہ تاریخ پر کھلتا ہے۔</value></data>
+  <data name="Open" xml:space="preserve"><value>کھولیں</value></data>
+  <data name="Opponent" xml:space="preserve"><value>مدِمقابل</value></data>
+  <data name="Optional" xml:space="preserve"><value>اختیاری</value></data>
+  <data name="Options" xml:space="preserve"><value>اختیارات…</value></data>
+  <data name="Or" xml:space="preserve"><value>یا</value></data>
+  <data name="Overdue" xml:space="preserve"><value>تاخیر شدہ</value></data>
+  <data name="Password" xml:space="preserve"><value>پاس ورڈ</value></data>
+  <data name="PauseCourse" xml:space="preserve"><value>کورس روکیں</value></data>
+  <data name="People" xml:space="preserve"><value>لوگ</value></data>
+  <data name="PeopleAndFriends" xml:space="preserve"><value>👥 لوگ اور دوست</value></data>
+  <data name="PickALanguageTellUsYour" xml:space="preserve"><value>زبان منتخب کریں، اپنی سطح، مقصد اور دستیاب وقت بتائیں۔ ہم آپ کا روڈ میپ بنائیں گے۔</value></data>
+  <data name="Plan" xml:space="preserve"><value>پلان</value></data>
+  <data name="Planned" xml:space="preserve"><value> · طے شدہ </value></data>
+  <data name="Play" xml:space="preserve"><value>🔊 چلائیں</value></data>
+  <data name="PlayLive" xml:space="preserve"><value>لائیو کھیلیں</value></data>
+  <data name="PlayMyRecording" xml:space="preserve"><value>▶ میری ریکارڈنگ چلائیں</value></data>
+  <data name="PlayMyRound" xml:space="preserve"><value>▶️ میرا راؤنڈ کھیلیں</value></data>
+  <data name="PlayMyRun" xml:space="preserve"><value>▶️ میری باری کھیلیں</value></data>
+  <data name="PlayThePracticeBot" xml:space="preserve"><value>🤖 مشقی بوٹ سے کھیلیں</value></data>
+  <data name="Points" xml:space="preserve"><value>پوائنٹس</value></data>
+  <data name="PointsAcrossAllYourLanguages" xml:space="preserve"><value>آپ کی تمام زبانوں کے پوائنٹس</value></data>
+  <data name="PointsAndBadges" xml:space="preserve"><value>پوائنٹس اور بیجز</value></data>
+  <data name="PointsAndBadges2" xml:space="preserve"><value>⭐ پوائنٹس اور بیجز</value></data>
+  <data name="Practice" xml:space="preserve"><value>مشق</value></data>
+  <data name="PracticeUsesTheLanguageYouAre" xml:space="preserve"><value>مشق اسی زبان میں ہوتی ہے جو آپ سیکھ رہے ہیں۔ کورس شروع کر کے یہاں واپس آئیں۔</value></data>
+  <data name="Privacy" xml:space="preserve"><value>رازداری</value></data>
+  <data name="PrivacyAndBlockedLearners" xml:space="preserve"><value>🔒 رازداری اور بلاک شدہ</value></data>
+  <data name="Profile" xml:space="preserve"><value>پروفائل</value></data>
+  <data name="ProfilePhoto" xml:space="preserve"><value>پروفائل تصویر</value></data>
+  <data name="PublicGroup" xml:space="preserve"><value>عوامی گروپ</value></data>
+  <data name="PublicGroups" xml:space="preserve"><value>عوامی گروپس</value></data>
+  <data name="Questions" xml:space="preserve"><value>سوالات</value></data>
+  <data name="QuickMatch" xml:space="preserve"><value>⚡ فوری مقابلہ</value></data>
+  <data name="RateThisLecture" xml:space="preserve"><value>اس لیکچر کی درجہ بندی کریں</value></data>
+  <data name="Read" xml:space="preserve"><value>🔊 پڑھیں</value></data>
+  <data name="ReadAloud" xml:space="preserve"><value>بلند آواز میں پڑھیں</value></data>
+  <data name="ReadAloud2" xml:space="preserve"><value>🔊 بلند آواز میں پڑھیں</value></data>
+  <data name="ReadReceipts" xml:space="preserve"><value>پڑھنے کی رسید</value></data>
+  <data name="ReadRepliesAloudTapAReply" xml:space="preserve"><value>جواب بلند آواز میں سنائیں (دوبارہ سننے کے لیے جواب پر ٹیپ کریں)</value></data>
+  <data name="ReadThisAloud" xml:space="preserve"><value>یہ بلند آواز میں پڑھیں:</value></data>
+  <data name="RecentMatches" xml:space="preserve"><value>حالیہ مقابلے</value></data>
+  <data name="Rematch" xml:space="preserve"><value>🔁 دوبارہ مقابلہ</value></data>
+  <data name="RemindMeAtASetTime" xml:space="preserve"><value>مقررہ وقت پر یاد دلائیں</value></data>
+  <data name="RemindMeToStudy" xml:space="preserve"><value>پڑھائی کی یاد دلائیں</value></data>
+  <data name="RemoveFriend" xml:space="preserve"><value>دوستی ختم کریں</value></data>
+  <data name="Rename" xml:space="preserve"><value>نام بدلیں</value></data>
+  <data name="Report" xml:space="preserve"><value>⋯ رپورٹ کریں</value></data>
+  <data name="Report2" xml:space="preserve"><value>⚑ رپورٹ کریں</value></data>
+  <data name="ReportAMistake" xml:space="preserve"><value>غلطی کی اطلاع دیں</value></data>
+  <data name="ResetYourPassword" xml:space="preserve"><value>اپنا پاس ورڈ ری سیٹ کریں</value></data>
+  <data name="Result" xml:space="preserve"><value>نتیجہ</value></data>
+  <data name="ResumeNow" xml:space="preserve"><value>ابھی دوبارہ شروع کریں</value></data>
+  <data name="Review" xml:space="preserve"><value>جائزہ</value></data>
+  <data name="ReviewAnswers" xml:space="preserve"><value>جوابات کا جائزہ</value></data>
+  <data name="ReviewDueWords" xml:space="preserve"><value>باقی الفاظ دہرائیں</value></data>
+  <data name="ReviewWords" xml:space="preserve"><value>الفاظ دہرائیں</value></data>
+  <data name="Revoked" xml:space="preserve"><value>منسوخ</value></data>
+  <data name="Roadmap" xml:space="preserve"><value>روڈ میپ</value></data>
+  <data name="SampleResultTheSpeechOrAI" xml:space="preserve"><value>نمونہ نتیجہ: اس سرور پر اسپیچ یا AI سروس ترتیب نہیں دی گئی۔</value></data>
+  <data name="Save" xml:space="preserve"><value>محفوظ کریں</value></data>
+  <data name="SaveAndRePlan" xml:space="preserve"><value>محفوظ کریں اور دوبارہ پلان بنائیں</value></data>
+  <data name="SaveNote" xml:space="preserve"><value>نوٹ محفوظ کریں</value></data>
+  <data name="SaveToMyWords" xml:space="preserve"><value>⭐ میرے الفاظ میں محفوظ کریں</value></data>
+  <data name="Saved" xml:space="preserve"><value>محفوظ</value></data>
+  <data name="SayHelloToStart" xml:space="preserve"><value>شروع کرنے کے لیے سلام کہیں!</value></data>
+  <data name="ScoreTrend" xml:space="preserve"><value>اسکور کا رجحان</value></data>
+  <data name="Search" xml:space="preserve"><value>تلاش</value></data>
+  <data name="SearchGroups" xml:space="preserve"><value>گروپس تلاش کریں</value></data>
+  <data name="SearchLearnersByName" xml:space="preserve"><value>نام سے سیکھنے والے تلاش کریں</value></data>
+  <data name="SecondsPerQuestion" xml:space="preserve"><value>فی سوال سیکنڈ</value></data>
+  <data name="SeeFullRoadmap" xml:space="preserve"><value>پورا روڈ میپ دیکھیں</value></data>
+  <data name="SeeResult" xml:space="preserve"><value>نتیجہ دیکھیں</value></data>
+  <data name="Send" xml:space="preserve"><value>بھیجیں</value></data>
+  <data name="SendChallenge" xml:space="preserve"><value>چیلنج بھیجیں</value></data>
+  <data name="SendCode" xml:space="preserve"><value>کوڈ بھیجیں</value></data>
+  <data name="Sending" xml:space="preserve"><value>بھیجا جا رہا ہے…</value></data>
+  <data name="Share" xml:space="preserve"><value>شیئر کریں</value></data>
+  <data name="ShareToChat" xml:space="preserve"><value>💬 چیٹ میں شیئر کریں</value></data>
+  <data name="ShortLecturesDailyQuizzesMonthlyExams" xml:space="preserve"><value>مختصر لیکچرز، روزانہ کوئز، ماہانہ امتحانات اور آخر میں سرٹیفکیٹ۔</value></data>
+  <data name="ShowMeOnLeaderboards" xml:space="preserve"><value>مجھے لیڈر بورڈ پر دکھائیں</value></data>
+  <data name="ShowMyNameOnLeaderboards" xml:space="preserve"><value>لیڈر بورڈ پر میرا نام دکھائیں</value></data>
+  <data name="ShowTranslation" xml:space="preserve"><value>ترجمہ دکھائیں</value></data>
+  <data name="ShowWhenIMOnline" xml:space="preserve"><value>آن لائن ہونے پر دکھائیں</value></data>
+  <data name="SignIn" xml:space="preserve"><value>سائن اِن</value></data>
+  <data name="SignInToContinueLearning" xml:space="preserve"><value>سیکھنا جاری رکھنے کے لیے سائن اِن کریں۔</value></data>
+  <data name="SignOut" xml:space="preserve"><value>سائن آؤٹ</value></data>
+  <data name="SignOutOnAllDevices" xml:space="preserve"><value>تمام آلات سے سائن آؤٹ</value></data>
+  <data name="Slowly" xml:space="preserve"><value>🐢 آہستہ</value></data>
+  <data name="SomeWordsWereHiddenByThe" xml:space="preserve"><value>کچھ الفاظ فلٹر نے چھپا دیے</value></data>
+  <data name="Standings" xml:space="preserve"><value>درجہ بندی</value></data>
+  <data name="StartACourse" xml:space="preserve"><value>کورس شروع کریں</value></data>
+  <data name="StartACourseToCompeteIn" xml:space="preserve"><value>کسی زبان میں مقابلے کے لیے اس کا کورس شروع کریں۔</value></data>
+  <data name="StartAGroupBattle" xml:space="preserve"><value>⚔️ گروپ مقابلہ شروع کریں</value></data>
+  <data name="StartNow" xml:space="preserve"><value>ابھی شروع کریں</value></data>
+  <data name="StartYourFirstCourse" xml:space="preserve"><value>اپنا پہلا کورس شروع کریں</value></data>
+  <data name="Stop" xml:space="preserve"><value>روکیں</value></data>
+  <data name="StreakAtRisk" xml:space="preserve"><value>تسلسل خطرے میں</value></data>
+  <data name="StudyDays" xml:space="preserve"><value>پڑھائی کے دن</value></data>
+  <data name="StudyReminders" xml:space="preserve"><value>پڑھائی کی یاد دہانیاں</value></data>
+  <data name="StudyTimePerDay" xml:space="preserve"><value>روزانہ پڑھائی کا وقت</value></data>
+  <data name="SwapLanguages" xml:space="preserve"><value>زبانیں بدلیں</value></data>
+  <data name="SwitchPublicPrivate" xml:space="preserve"><value>عوامی / نجی بدلیں</value></data>
+  <data name="T8CharactersWithACapitalLetter" xml:space="preserve"><value>کم از کم 8 حروف، جن میں ایک بڑا حرف، ایک چھوٹا حرف اور ایک ہندسہ ہو۔</value></data>
+  <data name="TapAWordToTranslateIt" xml:space="preserve"><value>ترجمے کے لیے لفظ پر ٹیپ کریں۔</value></data>
+  <data name="TapAnyWordInTheText" xml:space="preserve"><value>معنی دیکھنے کے لیے متن میں کسی بھی لفظ پر ٹیپ کریں۔</value></data>
+  <data name="TapToOpen" xml:space="preserve"><value>کھولنے کے لیے ٹیپ کریں</value></data>
+  <data name="TapToSeeTheMeaning" xml:space="preserve"><value>معنی دیکھنے کے لیے ٹیپ کریں</value></data>
+  <data name="TermsAndPrivacyPolicy" xml:space="preserve"><value>شرائط اور رازداری کی پالیسی</value></data>
+  <data name="TheyHave24HoursToAccept" xml:space="preserve"><value>قبول کرنے کے لیے 24 گھنٹے ہیں۔ جیت 30 پوائنٹس، برابری 15، ہار 5۔</value></data>
+  <data name="ThisPartOfLinguaPathIsBeing" xml:space="preserve"><value>LinguaPath کا یہ حصہ تیار ہو رہا ہے اور اگلی اپ ڈیٹ میں آئے گا۔</value></data>
+  <data name="TimeZone" xml:space="preserve"><value>ٹائم زون</value></data>
+  <data name="TipsForThisLecture" xml:space="preserve"><value>اس لیکچر کے مشورے</value></data>
+  <data name="TipsPosts" xml:space="preserve"><value>💡 مشورے اور پوسٹس</value></data>
+  <data name="TipsPosts2" xml:space="preserve"><value>مشورے اور پوسٹس</value></data>
+  <data name="To" xml:space="preserve"><value>تک</value></data>
+  <data name="Tournaments" xml:space="preserve"><value>🏆 ٹورنامنٹس</value></data>
+  <data name="Tournaments2" xml:space="preserve"><value>ٹورنامنٹس</value></data>
+  <data name="Translate" xml:space="preserve"><value>ترجمہ</value></data>
+  <data name="TranslateSomething" xml:space="preserve"><value>🌐 کچھ ترجمہ کریں</value></data>
+  <data name="TypePasteOrSpeak" xml:space="preserve"><value>لکھیں، پیسٹ کریں یا بولیں…</value></data>
+  <data name="TypeTheMissingWord" xml:space="preserve"><value>غائب لفظ لکھیں</value></data>
+  <data name="TypeTheSentence" xml:space="preserve"><value>جملہ لکھیں…</value></data>
+  <data name="Unblock" xml:space="preserve"><value>ان بلاک کریں</value></data>
+  <data name="UpdateNow" xml:space="preserve"><value>ابھی اپ ڈیٹ کریں</value></data>
+  <data name="UpdateRequired" xml:space="preserve"><value>اپ ڈیٹ ضروری ہے</value></data>
+  <data name="UseThisLevel" xml:space="preserve"><value>یہ سطح استعمال کریں</value></data>
+  <data name="UseThisPhoneS" xml:space="preserve"><value>اس فون کا استعمال کریں</value></data>
+  <data name="Val_DobInvalid" xml:space="preserve"><value>درست تاریخِ پیدائش درج کریں۔</value></data>
+  <data name="Val_DobTooYoung" xml:space="preserve"><value>LinguaPath استعمال کرنے کے لیے عمر کم از کم {0} سال ہونی چاہیے۔</value></data>
+  <data name="Val_EmailInvalid" xml:space="preserve"><value>درست ای میل پتہ درج کریں۔</value></data>
+  <data name="Val_EmailRequired" xml:space="preserve"><value>ای میل ضروری ہے۔</value></data>
+  <data name="Val_OtpDigits" xml:space="preserve"><value>کوڈ 6 ہندسوں کا ہے۔</value></data>
+  <data name="Val_OtpRequired" xml:space="preserve"><value>ای میل میں آیا کوڈ درج کریں۔</value></data>
+  <data name="Val_PasswordDigit" xml:space="preserve"><value>پاس ورڈ میں کم از کم ایک ہندسہ ہو۔</value></data>
+  <data name="Val_PasswordLength" xml:space="preserve"><value>پاس ورڈ کم از کم 8 حروف کا ہو۔</value></data>
+  <data name="Val_PasswordLower" xml:space="preserve"><value>پاس ورڈ میں کم از کم ایک چھوٹا حرف ہو۔</value></data>
+  <data name="Val_PasswordRequired" xml:space="preserve"><value>پاس ورڈ ضروری ہے۔</value></data>
+  <data name="Val_PasswordUpper" xml:space="preserve"><value>پاس ورڈ میں کم از کم ایک بڑا حرف ہو۔</value></data>
+  <data name="Val_Required" xml:space="preserve"><value>{0} ضروری ہے۔</value></data>
+  <data name="Verify" xml:space="preserve"><value>تصدیق کریں</value></data>
+  <data name="VerifyEmail" xml:space="preserve"><value>ای میل کی تصدیق</value></data>
+  <data name="Vocabulary" xml:space="preserve"><value>ذخیرۂ الفاظ</value></data>
+  <data name="WatchAndReadMore" xml:space="preserve"><value>مزید دیکھیں اور پڑھیں</value></data>
+  <data name="WeLlEmailYouA6" xml:space="preserve"><value>تصدیق کے لیے ہم آپ کو 6 ہندسوں کا کوڈ ای میل کریں گے۔</value></data>
+  <data name="WeSentA6DigitCode" xml:space="preserve"><value>ہم نے 6 ہندسوں کا کوڈ بھیجا ہے: </value></data>
+  <data name="WeSentItA6Digit" xml:space="preserve"><value> کا اکاؤنٹ موجود ہے تو ہم نے اسے 6 ہندسوں کا کوڈ بھیج دیا ہے۔</value></data>
+  <data name="Week" xml:space="preserve"><value>ہفتہ</value></data>
+  <data name="WelcomeBack" xml:space="preserve"><value>خوش آمدید</value></data>
+  <data name="WhatDoYouWantToTalk" xml:space="preserve"><value>آپ کس بارے میں بات کرنا چاہتے ہیں؟</value></data>
+  <data name="WhenOffYouAlsoWonT" xml:space="preserve"><value>بند ہونے پر آپ بھی نہیں دیکھ سکیں گے کہ دوسروں نے آپ کے پیغامات کب پڑھے۔</value></data>
+  <data name="WhichExamEGDELEA2" xml:space="preserve"><value>کون سا امتحان؟ مثلاً DELE A2</value></data>
+  <data name="WhichExamOptional" xml:space="preserve"><value>کون سا امتحان؟ (اختیاری)</value></data>
+  <data name="WhoCanChallengeMe" xml:space="preserve"><value>مجھے کون چیلنج کر سکتا ہے</value></data>
+  <data name="WhoCanMessageMe" xml:space="preserve"><value>مجھے کون پیغام بھیج سکتا ہے</value></data>
+  <data name="Withdraw" xml:space="preserve"><value>دستبردار ہوں</value></data>
+  <data name="WriteAMessage" xml:space="preserve"><value>پیغام لکھیں…</value></data>
+  <data name="WriteAnythingYouWantToRemember" xml:space="preserve"><value>جو یاد رکھنا ہو لکھیں…</value></data>
+  <data name="WriteHere" xml:space="preserve"><value>یہاں لکھیں…</value></data>
+  <data name="YouCanChangeAnyOfThis" xml:space="preserve"><value>یہ سب آپ بعد میں کورس کی ترتیبات سے بدل سکتے ہیں۔</value></data>
+  <data name="YouCanInviteFriendsLaterToo" xml:space="preserve"><value>آپ بعد میں بھی دوستوں کو مدعو کر سکتے ہیں۔</value></data>
+  <data name="YouExampleCom" xml:space="preserve"><value>you@example.com</value></data>
+  <data name="YouHavenTBlockedAnyone" xml:space="preserve"><value>آپ نے کسی کو بلاک نہیں کیا۔</value></data>
+  <data name="YouSignedUpWithGoogleOr" xml:space="preserve"><value>آپ نے Google یا Apple سے سائن اپ کیا تھا۔ ای میل سے بھی سائن اِن کے لیے پاس ورڈ بنائیں۔</value></data>
+  <data name="YourAnswer" xml:space="preserve"><value>آپ کا جواب</value></data>
+  <data name="YourDailyQuizzesAndExamsWill" xml:space="preserve"><value>آپ کے روزانہ کوئز اور امتحانات یہاں نظر آئیں گے۔</value></data>
+  <data name="YourLast100TranslationsAppearHere" xml:space="preserve"><value>آپ کے آخری 100 ترجمے یہاں نظر آتے ہیں۔</value></data>
+  <data name="YourNativeLanguageOptional" xml:space="preserve"><value>آپ کی مادری زبان (اختیاری)</value></data>
+  <data name="YourPartnerWritesShortRepliesAt" xml:space="preserve"><value>آپ کا ساتھی آپ کی سطح پر مختصر جواب لکھتا ہے اور آپ کی غلطیاں درست کرتا ہے۔</value></data>
+  <data name="YourRoadmapWillStartAtThis" xml:space="preserve"><value>آپ کا روڈ میپ اسی سطح سے شروع ہوگا۔ آپ اب بھی اسے بدل سکتے ہیں۔</value></data>
+  <data name="Ui_State_Done" xml:space="preserve"><value>مکمل</value></data>
+  <data name="Ui_State_InProgress" xml:space="preserve"><value>جاری ہے</value></data>
+  <data name="Ui_State_Next" xml:space="preserve"><value>اگلا</value></data>
+  <data name="Ui_State_Locked" xml:space="preserve"><value>مقفل</value></data>
+  <data name="Ui_Appearance" xml:space="preserve"><value>ظاہری شکل</value></data>
+  <data name="Ui_Theme" xml:space="preserve"><value>تھیم</value></data>
+  <data name="Ui_ThemeSystem" xml:space="preserve"><value>سسٹم کے مطابق</value></data>
+  <data name="Ui_ThemeLight" xml:space="preserve"><value>روشن</value></data>
+  <data name="Ui_ThemeDark" xml:space="preserve"><value>تاریک</value></data>
+  <data name="Ui_QuickActions" xml:space="preserve"><value>فوری اقدامات</value></data>
+  <data name="Ui_YourProgress" xml:space="preserve"><value>آپ کی پیش رفت</value></data>
+  <data name="Ui_Complete" xml:space="preserve"><value>مکمل</value></data>
+  <data name="Ui_Community" xml:space="preserve"><value>کمیونٹی</value></data>
+  <data name="Ui_KeepGoing" xml:space="preserve"><value>ہر روز کے چھوٹے قدم بڑا فرق ڈالتے ہیں۔</value></data>
+  <data name="Ui_Skills" xml:space="preserve"><value>مہارتیں</value></data>
+  <data name="Ui_Explore" xml:space="preserve"><value>دریافت کریں</value></data>
+</root>

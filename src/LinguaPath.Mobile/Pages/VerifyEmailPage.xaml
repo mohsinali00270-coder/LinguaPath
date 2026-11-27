@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                x:Class="LinguaPath.Mobile.Pages.VerifyEmailPage"
+                x:DataType="vm:VerifyEmailViewModel"
+                Title="{l:Tr VerifyEmail}">
+    <ScrollView>
+        <VerticalStackLayout Padding="24,12,24,32" Spacing="16">
+            <Border Style="{StaticResource IconTile}" WidthRequest="56" HeightRequest="56" StrokeShape="RoundRectangle 18">
+                <Path Style="{StaticResource Icon}" Data="{StaticResource IconMail}" WidthRequest="26" HeightRequest="26" />
+            </Border>
+            <Label Text="{l:Tr CheckYourEmail}" Style="{StaticResource Title}" />
+            <Label Style="{StaticResource Subtitle}">
+                <Label.FormattedText>
+                    <FormattedString>
+                        <Span Text="{l:Tr WeSentA6DigitCode}" />
+                        <Span Text="{Binding Email}" FontAttributes="Bold" />
+                        <Span Text="{l:Tr ItExpiresIn10Minutes}" />
+                    </FormattedString>
+                </Label.FormattedText>
+            </Label>
+
+            <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+                <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+            </Border>
+
+            <VerticalStackLayout>
+                <Border Style="{StaticResource InputBox}">
+                    <Entry Text="{Binding Code}" Keyboard="Numeric" MaxLength="6" FontSize="28" CharacterSpacing="12"
+                           HorizontalTextAlignment="Center" Placeholder="000000" ReturnType="Done" ReturnCommand="{Binding VerifyCommand}" />
+                </Border>
+                <Label Text="{Binding Errors[Code]}" Style="{StaticResource FieldError}" HorizontalOptions="Center" />
+            </VerticalStackLayout>
+
+            <Button Text="{l:Tr Verify}" Command="{Binding VerifyCommand}" />
+            <Button Text="{Binding ResendText}" Style="{StaticResource LinkButton}" Command="{Binding ResendCommand}" />
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+            <Label Text="{l:Tr CanTFindItCheckYour}" Style="{StaticResource Subtitle}" FontSize="13" HorizontalOptions="Center" />
+        </VerticalStackLayout>
+    </ScrollView>
+</pages:BasePage>

@@ -1,0 +1,21 @@
+@model RoadmapAiInput
+<div asp-validation-summary="All" class="alert alert-danger py-2 small"></div>
+<div class="row g-3">
+    <div class="col-md-6">
+        <label asp-for="LanguageId" class="form-label"></label>
+        <select asp-for="LanguageId" asp-items="ViewBag.Languages" class="form-select"><option value="0">Choose…</option></select>
+    </div>
+    <div class="col-md-6"><label asp-for="CourseTitle" class="form-label"></label><input asp-for="CourseTitle" class="form-control" /></div>
+    <div class="col-md-3">
+        <label asp-for="StartLevel" class="form-label"></label>
+        <select asp-for="StartLevel" asp-items="Html.GetEnumSelectList<CefrLevel>()" class="form-select"></select>
+    </div>
+    <div class="col-md-3">
+        <label asp-for="EndLevel" class="form-label"></label>
+        <select asp-for="EndLevel" asp-items="Html.GetEnumSelectList<CefrLevel>()" class="form-select"></select>
+    </div>
+    <div class="col-md-3"><label asp-for="TotalHours" class="form-label"></label><input asp-for="TotalHours" class="form-control" id="ai-hours" /></div>
+    <div class="col-md-3"><label asp-for="NativeLanguage" class="form-label">Explanations in</label><input asp-for="NativeLanguage" class="form-control" /></div>
+    <div class="col-12"><label asp-for="Focus" class="form-label"></label><input asp-for="Focus" class="form-control" /></div>
+    <div class="col-12"><label asp-for="Notes" class="form-label"></label><textarea asp-for="Notes" class="form-control" rows="2" placeholder="e.g. Gulf Arabic, business context; avoid slang"></textarea></div>
+</div>

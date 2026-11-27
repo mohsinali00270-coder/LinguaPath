@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                xmlns:social="clr-namespace:LinguaPath.Shared.Contracts.Social;assembly=LinguaPath.Shared"
+                x:Class="LinguaPath.Mobile.Pages.PublicGroupsPage"
+                x:DataType="vm:PublicGroupsViewModel"
+                Title="{l:Tr PublicGroups}">
+    <Grid RowDefinitions="Auto,Auto,*" Padding="16,8" RowSpacing="8">
+        <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+            <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+        </Border>
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="8">
+            <Border Style="{StaticResource InputBox}">
+                <Entry Text="{Binding Query}" Placeholder="{l:Tr SearchGroups}" ReturnType="Search" ReturnCommand="{Binding SearchCommand}" />
+            </Border>
+            <Button Grid.Column="1" Text="{l:Tr Search}" Command="{Binding SearchCommand}" />
+        </Grid>
+        <CollectionView Grid.Row="2" ItemsSource="{Binding Groups}" SelectionMode="None">
+            <CollectionView.EmptyView>
+                <Label Text="{l:Tr NoPublicGroupsFoundCreateOne}" Style="{StaticResource Subtitle}" HorizontalTextAlignment="Center" Margin="0,40" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="vm:PublicGroupRow">
+                    <Border Style="{StaticResource Card}" Margin="0,4">
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10">
+                            <Label Text="{Binding Icon}" FontSize="28" VerticalOptions="Center" />
+                            <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                <Label Text="{Binding Name}" FontAttributes="Bold" />
+                                <Label Text="{Binding Detail}" Style="{StaticResource Subtitle}" FontSize="12" />
+                                <Label Text="{Binding Description}" FontSize="13" MaxLines="2" LineBreakMode="TailTruncation" />
+                            </VerticalStackLayout>
+                            <Button Grid.Column="2" Text="{Binding ActionText}" Padding="12,0" VerticalOptions="Center"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PublicGroupsViewModel}}, Path=JoinCommand}" CommandParameter="{Binding .}" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</pages:BasePage>

@@ -1,0 +1,12 @@
+@model ContentStatus
+@{
+    var css = Model switch
+    {
+        ContentStatus.Published => "text-bg-success",
+        ContentStatus.InReview => "text-bg-info",
+        ContentStatus.Approved => "text-bg-primary",
+        ContentStatus.Archived => "text-bg-secondary",
+        _ => "text-bg-light border"
+    };
+}
+<span class="badge @css">@Model</span>

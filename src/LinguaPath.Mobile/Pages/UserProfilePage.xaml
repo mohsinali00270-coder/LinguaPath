@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                xmlns:social="clr-namespace:LinguaPath.Shared.Contracts.Social;assembly=LinguaPath.Shared"
+                xmlns:progress="clr-namespace:LinguaPath.Shared.Contracts.Progress;assembly=LinguaPath.Shared"
+                x:Class="LinguaPath.Mobile.Pages.UserProfilePage"
+                x:DataType="vm:UserProfileViewModel"
+                Title="{Binding Name}">
+    <ScrollView>
+        <VerticalStackLayout Padding="20,16" Spacing="12">
+            <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+                <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+            </Border>
+            <Border WidthRequest="96" HeightRequest="96" StrokeShape="RoundRectangle 48" Background="{StaticResource PurpleTealGradient}" StrokeThickness="0" HorizontalOptions="Center">
+                <Grid>
+                    <Label Text="{Binding Initial}" FontSize="36" HorizontalOptions="Center" VerticalOptions="Center" TextColor="White" FontAttributes="Bold" />
+                    <Image SemanticProperties.Description="{l:Tr ProfilePhoto}" Source="{Binding Profile.PhotoUrl}" Aspect="AspectFill" IsVisible="{Binding HasPhoto}" />
+                </Grid>
+            </Border>
+            <Label Text="{Binding Name}" Style="{StaticResource Title}" HorizontalTextAlignment="Center" />
+            <Label Text="{Binding StatusText}" Style="{StaticResource Subtitle}" HorizontalTextAlignment="Center" />
+            <Label Text="{Binding Profile.Bio}" HorizontalTextAlignment="Center" IsVisible="{Binding HasBio}" />
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="{Binding LanguagesText}" />
+                    <Label Text="{Binding PointsText}" Style="{StaticResource Subtitle}" />
+                </VerticalStackLayout>
+            </Border>
+            <FlexLayout BindableLayout.ItemsSource="{Binding Badges}" Wrap="Wrap" JustifyContent="Center">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="progress:BadgeDto">
+                        <Border Style="{StaticResource Chip}" Margin="3">
+                            <Label Text="{Binding Icon}" ToolTipProperties.Text="{Binding Title}" />
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </FlexLayout>
+
+            <Button Text="{l:Tr Message2}" Command="{Binding MessageCommand}" IsVisible="{Binding CanMessage}" />
+            <Button Text="{l:Tr Challenge}" Style="{StaticResource OutlineButton}" Command="{Binding ChallengeCommand}" IsVisible="{Binding IsOther}" />
+            <Button Text="{l:Tr AddFriend}" Style="{StaticResource OutlineButton}" Command="{Binding AddFriendCommand}" IsVisible="{Binding CanAdd}" />
+            <Button Text="{l:Tr AcceptFriendRequest}" Command="{Binding AddFriendCommand}" IsVisible="{Binding CanAccept}" />
+            <Button Text="{l:Tr CancelFriendRequest}" Style="{StaticResource OutlineButton}" Command="{Binding RemoveFriendCommand}" IsVisible="{Binding IsPending}" />
+            <Button Text="{l:Tr RemoveFriend}" Style="{StaticResource OutlineButton}" Command="{Binding RemoveFriendCommand}" IsVisible="{Binding IsFriend}" />
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="8" IsVisible="{Binding IsOther}">
+                <Button Text="{l:Tr Block}" Style="{StaticResource DangerButton}" Command="{Binding BlockCommand}" IsVisible="{Binding CanBlock}" />
+                <Button Text="{l:Tr Unblock}" Style="{StaticResource OutlineButton}" Command="{Binding UnblockCommand}" IsVisible="{Binding IsBlockedByMe}" />
+                <Button Grid.Column="1" Text="{l:Tr Report2}" Style="{StaticResource OutlineButton}" Command="{Binding ReportCommand}" />
+            </Grid>
+        </VerticalStackLayout>
+    </ScrollView>
+</pages:BasePage>

@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                x:Class="LinguaPath.Mobile.Pages.LeaderboardPage"
+                x:DataType="vm:LeaderboardViewModel"
+                Title="{l:Tr Leaderboard}">
+    <Grid RowDefinitions="Auto,*,Auto" Padding="16,4,16,12">
+        <VerticalStackLayout Spacing="10">
+            <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+                <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+            </Border>
+            <Border Style="{StaticResource CardFlat}" Padding="14,2">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                    <Path Style="{StaticResource IconSmall}" Data="{StaticResource IconGlobe}" />
+                    <Picker Grid.Column="1" Title="{l:Tr Languages}" ItemsSource="{Binding Scopes}" SelectedItem="{Binding Scope}" />
+                </Grid>
+            </Border>
+            <!-- Period: segmented control -->
+            <Border Style="{StaticResource CardMuted}" Padding="4" StrokeShape="RoundRectangle 14">
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="4">
+                    <Button Text="{l:Tr Week}" Command="{Binding SetPeriodCommand}" CommandParameter="Weekly" Style="{StaticResource Segment}">
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding IsWeekly}" Value="True">
+                                <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                                <Setter Property="TextColor" Value="White" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+                    <Button Grid.Column="1" Text="{l:Tr Month}" Command="{Binding SetPeriodCommand}" CommandParameter="Monthly" Style="{StaticResource Segment}">
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding IsMonthly}" Value="True">
+                                <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                                <Setter Property="TextColor" Value="White" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+                    <Button Grid.Column="2" Text="{l:Tr AllTime}" Command="{Binding SetPeriodCommand}" CommandParameter="AllTime" Style="{StaticResource Segment}">
+                        <Button.Triggers>
+                            <DataTrigger TargetType="Button" Binding="{Binding IsAllTime}" Value="True">
+                                <Setter Property="BackgroundColor" Value="{StaticResource Primary}" />
+                                <Setter Property="TextColor" Value="White" />
+                            </DataTrigger>
+                        </Button.Triggers>
+                    </Button>
+                </Grid>
+            </Border>
+            <Label Text="{Binding SinceText}" Style="{StaticResource Caption}" FontSize="12" Margin="4,0" />
+        </VerticalStackLayout>
+
+        <RefreshView Grid.Row="1" IsRefreshing="{Binding IsBusy}" Command="{Binding RefreshCommand}" Margin="0,8,0,0">
+            <CollectionView ItemsSource="{Binding Entries}">
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout Spacing="12" Margin="0,48" HorizontalOptions="Center">
+                        <Border Style="{StaticResource IconTile}" WidthRequest="64" HeightRequest="64" StrokeShape="RoundRectangle 22" HorizontalOptions="Center">
+                            <Path Style="{StaticResource Icon}" Data="{StaticResource IconTrophy}" WidthRequest="30" HeightRequest="30" />
+                        </Border>
+                        <Label Text="{l:Tr NoPointsYetInThisPeriod}" Style="{StaticResource Subtitle}" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:LeaderRow">
+                        <Border Style="{StaticResource CardFlat}" Padding="12,10" Margin="0,0,0,8">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding IsMe}" Value="True">
+                                    <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryLightDark}}" />
+                                    <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <Grid ColumnDefinitions="48,44,*,Auto" ColumnSpacing="10">
+                                <Label Text="{Binding Rank}" FontSize="18" FontAttributes="Bold" VerticalOptions="Center" HorizontalTextAlignment="Center"
+                                       TextColor="{AppThemeBinding Light={StaticResource Navy700}, Dark={StaticResource TextSecondaryDark}}" />
+                                <Border Grid.Column="1" WidthRequest="40" HeightRequest="40" StrokeShape="RoundRectangle 20" StrokeThickness="0"
+                                        Background="{StaticResource PurpleTealGradient}">
+                                    <Label Text="{Binding Initial}" HorizontalOptions="Center" VerticalOptions="Center" FontAttributes="Bold" TextColor="White" />
+                                </Border>
+                                <Label Grid.Column="2" Text="{Binding Name}" FontAttributes="Bold" VerticalOptions="Center" LineBreakMode="TailTruncation" />
+                                <Border Grid.Column="3" Style="{StaticResource Pill}">
+                                    <HorizontalStackLayout Spacing="4">
+                                        <Label Text="{Binding Tier}" FontSize="13" VerticalOptions="Center" />
+                                        <Label Text="{Binding Points}" Style="{StaticResource PillText}" FontSize="13" VerticalOptions="Center" />
+                                    </HorizontalStackLayout>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+
+        <!-- My standing, pinned to the bottom -->
+        <Border Grid.Row="2" Style="{StaticResource HeroCard}" IsVisible="{Binding HasMe}" Margin="0,8,0,0" Padding="16,14" StrokeShape="RoundRectangle 20">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                <Border Style="{StaticResource IconTileOnHero}" WidthRequest="38" HeightRequest="38" StrokeShape="RoundRectangle 12">
+                    <Path Style="{StaticResource IconOnHero}" Data="{StaticResource IconTrophy}" WidthRequest="18" HeightRequest="18" />
+                </Border>
+                <Label Grid.Column="1" Text="{Binding MeText}" FontAttributes="Bold" TextColor="White" VerticalOptions="Center" />
+            </Grid>
+        </Border>
+    </Grid>
+</pages:BasePage>

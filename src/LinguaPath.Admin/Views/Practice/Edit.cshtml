@@ -1,0 +1,152 @@
+@model PracticeItemInput
+@{
+    var isNew = Model.Id == 0;
+    ViewData["Title"] = isNew ? "New exercise" : "Edit exercise";
+    var state = ViewBag.State as (ContentStatus Status, ContentSource Source)?;
+    var status = state?.Status ?? ContentStatus.Draft;
+    var history = ViewBag.History as IReadOnlyList<ReviewHistoryItem> ?? [];
+    var lastRejected = history.FirstOrDefault();
+    string Help(PracticeType t) => t switch
+    {
+        PracticeType.Read => "A passage of about 80-250 words. Add comprehension questions below; learners answer them after reading.",
+        PracticeType.Write => "The task: what to write, for whom and how many words. The AI checks the learner's text and lists corrections.",
+        PracticeType.Speak => "One sentence (at most 300 characters) the learner reads aloud; pronunciation is scored word by word.",
+        PracticeType.Listen => "One or two sentences the app reads aloud; the learner types what they hear and sees a diff of mistakes.",
+        _ => ""
+    };
+}
+<a asp-action="Index" class="small">&larr; Practice library</a>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-2 mb-3">
+    <h2 class="h5 mb-0">@(isNew ? "New exercise" : Model.Title) @if (!isNew) { <partial name="_ContentStatus" model="status" /> }</h2>
+    @if (!isNew)
+    {
+        <div class="d-flex flex-wrap gap-2">
+            @if (status == ContentStatus.Draft)
+            {
+                <form asp-action="Submit" asp-route-id="@Model.Id" method="post"><button class="btn btn-sm btn-primary">Send for review</button></form>
+            }
+            @if (status == ContentStatus.Approved)
+            {
+                <form asp-action="Publish" asp-route-id="@Model.Id" method="post"><button class="btn btn-sm btn-success">Publish</button></form>
+            }
+            @if (status == ContentStatus.Published)
+            {
+                <form asp-action="Unpublish" asp-route-id="@Model.Id" method="post"><button class="btn btn-sm btn-outline-warning">Unpublish</button></form>
+            }
+            @if (status != ContentStatus.Archived)
+            {
+                <form asp-action="Archive" asp-route-id="@Model.Id" method="post" data-confirm="Archive this exercise?"><button class="btn btn-sm btn-outline-secondary">Archive</button></form>
+            }
+            <form asp-action="Delete" asp-route-id="@Model.Id" method="post" data-confirm="Delete this exercise?"><button class="btn btn-sm btn-outline-danger">Delete</button></form>
+        </div>
+    }
+</div>
+
+@if (ViewBag.AiProvenance is AiProvenance aiInfo)
+{
+    <details class="alert alert-light border small py-2">
+        <summary>AI draft · @aiInfo.Model @if (aiInfo.NeedsNativeCheck) { <span class="badge text-bg-warning">native speaker check required</span> }</summary>
+        <pre class="small mb-0 mt-2" style="white-space:pre-wrap;max-height:300px;overflow:auto">@aiInfo.Prompt</pre>
+    </details>
+}
+@if (lastRejected is { Status: ReviewStatus.Rejected } && status == ContentStatus.Draft)
+{
+    <div class="alert alert-warning small"><b>Reviewer asked for changes:</b> @lastRejected.Comment</div>
+}
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="card lp-card">
+            <div class="card-body">
+                <form asp-action="Save" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <div asp-validation-summary="All" class="alert alert-danger py-2 small"></div>
+                    <div class="row g-3">
+                        <div class="col-md-5">
+                            <label asp-for="LanguageId" class="form-label"></label>
+                            <select asp-for="LanguageId" asp-items="ViewBag.Languages" class="form-select"><option value="0">Choose…</option></select>
+                        </div>
+                        <div class="col-md-4">
+                            <label asp-for="Type" class="form-label">Exercise type</label>
+                            <select asp-for="Type" class="form-select" id="practice-type">
+                                @foreach (var t in new[] { PracticeType.Read, PracticeType.Write, PracticeType.Speak, PracticeType.Listen })
+                                {
+                                    <option value="@t" data-help="@Help(t)">@t</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label asp-for="Level" class="form-label"></label>
+                            <select asp-for="Level" asp-items="Html.GetEnumSelectList<CefrLevel>()" class="form-select"></select>
+                        </div>
+                        <div class="col-md-8"><label asp-for="Title" class="form-label"></label><input asp-for="Title" class="form-control" /></div>
+                        <div class="col-md-4"><label asp-for="Topic" class="form-label"></label><input asp-for="Topic" class="form-control" placeholder="e.g. Travel" /></div>
+                        <div class="col-12">
+                            <label asp-for="Text" class="form-label"></label>
+                            <textarea asp-for="Text" class="form-control" rows="6"></textarea>
+                            <div class="form-text" id="practice-help">@Help(Model.Type)</div>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Translation" class="form-label">Translation (shown after the exercise)</label>
+                            <textarea asp-for="Translation" class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
+
+                    <div id="reading-questions" class="mt-4" style="@(Model.Type == PracticeType.Read ? "" : "display:none")">
+                        <h3 class="h6">Comprehension questions</h3>
+                        <p class="small text-muted">Leave rows empty to skip them. Options one per line; "Correct" is the option's number.</p>
+                        @for (var i = 0; i < Model.Questions.Count; i++)
+                        {
+                            <div class="border rounded p-2 mb-2">
+                                <div class="row g-2">
+                                    <div class="col-md-12"><input asp-for="Questions[i].Question" class="form-control form-control-sm" placeholder="Question @(i + 1)" /></div>
+                                    <div class="col-md-6"><textarea asp-for="Questions[i].Options" class="form-control form-control-sm" rows="3" placeholder="Option 1&#10;Option 2&#10;Option 3"></textarea></div>
+                                    <div class="col-md-2"><label class="form-label small mb-0">Correct</label><input asp-for="Questions[i].Correct" class="form-control form-control-sm" min="1" max="6" /></div>
+                                    <div class="col-md-4"><textarea asp-for="Questions[i].Explanation" class="form-control form-control-sm" rows="3" placeholder="Why (optional)"></textarea></div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                    <div class="d-flex gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        @if (status == ContentStatus.Draft)
+                        {
+                            <button type="submit" name="then" value="submit" class="btn btn-outline-primary">Save and send for review</button>
+                        }
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card lp-card">
+            <div class="card-body">
+                <h3 class="h6">Review history</h3>
+                @if (history.Count == 0) { <p class="small text-muted mb-0">Not reviewed yet.</p> }
+                @foreach (var h in history)
+                {
+                    <div class="small mb-2">
+                        <span class="badge text-bg-light border">@h.Status</span> @h.SubmittedAt.ToLocalTime().ToString("d MMM")
+                        @if (h.Reviewer is not null) { <span>· @h.Reviewer</span> }
+                        @if (!string.IsNullOrEmpty(h.Comment)) { <div class="text-muted">"@h.Comment"</div> }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var select = document.getElementById('practice-type');
+            var help = document.getElementById('practice-help');
+            var questions = document.getElementById('reading-questions');
+            select.addEventListener('change', function () {
+                help.textContent = select.selectedOptions[0].dataset.help || '';
+                questions.style.display = select.value === 'Read' ? '' : 'none';
+            });
+        })();
+    </script>
+}

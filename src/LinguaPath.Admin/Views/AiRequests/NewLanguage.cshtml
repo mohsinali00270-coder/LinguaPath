@@ -1,0 +1,52 @@
+@model RoadmapAiInput
+@{
+    ViewData["Title"] = "Generate a language with AI";
+    var e = (AiEstimator.Estimate)ViewBag.Estimate;
+}
+<a asp-controller="Languages" asp-action="Index" class="small">&larr; Languages</a>
+<div class="row g-4 mt-1">
+    <div class="col-lg-8">
+        <div class="card lp-card">
+            <div class="card-body">
+                <p class="small text-muted">AI drafts a full course for this language: first the roadmap, then — after you approve the roadmap — every lecture and its questions, module by module.
+                    A <b>Super Admin approves the estimated cost</b> before anything is generated, and every item is reviewed before publishing (FR-A21–A24).</p>
+                <form asp-action="NewLanguage" method="post">
+                    <input type="hidden" asp-for="GenerateContent" />
+                    <partial name="_RoadmapFields" model="Model" />
+                    <button class="btn btn-primary mt-3">Send for approval</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card lp-card">
+            <div class="card-body">
+                <h3 class="h6">Estimate (FR-A22)</h3>
+                <div class="small">
+                    <div><span id="est-modules">@e.Modules</span> modules · <span id="est-lectures">@e.Lectures</span> lectures</div>
+                    <div><span id="est-questions">@e.Questions</span> questions</div>
+                    <div class="mt-1">≈ <b>$<span id="est-cost">@e.Cost.ToString("0.00")</span></b> of AI usage</div>
+                    <div class="text-muted mt-2">Based on ~20 minutes per lecture and the token prices in Settings. The real cost is tracked per call.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        (function () {
+            var hours = document.getElementById('ai-hours');
+            if (!hours) return;
+            hours.addEventListener('change', function () {
+                fetch('@Url.Action("Estimate")?content=true&hours=' + encodeURIComponent(hours.value))
+                    .then(function (r) { return r.json(); })
+                    .then(function (e) {
+                        document.getElementById('est-modules').textContent = e.modules;
+                        document.getElementById('est-lectures').textContent = e.lectures;
+                        document.getElementById('est-questions').textContent = e.questions;
+                        document.getElementById('est-cost').textContent = e.cost;
+                    });
+            });
+        })();
+    </script>
+}

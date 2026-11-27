@@ -1,0 +1,54 @@
+@model AuditLogIndexViewModel
+@{
+    ViewData["Title"] = "Audit log";
+    var f = Model.Filter;
+    var pager = new PagerModel
+    {
+        Page = Model.Results.Page,
+        TotalPages = Model.Results.TotalPages,
+        TotalCount = Model.Results.TotalCount,
+        UrlFor = p => Url.Action("Index", new { search = f.Search, entityType = f.EntityType, from = f.From?.ToString("yyyy-MM-dd"), to = f.To?.ToString("yyyy-MM-dd"), page = p })!
+    };
+}
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-4"><input name="search" value="@f.Search" class="form-control" placeholder="Admin email, action or record id" /></div>
+    <div class="col-md-2">
+        <select name="entityType" class="form-select">
+            <option value="">All records</option>
+            @foreach (var t in Model.EntityTypes)
+            {
+                <option value="@t" selected="@(t == f.EntityType)">@t</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-2"><input type="date" name="from" value="@f.From?.ToString("yyyy-MM-dd")" class="form-control" aria-label="From" /></div>
+    <div class="col-md-2"><input type="date" name="to" value="@f.To?.ToString("yyyy-MM-dd")" class="form-control" aria-label="To" /></div>
+    <div class="col-md-2"><button class="btn btn-outline-primary w-100" type="submit">Filter</button></div>
+</form>
+
+<div class="card lp-card">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead><tr><th>When</th><th>Admin</th><th>Action</th><th>Record</th><th>Before</th><th>After</th><th>IP</th></tr></thead>
+            <tbody>
+            @if (Model.Results.Items.Count == 0)
+            {
+                <tr><td colspan="7" class="text-center text-muted py-4">No entries.</td></tr>
+            }
+            @foreach (var a in Model.Results.Items)
+            {
+                <tr>
+                    <td class="small text-nowrap">@a.CreatedAt.ToLocalTime().ToString("g")</td>
+                    <td class="small">@(a.UserEmail ?? "system")</td>
+                    <td><span class="badge text-bg-light border">@a.Action</span></td>
+                    <td class="small">@a.EntityType <span class="text-muted">@a.EntityId</span></td>
+                    <td><div class="lp-json">@a.OldValues</div></td>
+                    <td><div class="lp-json">@a.NewValues</div></td>
+                    <td class="small text-muted">@a.IpAddress</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+<partial name="_Pager" model="pager" />

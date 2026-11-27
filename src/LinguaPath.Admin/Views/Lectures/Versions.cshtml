@@ -1,0 +1,41 @@
+@model IReadOnlyList<LectureVersionItem>
+@{
+    var lecture = (LectureEditorModel)ViewBag.Lecture;
+    ViewData["Title"] = "Versions";
+}
+<a asp-action="Edit" asp-route-id="@lecture.Input.Id" class="small">&larr; @lecture.Input.Title</a>
+<h2 class="h5 mt-2 mb-3">Version history</h2>
+<p class="small text-muted">Every save keeps a copy. Restoring a version saves it again as the newest version, so nothing is lost.</p>
+
+<div class="card lp-card">
+    <table class="table align-middle mb-0">
+        <thead><tr><th>Version</th><th>Title</th><th>Note</th><th>By</th><th>When</th><th>Text</th><th></th></tr></thead>
+        <tbody>
+        @if (Model.Count == 0)
+        {
+            <tr><td colspan="7" class="text-center text-muted py-4">No saved versions yet.</td></tr>
+        }
+        @foreach (var v in Model)
+        {
+            <tr>
+                <td>v@v.Version @if (v.Version == lecture.Version) { <span class="badge text-bg-success ms-1">current</span> }</td>
+                <td>@v.Title</td>
+                <td class="small">@v.Note</td>
+                <td class="small">@(v.ChangedBy ?? "—")</td>
+                <td class="small text-muted">@v.ChangedAt.ToLocalTime().ToString("g")</td>
+                <td class="small text-muted">@v.BodyLength chars</td>
+                <td class="text-end text-nowrap">
+                    <a class="btn btn-sm btn-outline-secondary" asp-action="Version" asp-route-id="@v.Id">View</a>
+                    @if (v.Version != lecture.Version && lecture.Status != ContentStatus.Archived)
+                    {
+                        <form asp-action="Restore" asp-route-id="@v.Id" asp-route-lectureId="@lecture.Input.Id" method="post" class="d-inline"
+                              data-confirm="Restore version @v.Version? The current text is kept in the history.">
+                            <button class="btn btn-sm btn-link">Restore</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                x:Class="LinguaPath.Mobile.Pages.CourseSettingsPage"
+                x:DataType="vm:CourseSettingsViewModel"
+                Title="{l:Tr CoursePlan}">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="6">
+            <Label Text="{Binding Header}" FontSize="18" FontAttributes="Bold" />
+            <Label Text="{l:Tr ChangingYourPlanRePacesThe}"
+                   Style="{StaticResource Subtitle}" FontSize="13" />
+
+            <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}" Margin="0,8">
+                <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+            </Border>
+
+            <!-- Pause / resume (FR-L121) -->
+            <Border Style="{StaticResource Card}" Margin="0,8,0,0">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{Binding PauseInfo}" />
+                    <Button Text="{l:Tr PauseCourse}" Style="{StaticResource OutlineButton}" Command="{Binding PauseCommand}" IsVisible="{Binding IsActive}" />
+                    <Button Text="{l:Tr ResumeNow}" Command="{Binding ResumeCommand}" IsVisible="{Binding IsPaused}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <VerticalStackLayout IsVisible="{Binding IsActive}" Spacing="6">
+                <Label Text="{l:Tr LevelYouWantToReach}" Style="{StaticResource SectionHeader}" />
+                <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding TargetLevels}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:SelectableOption">
+                            <Border Style="{StaticResource Chip}">
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                        <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryLightDark}}" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CourseSettingsViewModel}}, Path=SelectTargetCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="{Binding Title}" />
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+
+                <Label Text="{l:Tr Goal}" Style="{StaticResource SectionHeader}" />
+                <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding Goals}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:SelectableOption">
+                            <Border Style="{StaticResource Chip}">
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                        <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryLightDark}}" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CourseSettingsViewModel}}, Path=SelectGoalCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="{Binding Title}" />
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+                <Border Style="{StaticResource InputBox}" IsVisible="{Binding IsExamGoal}">
+                    <Entry Text="{Binding ExamName}" Placeholder="{l:Tr WhichExamEGDELEA2}" MaxLength="100" />
+                </Border>
+
+                <Label Text="{l:Tr FinishBy}" Style="{StaticResource SectionHeader}" />
+                <Border Style="{StaticResource InputBox}">
+                    <DatePicker Date="{Binding EndDate}" MinimumDate="{Binding MinEndDate}" MaximumDate="{Binding MaxEndDate}" Format="D" />
+                </Border>
+
+                <Label Text="{l:Tr StudyTimePerDay}" Style="{StaticResource SectionHeader}" />
+                <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding MinuteOptions}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:SelectableOption">
+                            <Border Style="{StaticResource Chip}">
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                        <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryLightDark}}" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CourseSettingsViewModel}}, Path=SelectMinutesCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="{Binding Title}" />
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+
+                <Label Text="{l:Tr StudyDays}" Style="{StaticResource SectionHeader}" />
+                <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding Days}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:SelectableOption">
+                            <Border Style="{StaticResource Chip}" Padding="12,8">
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                        <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryLightDark}}" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CourseSettingsViewModel}}, Path=ToggleDayCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="{Binding Title}" />
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+
+                <Label Text="{l:Tr DailyReminder}" Style="{StaticResource SectionHeader}" />
+                <Border Style="{StaticResource Card}">
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                        <Label Text="{l:Tr RemindMeToStudy}" VerticalOptions="Center" />
+                        <Switch Grid.Column="1" IsToggled="{Binding HasStudyTime}" />
+                        <TimePicker Grid.Row="1" Grid.ColumnSpan="2" Time="{Binding StudyTime}" IsVisible="{Binding HasStudyTime}" />
+                    </Grid>
+                </Border>
+
+                <Label Text="{l:Tr FocusOn}" Style="{StaticResource SectionHeader}" />
+                <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding Skills}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:SelectableOption">
+                            <Border Style="{StaticResource Chip}">
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                        <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryLightDark}}" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CourseSettingsViewModel}}, Path=ToggleSkillCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="{Binding Title}" />
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+
+                <Button Text="{l:Tr SaveAndRePlan}" Command="{Binding SaveCommand}" Margin="0,16,0,0" />
+            </VerticalStackLayout>
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</pages:BasePage>

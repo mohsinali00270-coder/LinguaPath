@@ -1,0 +1,67 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net10.0-android;net10.0-ios</TargetFrameworks>
+    <!-- Windows is optional in the SRS; uncomment to add it when building on Windows. -->
+    <!-- <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net10.0-windows10.0.19041.0</TargetFrameworks> -->
+
+    <OutputType>Exe</OutputType>
+    <RootNamespace>LinguaPath.Mobile</RootNamespace>
+    <UseMaui>true</UseMaui>
+    <SingleProject>true</SingleProject>
+    <MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
+
+    <ApplicationTitle>LinguaPath</ApplicationTitle>
+    <ApplicationId>com.linguapath.app</ApplicationId>
+    <ApplicationDisplayVersion>1.0.0</ApplicationDisplayVersion>
+    <ApplicationVersion>1</ApplicationVersion>
+
+    <!-- NFR-13: Android 8.0+ (API 26), iOS 15+ -->
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">26.0</SupportedOSPlatformVersion>
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
+    <CodesignEntitlements>Platforms\iOS\Entitlements.plist</CodesignEntitlements>
+  </PropertyGroup>
+
+  <!-- Phase 10 store builds (docs/RELEASE.md). Signing keys are passed on the command line, never committed. -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release' and $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+    <AndroidPackageFormat>aab</AndroidPackageFormat>
+    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+  </PropertyGroup>
+
+  <!-- Firebase push (FR-L110): switched on when the Firebase config files are present, or with -p:UseFirebase=true. -->
+  <PropertyGroup>
+    <UseFirebase Condition="'$(UseFirebase)' == '' and (Exists('Platforms\Android\google-services.json') or Exists('Platforms\iOS\GoogleService-Info.plist'))">true</UseFirebase>
+    <DefineConstants Condition="'$(UseFirebase)' == 'true'">$(DefineConstants);FIREBASE</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(UseFirebase)' == 'true'">
+    <PackageReference Include="Plugin.Firebase.CloudMessaging" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UseFirebase)' == 'true' and $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+    <GoogleServicesJson Include="Platforms\Android\google-services.json" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UseFirebase)' == 'true' and $([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
+    <BundleResource Include="Platforms\iOS\GoogleService-Info.plist" Link="GoogleService-Info.plist" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#0B1530" />
+    <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#0B1530" BaseSize="128,128" />
+    <MauiImage Include="Resources\Images\*" />
+    <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The MAUI workload sets $(MauiVersion); VersionOverride keeps it in step with the installed workload. -->
+    <PackageReference Include="Microsoft.Maui.Controls" VersionOverride="$(MauiVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" />
+    <PackageReference Include="Plugin.Maui.Audio" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LinguaPath.Mobile.Core\LinguaPath.Mobile.Core.csproj" />
+  </ItemGroup>
+
+</Project>

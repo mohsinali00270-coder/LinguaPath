@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:controls="clr-namespace:LinguaPath.Mobile.Controls"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                x:Class="LinguaPath.Mobile.Pages.QuizResultPage"
+                x:DataType="vm:QuizResultViewModel"
+                Title="{l:Tr Result}">
+    <ScrollView>
+        <VerticalStackLayout Padding="16,8,16,28" Spacing="14">
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+            <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+                <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+            </Border>
+
+            <VerticalStackLayout IsVisible="{Binding HasResult}" Spacing="14">
+                <!-- Score hero -->
+                <Border Style="{StaticResource HeroCard}" Padding="20,24">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="{Binding Result.Title}" Style="{StaticResource HeroText}" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+                        <Grid WidthRequest="168" HeightRequest="168" HorizontalOptions="Center">
+                            <controls:ProgressRing Progress="{Binding Result.Percentage, Converter={StaticResource PercentFraction}}" Thickness="14"
+                                                   RingColor="{StaticResource SecondaryBright}" TrackColor="#33FFFFFF" />
+                            <Label Text="{Binding ScoreText}" FontSize="44" FontAttributes="Bold" TextColor="White"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Grid>
+                        <Label Text="{Binding Headline}" FontSize="22" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding Detail}" HorizontalTextAlignment="Center" Style="{StaticResource HeroText}" />
+                        <Border Style="{StaticResource PillOnHero}" HorizontalOptions="Center" IsVisible="{Binding PassText, Converter={StaticResource HasText}}">
+                            <Label Text="{Binding PassText}" FontSize="12" FontAttributes="Bold" TextColor="White" />
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Placement (FR-L11) -->
+                <Border Style="{StaticResource Card}" IsVisible="{Binding IsPlacement}">
+                    <VerticalStackLayout Spacing="8">
+                        <Border Style="{StaticResource IconTileTeal}" HorizontalOptions="Center">
+                            <Path Style="{StaticResource IconTeal}" Data="{StaticResource IconTarget}" />
+                        </Border>
+                        <Label Text="{Binding LevelText}" Style="{StaticResource Headline}" HorizontalOptions="Center" />
+                        <Label Text="{l:Tr YourRoadmapWillStartAtThis}" HorizontalTextAlignment="Center" Style="{StaticResource Subtitle}" />
+                        <Button Text="{l:Tr UseThisLevel}" Style="{StaticResource GradientButton}" Command="{Binding UseLevelCommand}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Skill breakdown -->
+                <Label Text="{l:Tr BySkill}" Style="{StaticResource SectionHeader}" IsVisible="{Binding IsPlacement, Converter={StaticResource Not}}" />
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Skills}" Spacing="10">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:SkillBar">
+                            <Border Style="{StaticResource CardFlat}" Padding="14,12">
+                                <VerticalStackLayout Spacing="8">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Text="{Binding Name}" FontAttributes="Bold" VerticalOptions="Center" />
+                                        <Label Grid.Column="1" Text="{Binding Text}" Style="{StaticResource LinkText}" VerticalOptions="Center" />
+                                    </Grid>
+                                    <ProgressBar Progress="{Binding Fraction}" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Button Text="{l:Tr ReviewAnswers}" Style="{StaticResource TonalButton}" Command="{Binding ToggleReviewCommand}" />
+
+                <!-- Answer review (FR-L72) -->
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding ReviewRows}" IsVisible="{Binding ShowReview}" Spacing="8">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:ReviewRow">
+                            <Border Style="{StaticResource CardFlat}">
+                                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                                    <VerticalStackLayout Spacing="3">
+                                        <Label Text="{Binding Header}" FontAttributes="Bold" />
+                                        <Label Text="{Binding Prompt}" IsVisible="{Binding HasPrompt}" Style="{StaticResource Subtitle}" />
+                                        <Label Text="{Binding YourAnswer}" />
+                                        <Label Text="{Binding CorrectAnswer}" IsVisible="{Binding ShowCorrect}" TextColor="{AppThemeBinding Light={StaticResource Success}, Dark={StaticResource SuccessDark}}" />
+                                        <Label Text="{Binding Explanation}" IsVisible="{Binding HasExplanation}" Style="{StaticResource Subtitle}" FontSize="13" />
+                                        <Label Text="{Binding Feedback}" IsVisible="{Binding HasFeedback}" FontSize="13" />
+                                    </VerticalStackLayout>
+                                    <VerticalStackLayout Grid.Column="1" HorizontalOptions="End">
+                                        <Label Text="{Binding Mark}" FontSize="22" HorizontalOptions="End" />
+                                        <Label Text="{Binding ScoreText}" FontSize="12" Style="{StaticResource Subtitle}" />
+                                    </VerticalStackLayout>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Button Text="{l:Tr Done2}" Style="{StaticResource GradientButton}" Command="{Binding DoneCommand}" IsVisible="{Binding IsPlacement, Converter={StaticResource Not}}" />
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</pages:BasePage>

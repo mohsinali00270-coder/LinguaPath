@@ -1,0 +1,115 @@
+﻿@model QuestionIndexViewModel
+@{
+    ViewData["Title"] = "Question bank";
+    var f = Model.Filter;
+    var pager = new PagerModel
+    {
+        Page = Model.Results.Page,
+        TotalPages = Model.Results.TotalPages,
+        TotalCount = Model.Results.TotalCount,
+        UrlFor = p => Url.Action("Index", f.RouteValues(p))!
+    };
+    var importErrors = TempData["ImportErrors"] as string;
+}
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <p class="small text-muted mb-0">Questions feed the daily quiz, monthly exams and the placement test once they're <b>Published</b>.</p>
+    <div class="d-flex gap-2">
+        <a class="btn btn-sm btn-outline-secondary" asp-action="Export" asp-all-route-data="@(new Dictionary<string, string?> { ["languageId"] = f.LanguageId?.ToString(), ["lectureId"] = f.LectureId?.ToString(), ["status"] = f.Status?.ToString(), ["skill"] = f.Skill?.ToString(), ["type"] = f.Type?.ToString(), ["level"] = f.Level?.ToString() })">Export to Excel</a>
+        <a class="btn btn-sm btn-outline-info" asp-controller="AiRequests" asp-action="Questions" asp-route-languageId="@f.LanguageId" asp-route-lectureId="@f.LectureId">Generate from a lecture with AI</a>
+        <a class="btn btn-sm btn-primary" asp-action="Create" asp-route-languageId="@f.LanguageId" asp-route-lectureId="@f.LectureId">New question</a>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(importErrors))
+{
+    <div class="alert alert-warning small"><b>Rows skipped:</b><pre class="mb-0 small" style="white-space:pre-wrap">@importErrors</pre></div>
+}
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-3"><select name="languageId" class="form-select" asp-items="ViewBag.Languages" onchange="this.form.submit()"><option value="">All languages</option></select></div>
+    <div class="col-md-3"><select name="lectureId" class="form-select" asp-items="ViewBag.Lectures"><option value="">All lectures</option></select></div>
+    <div class="col-md-2">
+        <select name="type" class="form-select">
+            <option value="">All types</option>
+            @foreach (var t in Enum.GetValues<QuestionType>()) { <option value="@t" selected="@(f.Type == t)">@t</option> }
+        </select>
+    </div>
+    <div class="col-md-2">
+        <select name="skill" class="form-select">
+            <option value="">All skills</option>
+            @foreach (var s in Enum.GetValues<Skill>()) { <option value="@s" selected="@(f.Skill == s)">@s</option> }
+        </select>
+    </div>
+    <div class="col-md-2">
+        <select name="level" class="form-select">
+            <option value="">All levels</option>
+            @foreach (var l in Enum.GetValues<CefrLevel>()) { <option value="@l" selected="@(f.Level == l)">@l</option> }
+        </select>
+    </div>
+    <div class="col-md-2">
+        <select name="difficulty" class="form-select">
+            <option value="">Any difficulty</option>
+            @for (var d = 1; d <= 5; d++) { <option value="@d" selected="@(f.Difficulty == d)">Difficulty @d</option> }
+        </select>
+    </div>
+    <div class="col-md-2">
+        <select name="status" class="form-select">
+            <option value="">All statuses</option>
+            @foreach (var s in Enum.GetValues<ContentStatus>()) { <option value="@s" selected="@(f.Status == s)">@s</option> }
+        </select>
+    </div>
+    <div class="col-md-3"><input name="search" value="@f.Search" class="form-control" placeholder="Search question text" /></div>
+    <div class="col-md-3 d-flex align-items-center">
+        <div class="form-check"><input class="form-check-input" type="checkbox" name="flagged" value="true" id="flagged" checked="@f.Flagged" /><label class="form-check-label small" for="flagged">Only flagged (&lt;20% or &gt;95% correct)</label></div>
+    </div>
+    <div class="col-md-2"><button class="btn btn-outline-primary w-100" type="submit">Filter</button></div>
+</form>
+
+<div class="card lp-card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead><tr><th>Question</th><th>Type · skill</th><th>Level</th><th>Status</th><th title="Answers · % correct · average time">Analytics</th><th></th></tr></thead>
+            <tbody>
+            @if (Model.Results.Items.Count == 0)
+            {
+                <tr><td colspan="6" class="text-center text-muted py-4">No questions match.</td></tr>
+            }
+            @foreach (var q in Model.Results.Items)
+            {
+                <tr>
+                    <td style="max-width:420px">
+                        <a asp-action="Edit" asp-route-id="@q.Id">@(q.Stem.Length > 110 ? q.Stem[..110] + "…" : q.Stem)</a>
+                        @if (q.Source == ContentSource.Ai) { <span class="badge text-bg-info ms-1">AI</span> }
+                        <div class="small text-muted">#@q.Id · @q.LanguageName@(q.LectureTitle is null ? "" : " · " + q.LectureTitle)</div>
+                    </td>
+                    <td class="small">@q.Type<br /><span class="text-muted">@q.Skill</span></td>
+                    <td class="small">@q.Level · D@q.Difficulty</td>
+                    <td><partial name="_ContentStatus" model="q.Status" /></td>
+                    <td class="small">
+                        @if (q.TimesAnswered == 0) { <span class="text-muted">—</span> }
+                        else
+                        {
+                            <span>@q.TimesAnswered · <b>@q.PercentCorrect%</b> · @q.AverageSeconds s</span>
+                            @if (q.Flag is not null) { <span class="badge text-bg-warning ms-1">@q.Flag</span> }
+                        }
+                    </td>
+                    <td class="text-end"><a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@q.Id">Edit</a></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+<partial name="_Pager" model="pager" />
+
+<div class="card lp-card mt-4">
+    <div class="card-body">
+        <h2 class="h6">Import from Excel</h2>
+        <p class="small text-muted">Use <b>Export to Excel</b> to get the template (it includes a "How to fill in" sheet). Rows with an Id update that question; new rows are added as Draft.</p>
+        <form asp-action="Import" method="post" enctype="multipart/form-data" class="row g-2">
+            <div class="col-md-4"><select name="languageId" class="form-select" asp-items="ViewBag.Languages" required><option value="">Language…</option></select></div>
+            <div class="col-md-5"><input type="file" name="file" accept=".xlsx" class="form-control" required /></div>
+            <div class="col-md-3"><button class="btn btn-outline-primary w-100" type="submit">Import</button></div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,117 @@
+@model LinguaPath.Shared.Common.PagedResult<WordItem>
+@{
+    ViewData["Title"] = "Abusive words";
+    var severity = ViewBag.Severity as ModerationSeverity?;
+    var languageList = ViewBag.LanguageList as List<(int Id, string Name)> ?? [];
+    var test = ViewBag.TestResult as FilterTestResult;
+    var pager = new PagerModel
+    {
+        Page = Model.Page, TotalPages = Model.TotalPages, TotalCount = Model.TotalCount,
+        UrlFor = p => Url.Action("Index", new { search = ViewBag.Search, severity, languageId = ViewBag.LanguageId, page = p })!
+    };
+}
+<p class="small text-muted"><b>Mild</b> words are masked (d***) and the message is delivered. <b>Abusive</b> words stop the message and add a strike.
+    <b>Severe</b> words block the account. Matching ignores case, accents, repeated letters, spacing and leetspeak.</p>
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        <form method="get" class="row g-2 mb-3">
+            <div class="col-md-4"><input name="search" value="@ViewBag.Search" class="form-control" placeholder="Search words" /></div>
+            <div class="col-md-3">
+                <select name="severity" class="form-select">
+                    <option value="">Any severity</option>
+                    @foreach (var s in new[] { ModerationSeverity.Mild, ModerationSeverity.Abusive, ModerationSeverity.Severe }) { <option value="@s" selected="@(severity == s)">@s</option> }
+                </select>
+            </div>
+            <div class="col-md-3"><select name="languageId" class="form-select" asp-items="ViewBag.Languages"><option value="">Any language</option><option value="0">All-language words</option></select></div>
+            <div class="col-md-2"><button class="btn btn-outline-primary w-100">Filter</button></div>
+        </form>
+
+        <div class="card lp-card">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead><tr><th>Word or phrase</th><th>Severity</th><th>Language</th><th>Active</th><th></th></tr></thead>
+                    <tbody>
+                    @if (Model.Items.Count == 0) { <tr><td colspan="5" class="text-center text-muted py-4">No words.</td></tr> }
+                    @foreach (var w in Model.Items)
+                    {
+                        <tr>
+                            <td colspan="4">
+                                <form asp-action="Save" method="post" class="d-flex gap-2 align-items-center">
+                                    <input type="hidden" name="id" value="@w.Id" />
+                                    <input name="term" value="@w.Term" class="form-control form-control-sm" />
+                                    <select name="severity" class="form-select form-select-sm" style="width:120px">
+                                        @foreach (var s in new[] { ModerationSeverity.Mild, ModerationSeverity.Abusive, ModerationSeverity.Severe }) { <option value="@s" selected="@(w.Severity == s)">@s</option> }
+                                    </select>
+                                    <select name="languageId" class="form-select form-select-sm" style="width:150px">
+                                        <option value="">All languages</option>
+                                        @foreach (var l in languageList) { <option value="@l.Id" selected="@(w.LanguageId == l.Id)">@l.Name</option> }
+                                    </select>
+                                    <input type="checkbox" name="isActive" value="true" class="form-check-input" checked="@w.IsActive" />
+                                    <button class="btn btn-sm btn-outline-primary">Save</button>
+                                </form>
+                            </td>
+                            <td class="text-end">
+                                <form asp-action="Delete" method="post" onsubmit="return confirm('Delete this word?')"><input type="hidden" name="id" value="@w.Id" /><button class="btn btn-sm btn-link text-danger">Delete</button></form>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <partial name="_Pager" model="pager" />
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card lp-card">
+            <div class="card-body">
+                <h2 class="h6">Add a word</h2>
+                <form asp-action="Save" method="post" class="vstack gap-2">
+                    <input name="term" class="form-control form-control-sm" placeholder="Word or phrase" required />
+                    <select name="severity" class="form-select form-select-sm">
+                        @foreach (var s in new[] { ModerationSeverity.Mild, ModerationSeverity.Abusive, ModerationSeverity.Severe }) { <option value="@s" selected="@(s == ModerationSeverity.Abusive)">@s</option> }
+                    </select>
+                    <select name="languageId" class="form-select form-select-sm">
+                        <option value="">All languages</option>
+                        @foreach (var l in languageList) { <option value="@l.Id">@l.Name</option> }
+                    </select>
+                    <input type="hidden" name="isActive" value="true" />
+                    <button class="btn btn-sm btn-primary">Add</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="card lp-card mt-3">
+            <div class="card-body">
+                <h2 class="h6">Import / export</h2>
+                <p class="small text-muted">Columns: <b>Term</b> | <b>Severity</b> (Mild, Abusive, Severe) | <b>Language</b> (ISO code or name; empty = all). Existing words are updated.</p>
+                <form asp-action="Import" method="post" enctype="multipart/form-data" class="d-flex gap-2">
+                    <input type="file" name="file" accept=".xlsx" class="form-control form-control-sm" />
+                    <button class="btn btn-sm btn-outline-primary">Import</button>
+                </form>
+                <a asp-action="Export" class="btn btn-sm btn-outline-secondary mt-2">Download list (.xlsx)</a>
+            </div>
+        </div>
+
+        <div class="card lp-card mt-3">
+            <div class="card-body">
+                <h2 class="h6">Test the filter</h2>
+                <form method="get" class="vstack gap-2">
+                    <textarea name="test" class="form-control form-control-sm" rows="3" placeholder="Type a message to see what happens">@ViewBag.Test</textarea>
+                    <select name="testLanguageId" class="form-select form-select-sm" asp-items="ViewBag.TestLanguages"><option value="">Any language</option></select>
+                    <button class="btn btn-sm btn-outline-primary">Test</button>
+                </form>
+                @if (test is not null)
+                {
+                    <div class="small mt-2">
+                        <div>Result: <b>@(test.Contacts.Count > 0 ? "Rejected (link/contact)" : test.Severity switch { ModerationSeverity.None => "Delivered", ModerationSeverity.Mild => "Delivered masked", ModerationSeverity.Abusive => "Rejected + strike", _ => "Account blocked" })</b></div>
+                        @if (test.Severity == ModerationSeverity.Mild) { <div>Shown as: <code>@test.MaskedText</code></div> }
+                        @foreach (var w in test.Words) { <div>• @w</div> }
+                        @foreach (var c in test.Contacts) { <div>• @c</div> }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

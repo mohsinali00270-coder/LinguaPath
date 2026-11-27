@@ -1,0 +1,30 @@
+@model PostsAiInput
+@{
+    ViewData["Title"] = "A month of posts with AI";
+}
+<a asp-controller="Posts" asp-action="Index" class="small">&larr; Posts</a>
+<div class="card lp-card mt-2" style="max-width:760px">
+    <div class="card-body">
+        <p class="small text-muted">AI drafts tips, cultural notes or words of the day, scheduled one a day (FR-A52). They are Drafts until reviewed and published.</p>
+        <form asp-action="Posts" method="post">
+            <div asp-validation-summary="All" class="alert alert-danger py-2 small"></div>
+            <div class="row g-3">
+                <div class="col-md-6"><label asp-for="LanguageId" class="form-label"></label><select asp-for="LanguageId" asp-items="ViewBag.Languages" class="form-select"><option value="0">Choose…</option></select></div>
+                <div class="col-md-6">
+                    <label asp-for="PostType" class="form-label"></label>
+                    <select asp-for="PostType" class="form-select">
+                        <option value="@PostType.WordOfTheDay">Word of the day</option>
+                        <option value="@PostType.Tip">Tip</option>
+                        <option value="@PostType.CulturalNote">Cultural note</option>
+                    </select>
+                </div>
+                <div class="col-md-4"><label asp-for="Level" class="form-label"></label><select asp-for="Level" asp-items="Html.GetEnumSelectList<CefrLevel>()" class="form-select"></select></div>
+                <div class="col-md-4"><label asp-for="Month" class="form-label"></label><input asp-for="Month" type="month" value="@Model.Month.ToString("yyyy-MM")" class="form-control" /></div>
+                <div class="col-md-4"><label asp-for="Count" class="form-label"></label><input asp-for="Count" class="form-control" /></div>
+                <div class="col-md-6"><label asp-for="NativeLanguage" class="form-label"></label><input asp-for="NativeLanguage" class="form-control" /></div>
+                <div class="col-12"><label asp-for="Notes" class="form-label"></label><textarea asp-for="Notes" class="form-control" rows="2"></textarea></div>
+            </div>
+            <button class="btn btn-primary mt-3">Draft the posts</button>
+        </form>
+    </div>
+</div>

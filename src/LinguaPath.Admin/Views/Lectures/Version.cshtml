@@ -1,0 +1,32 @@
+@model LectureVersionView
+@{
+    ViewData["Title"] = $"Version {Model.Version}";
+}
+<a asp-action="Versions" asp-route-id="@Model.LectureId" class="small">&larr; All versions</a>
+<div class="d-flex justify-content-between align-items-center mt-2 mb-3">
+    <div>
+        <h2 class="h5 mb-0">v@Model.Version · @Model.Title</h2>
+        <div class="small text-muted">@(Model.ChangedBy ?? "—") · @Model.ChangedAt.ToLocalTime().ToString("g") @(string.IsNullOrEmpty(Model.Note) ? "" : $"· {Model.Note}")</div>
+    </div>
+    @if (Model.Version != Model.CurrentVersion)
+    {
+        <form asp-action="Restore" asp-route-id="@Model.Id" asp-route-lectureId="@Model.LectureId" method="post" data-confirm="Restore this version?">
+            <button class="btn btn-sm btn-primary">Restore this version</button>
+        </form>
+    }
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card lp-card h-100">
+            <div class="card-header bg-white"><b>This version (v@Model.Version)</b></div>
+            <iframe src="@Url.Action("Frame", new { id = Model.LectureId, versionId = Model.Id })" sandbox="" class="w-100 border-0" style="height:560px" title="Version text"></iframe>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card lp-card h-100">
+            <div class="card-header bg-white"><b>Current (v@Model.CurrentVersion)</b> · @Model.CurrentTitle</div>
+            <iframe src="@Url.Action("Frame", new { id = Model.LectureId })" sandbox="" class="w-100 border-0" style="height:560px" title="Current text"></iframe>
+        </div>
+    </div>
+</div>

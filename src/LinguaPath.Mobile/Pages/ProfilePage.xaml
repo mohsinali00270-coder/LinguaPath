@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                x:Class="LinguaPath.Mobile.Pages.ProfilePage"
+                x:DataType="vm:ProfileViewModel"
+                Shell.NavBarIsVisible="False">
+    <ScrollView>
+        <VerticalStackLayout Spacing="0" Padding="0,0,0,32">
+            <!-- Header with avatar -->
+            <Border Style="{StaticResource HeaderBand}" Padding="20,44,20,64">
+                <VerticalStackLayout Spacing="10">
+                    <Grid HorizontalOptions="Center" WidthRequest="108" HeightRequest="108">
+                        <Border StrokeShape="Ellipse" StrokeThickness="4" Stroke="#4DFFFFFF" BackgroundColor="#26FFFFFF">
+                            <Label Text="{Binding Initials}" FontSize="38" FontAttributes="Bold" TextColor="White"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <Border StrokeShape="Ellipse" StrokeThickness="4" Stroke="#4DFFFFFF" IsVisible="{Binding PhotoUrl, Converter={StaticResource HasText}}">
+                            <Image SemanticProperties.Description="{l:Tr ProfilePhoto}" Source="{Binding PhotoUrl}" Aspect="AspectFill" />
+                        </Border>
+                        <!-- Edit badge -->
+                        <Border WidthRequest="32" HeightRequest="32" StrokeShape="Ellipse" StrokeThickness="2" Stroke="White"
+                                Background="{StaticResource TealGradient}" HorizontalOptions="End" VerticalOptions="End" InputTransparent="True">
+                            <Path Style="{StaticResource IconOnHero}" Data="{StaticResource IconPen}" WidthRequest="14" HeightRequest="14" />
+                        </Border>
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding ChangePhotoCommand}" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                    <Label Text="{Binding Profile.FullName}" FontSize="22" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center" />
+                    <Label Text="{Binding Profile.Email}" Style="{StaticResource HeroText}" HorizontalOptions="Center" />
+                    <Button Text="{l:Tr ChangePhoto}" Style="{StaticResource HeroChipButton}" HorizontalOptions="Center" Command="{Binding ChangePhotoCommand}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <VerticalStackLayout Padding="16,0" Spacing="10" Margin="0,-40,0,0">
+                <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+                    <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+                </Border>
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+
+                <!-- My learning -->
+                <Border Style="{StaticResource Card}" Padding="14,6">
+                    <VerticalStackLayout>
+                        <Label Text="{l:Tr MyLearning}" Style="{StaticResource SectionHeader}" Margin="4,10,4,2" />
+                        <Grid Style="{StaticResource ListRow}">
+                            <Border Style="{StaticResource IconTileAmber}" WidthRequest="38" HeightRequest="38" StrokeShape="RoundRectangle 12">
+                                <Path Style="{StaticResource IconAmber}" Data="{StaticResource IconStar}" WidthRequest="18" HeightRequest="18" />
+                            </Border>
+                            <Label Grid.Column="1" Text="{l:Tr PointsAndBadges}" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Path Grid.Column="2" Style="{StaticResource IconMuted}" Data="{StaticResource IconChevron}" ScaleX="{l:Mirror}" />
+                            <Button Grid.ColumnSpan="3" Style="{StaticResource HitTarget}" SemanticProperties.Description="{l:Tr PointsAndBadges}" Command="{Binding OpenPointsCommand}" />
+                        </Grid>
+                        <BoxView Style="{StaticResource Divider}" />
+                        <Grid Style="{StaticResource ListRow}">
+                            <Border Style="{StaticResource IconTile}" WidthRequest="38" HeightRequest="38" StrokeShape="RoundRectangle 12">
+                                <Path Style="{StaticResource Icon}" Data="{StaticResource IconTrophy}" WidthRequest="18" HeightRequest="18" />
+                            </Border>
+                            <Label Grid.Column="1" Text="{l:Tr Leaderboard}" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Path Grid.Column="2" Style="{StaticResource IconMuted}" Data="{StaticResource IconChevron}" ScaleX="{l:Mirror}" />
+                            <Button Grid.ColumnSpan="3" Style="{StaticResource HitTarget}" SemanticProperties.Description="{l:Tr Leaderboard}" Command="{Binding OpenLeaderboardCommand}" />
+                        </Grid>
+                        <BoxView Style="{StaticResource Divider}" />
+                        <Grid Style="{StaticResource ListRow}">
+                            <Border Style="{StaticResource IconTileTeal}" WidthRequest="38" HeightRequest="38" StrokeShape="RoundRectangle 12">
+                                <Path Style="{StaticResource IconTeal}" Data="{StaticResource IconAward}" WidthRequest="18" HeightRequest="18" />
+                            </Border>
+                            <Label Grid.Column="1" Text="{l:Tr MyCertificates}" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Path Grid.Column="2" Style="{StaticResource IconMuted}" Data="{StaticResource IconChevron}" ScaleX="{l:Mirror}" />
+                            <Button Grid.ColumnSpan="3" Style="{StaticResource HitTarget}" SemanticProperties.Description="{l:Tr MyCertificates}" Command="{Binding OpenCertificatesCommand}" />
+                        </Grid>
+                        <BoxView Style="{StaticResource Divider}" />
+                        <Grid Style="{StaticResource ListRow}">
+                            <Border Style="{StaticResource IconTile}" WidthRequest="38" HeightRequest="38" StrokeShape="RoundRectangle 12">
+                                <Path Style="{StaticResource Icon}" Data="{StaticResource IconShield}" WidthRequest="18" HeightRequest="18" />
+                            </Border>
+                            <Label Grid.Column="1" Text="{l:Tr MyLeague}" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Path Grid.Column="2" Style="{StaticResource IconMuted}" Data="{StaticResource IconChevron}" ScaleX="{l:Mirror}" />
+                            <Button Grid.ColumnSpan="3" Style="{StaticResource HitTarget}" SemanticProperties.Description="{l:Tr MyLeague}" Command="{Binding OpenLeagueCommand}" />
+                        </Grid>
+                        <BoxView Style="{StaticResource Divider}" />
+                        <Grid Style="{StaticResource ListRow}">
+                            <Border Style="{StaticResource IconTileDanger}" WidthRequest="38" HeightRequest="38" StrokeShape="RoundRectangle 12">
+                                <Path Style="{StaticResource IconDanger}" Data="{StaticResource IconSwords}" WidthRequest="18" HeightRequest="18" />
+                            </Border>
+                            <Label Grid.Column="1" Text="{l:Tr Compete}" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Path Grid.Column="2" Style="{StaticResource IconMuted}" Data="{StaticResource IconChevron}" ScaleX="{l:Mirror}" />
+                            <Button Grid.ColumnSpan="3" Style="{StaticResource HitTarget}" SemanticProperties.Description="{l:Tr Compete}" Command="{Binding OpenCompeteCommand}" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Community -->
+                <Border Style="{StaticResource Card}" Padding="14,6">
+                    <VerticalStackLayout>
+                        <Label Text="{l:Tr Ui_Community}" Style="{StaticResource SectionHeader}" Margin="4,10,4,2" />
+                        <Grid Style="{StaticResource ListRow}">
+                            <Border Style="{StaticResource IconTile}" WidthRequest="38" HeightRequest="38" StrokeShape="RoundRectangle 12">
+                                <Path Style="{StaticResource Icon}" Data="{StaticResource IconChat}" WidthRequest="18" HeightRequest="18" />
+                            </Border>
+                            <Label Grid.Column="1" Text="{l:Tr Chats}" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Path Grid.Column="2" Style="{StaticResource IconMuted}" Data="{StaticResource IconChevron}" ScaleX="{l:Mirror}" />
+                            <Button Grid.ColumnSpan="3" Style="{StaticResource HitTarget}" SemanticProperties.Description="{l:Tr Chats}" Command="{Binding OpenChatsCommand}" />
+                        </Grid>
+                        <BoxView Style="{StaticResource Divider}" />
+                        <Grid Style="{StaticResource ListRow}">
+                            <Border Style="{StaticResource IconTileTeal}" WidthRequest="38" HeightRequest="38" StrokeShape="RoundRectangle 12">
+                                <Path Style="{StaticResource IconTeal}" Data="{StaticResource IconUsers}" WidthRequest="18" HeightRequest="18" />
+                            </Border>
+                            <Label Grid.Column="1" Text="{l:Tr PeopleAndFriends}" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Path Grid.Column="2" Style="{StaticResource IconMuted}" Data="{StaticResource IconChevron}" ScaleX="{l:Mirror}" />
+                            <Button Grid.ColumnSpan="3" Style="{StaticResource HitTarget}" SemanticProperties.Description="{l:Tr PeopleAndFriends}" Command="{Binding OpenPeopleCommand}" />
+                        </Grid>
+                        <BoxView Style="{StaticResource Divider}" />
+                        <Grid Style="{StaticResource ListRow}">
+                            <Border Style="{StaticResource IconTile}" WidthRequest="38" HeightRequest="38" StrokeShape="RoundRectangle 12">
+                                <Path Style="{StaticResource Icon}" Data="{StaticResource IconLock}" WidthRequest="18" HeightRequest="18" />
+                            </Border>
+                            <Label Grid.Column="1" Text="{l:Tr PrivacyAndBlockedLearners}" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Path Grid.Column="2" Style="{StaticResource IconMuted}" Data="{StaticResource IconChevron}" ScaleX="{l:Mirror}" />
+                            <Button Grid.ColumnSpan="3" Style="{StaticResource HitTarget}" SemanticProperties.Description="{l:Tr PrivacyAndBlockedLearners}" Command="{Binding OpenPrivacyCommand}" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Appearance: light / dark / system -->
+                <Border Style="{StaticResource Card}" Padding="18,14">
+                    <VerticalStackLayout Spacing="12">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                            <Border Style="{StaticResource IconTile}" WidthRequest="38" HeightRequest="38" StrokeShape="RoundRectangle 12">
+                                <Path Style="{StaticResource Icon}" Data="{StaticResource IconMoon}" WidthRequest="18" HeightRequest="18" />
+                            </Border>
+                            <Label Grid.Column="1" Text="{l:Tr Ui_Appearance}" FontAttributes="Bold" VerticalOptions="Center" />
+                        </Grid>
+                        <Border Style="{StaticResource CardMuted}" Padding="4" StrokeShape="RoundRectangle 14">
+                            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="4">
+                                <Button x:Name="ThemeSystemButton" Text="{l:Tr Ui_ThemeSystem}" Style="{StaticResource Segment}" Clicked="OnThemeClicked" />
+                                <Button x:Name="ThemeLightButton" Grid.Column="1" Text="{l:Tr Ui_ThemeLight}" Style="{StaticResource Segment}" Clicked="OnThemeClicked" />
+                                <Button x:Name="ThemeDarkButton" Grid.Column="2" Text="{l:Tr Ui_ThemeDark}" Style="{StaticResource Segment}" Clicked="OnThemeClicked" />
+                            </Grid>
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Account -->
+                <Border Style="{StaticResource Card}" Padding="14,6">
+                    <VerticalStackLayout>
+                        <Label Text="{l:Tr Account}" Style="{StaticResource SectionHeader}" Margin="4,10,4,2" />
+                        <Grid Style="{StaticResource ListRow}">
+                            <Border Style="{StaticResource IconTile}" WidthRequest="38" HeightRequest="38" StrokeShape="RoundRectangle 12">
+                                <Path Style="{StaticResource Icon}" Data="{StaticResource IconUser}" WidthRequest="18" HeightRequest="18" />
+                            </Border>
+                            <Label Grid.Column="1" Text="{l:Tr EditProfile}" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Path Grid.Column="2" Style="{StaticResource IconMuted}" Data="{StaticResource IconChevron}" ScaleX="{l:Mirror}" />
+                            <Button Grid.ColumnSpan="3" Style="{StaticResource HitTarget}" SemanticProperties.Description="{l:Tr EditProfile}" Command="{Binding EditProfileCommand}" />
+                        </Grid>
+                        <BoxView Style="{StaticResource Divider}" />
+                        <Grid Style="{StaticResource ListRow}">
+                            <Border Style="{StaticResource IconTile}" WidthRequest="38" HeightRequest="38" StrokeShape="RoundRectangle 12">
+                                <Path Style="{StaticResource Icon}" Data="{StaticResource IconLock}" WidthRequest="18" HeightRequest="18" />
+                            </Border>
+                            <Label Grid.Column="1" Text="{l:Tr ChangePassword}" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Path Grid.Column="2" Style="{StaticResource IconMuted}" Data="{StaticResource IconChevron}" ScaleX="{l:Mirror}" />
+                            <Button Grid.ColumnSpan="3" Style="{StaticResource HitTarget}" SemanticProperties.Description="{l:Tr ChangePassword}" Command="{Binding ChangePasswordCommand}" />
+                        </Grid>
+                        <BoxView Style="{StaticResource Divider}" />
+                        <Grid Style="{StaticResource ListRow}">
+                            <Border Style="{StaticResource IconTileTeal}" WidthRequest="38" HeightRequest="38" StrokeShape="RoundRectangle 12">
+                                <Path Style="{StaticResource IconTeal}" Data="{StaticResource IconDownload}" WidthRequest="18" HeightRequest="18" />
+                            </Border>
+                            <Label Grid.Column="1" Text="{l:Tr DownloadMyData}" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Path Grid.Column="2" Style="{StaticResource IconMuted}" Data="{StaticResource IconChevron}" ScaleX="{l:Mirror}" />
+                            <Button Grid.ColumnSpan="3" Style="{StaticResource HitTarget}" SemanticProperties.Description="{l:Tr DownloadMyData}" Command="{Binding ExportDataCommand}" />
+                        </Grid>
+                        <BoxView Style="{StaticResource Divider}" />
+                        <Grid Style="{StaticResource ListRow}">
+                            <Border Style="{StaticResource IconTile}" WidthRequest="38" HeightRequest="38" StrokeShape="RoundRectangle 12">
+                                <Path Style="{StaticResource Icon}" Data="{StaticResource IconLogout}" WidthRequest="18" HeightRequest="18" />
+                            </Border>
+                            <Label Grid.Column="1" Text="{l:Tr SignOut}" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Path Grid.Column="2" Style="{StaticResource IconMuted}" Data="{StaticResource IconChevron}" ScaleX="{l:Mirror}" />
+                            <Button Grid.ColumnSpan="3" Style="{StaticResource HitTarget}" SemanticProperties.Description="{l:Tr SignOut}" Command="{Binding SignOutCommand}" />
+                        </Grid>
+                        <BoxView Style="{StaticResource Divider}" />
+                        <Grid Style="{StaticResource ListRow}">
+                            <Border Style="{StaticResource IconTile}" WidthRequest="38" HeightRequest="38" StrokeShape="RoundRectangle 12">
+                                <Path Style="{StaticResource Icon}" Data="{StaticResource IconShield}" WidthRequest="18" HeightRequest="18" />
+                            </Border>
+                            <Label Grid.Column="1" Text="{l:Tr SignOutOnAllDevices}" FontAttributes="Bold" VerticalOptions="Center" />
+                            <Path Grid.Column="2" Style="{StaticResource IconMuted}" Data="{StaticResource IconChevron}" ScaleX="{l:Mirror}" />
+                            <Button Grid.ColumnSpan="3" Style="{StaticResource HitTarget}" SemanticProperties.Description="{l:Tr SignOutOnAllDevices}" Command="{Binding SignOutEverywhereCommand}" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Button Text="{l:Tr DeleteAccount}" Style="{StaticResource DangerButton}" Command="{Binding DeleteAccountCommand}" Margin="0,12,0,0" />
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</pages:BasePage>

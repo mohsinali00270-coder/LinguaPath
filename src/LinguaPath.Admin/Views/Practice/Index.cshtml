@@ -1,0 +1,68 @@
+@model IReadOnlyList<PracticeItemListItem>
+@{
+    ViewData["Title"] = "Practice library";
+    var type = ViewBag.Type as PracticeType?;
+    var status = ViewBag.Status as ContentStatus?;
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <p class="small text-muted mb-0">Reading passages, writing tasks, speaking and dictation sentences for the app's Practice tab. Learners get items at their level; free-talk needs no items.</p>
+    <div class="d-flex gap-2">
+        <a asp-action="Generate" asp-route-languageId="@ViewBag.LanguageId" asp-route-type="@(type ?? PracticeType.Read)" class="btn btn-outline-info btn-sm">Draft with AI</a>
+        <a asp-action="Create" asp-route-languageId="@ViewBag.LanguageId" asp-route-type="@(type ?? PracticeType.Read)" class="btn btn-primary btn-sm">New exercise</a>
+    </div>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-3"><select name="languageId" class="form-select" asp-items="ViewBag.Languages"><option value="">All languages</option></select></div>
+    <div class="col-md-2">
+        <select name="type" class="form-select">
+            <option value="">All types</option>
+            @foreach (var t in new[] { PracticeType.Read, PracticeType.Write, PracticeType.Speak, PracticeType.Listen })
+            {
+                <option value="@t" selected="@(type == t)">@t</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-2">
+        <select name="status" class="form-select">
+            <option value="">All statuses</option>
+            @foreach (var s in Enum.GetValues<ContentStatus>())
+            {
+                <option value="@s" selected="@(status == s)">@s</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-3"><input name="search" value="@ViewBag.Search" class="form-control" placeholder="Title, text or topic" /></div>
+    <div class="col-md-2"><button class="btn btn-outline-primary w-100" type="submit">Filter</button></div>
+</form>
+
+<div class="card lp-card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead><tr><th>Exercise</th><th>Language</th><th>Type</th><th>Level</th><th>Status</th><th>Questions</th><th>Done by learners</th><th></th></tr></thead>
+            <tbody>
+            @if (Model.Count == 0)
+            {
+                <tr><td colspan="8" class="text-center text-muted py-4">No exercises yet.</td></tr>
+            }
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@p.Id"><b>@p.Title</b></a>
+                        @if (p.Source == ContentSource.Ai) { <span class="badge text-bg-info ms-1">AI</span> }
+                        @if (!string.IsNullOrEmpty(p.Topic)) { <div class="small text-muted">@p.Topic</div> }
+                    </td>
+                    <td>@p.Language</td>
+                    <td>@p.Type</td>
+                    <td>@p.Level</td>
+                    <td><partial name="_ContentStatus" model="p.Status" /></td>
+                    <td>@(p.Type == PracticeType.Read ? p.Questions.ToString() : "—")</td>
+                    <td>@p.Attempts</td>
+                    <td class="text-end"><a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@p.Id">Edit</a></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

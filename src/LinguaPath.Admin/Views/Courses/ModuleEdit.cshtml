@@ -1,0 +1,44 @@
+@model ModuleInput
+@{
+    ViewData["Title"] = Model.Id == 0 ? "Add module" : "Edit module";
+}
+<div class="card lp-card" style="max-width:720px">
+    <div class="card-body">
+        <form asp-action="SaveModule" method="post">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="CourseId" />
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small"></div>
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-control" placeholder="Ordering food" />
+                <span asp-validation-for="Title" class="text-danger small"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Objective" class="form-label"></label>
+                <textarea asp-for="Objective" class="form-control" rows="2" placeholder="What learners can do after this module"></textarea>
+            </div>
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <label asp-for="Level" class="form-label"></label>
+                    <select asp-for="Level" asp-items="Html.GetEnumSelectList<CefrLevel>()" class="form-select"></select>
+                    <span asp-validation-for="Level" class="text-danger small"></span>
+                </div>
+                <div class="col-md-8">
+                    <label asp-for="MonthNo" class="form-label"></label>
+                    <input asp-for="MonthNo" class="form-control" />
+                    <div class="form-text">The monthly exam of this month covers the module (FR-A33).</div>
+                    <span asp-validation-for="MonthNo" class="text-danger small"></span>
+                </div>
+            </div>
+            <div class="mb-4">
+                <label asp-for="PrerequisiteModuleId" class="form-label"></label>
+                <select asp-for="PrerequisiteModuleId" asp-items="ViewBag.Prerequisites" class="form-select">
+                    <option value="">None</option>
+                </select>
+                <span asp-validation-for="PrerequisiteModuleId" class="text-danger small"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Save module</button>
+            <a asp-action="Builder" asp-route-id="@Model.CourseId" class="btn btn-link">Back to roadmap</a>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,182 @@
+﻿@model QuestionEditorModel
+@{
+    var isNew = Model.Input.Id == 0;
+    ViewData["Title"] = isNew ? "New question" : $"Question #{Model.Input.Id}";
+    var history = ViewBag.History as IReadOnlyList<ReviewHistoryItem> ?? [];
+    var options = Model.Input.Options.Count > 0 ? Model.Input.Options : new List<OptionInput> { new(), new() };
+}
+<a asp-action="Index" asp-route-languageId="@(Model.Input.LanguageId == 0 ? null : Model.Input.LanguageId)" class="small">&larr; Question bank</a>
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-2 mb-3">
+    <div class="d-flex align-items-center gap-2">
+        <h2 class="h5 mb-0">@ViewData["Title"]</h2>
+        @if (!isNew)
+        {
+            <partial name="_ContentStatus" model="Model.Status" />
+            <span class="badge text-bg-light border">v@Model.Version</span>
+            @if (Model.TimesAnswered > 0) { <span class="small text-muted">@Model.TimesAnswered answers · @Model.PercentCorrect% correct</span> }
+        }
+    </div>
+    @if (!isNew)
+    {
+        <div class="d-flex flex-wrap gap-2">
+            @if (Model.Status == ContentStatus.Draft)
+            {
+                <form asp-action="Submit" asp-route-id="@Model.Input.Id" method="post"><button class="btn btn-sm btn-primary">Send for review</button></form>
+            }
+            @if (Model.Status == ContentStatus.Approved)
+            {
+                <form asp-action="Publish" asp-route-id="@Model.Input.Id" method="post"><button class="btn btn-sm btn-success">Publish</button></form>
+            }
+            @if (Model.Status == ContentStatus.Published)
+            {
+                <form asp-action="Unpublish" asp-route-id="@Model.Input.Id" method="post"><button class="btn btn-sm btn-outline-warning">Unpublish</button></form>
+            }
+            @if (Model.Status != ContentStatus.Archived)
+            {
+                <form asp-action="Archive" asp-route-id="@Model.Input.Id" method="post" data-confirm="Archive this question?"><button class="btn btn-sm btn-outline-secondary">Archive</button></form>
+            }
+            <form asp-action="Delete" asp-route-id="@Model.Input.Id" method="post" data-confirm="Delete this question?"><button class="btn btn-sm btn-outline-danger">Delete</button></form>
+        </div>
+    }
+</div>
+
+@if (ViewBag.AiProvenance is AiProvenance aiInfo)
+{
+    <details class="alert alert-light border small py-2">
+        <summary>AI draft · @aiInfo.Model @if (aiInfo.NeedsNativeCheck) { <span class="badge text-bg-warning">native speaker check required</span> }
+            @if (!string.IsNullOrEmpty(Model.SourceText)) { <span>· based on: <i>"@Model.SourceText"</i></span> }</summary>
+        <pre class="small mb-0 mt-2" style="white-space:pre-wrap;max-height:300px;overflow:auto">@aiInfo.Prompt</pre>
+    </details>
+}
+@if (Model.LastReviewStatus == ReviewStatus.Rejected && Model.Status == ContentStatus.Draft)
+{
+    <div class="alert alert-warning small"><b>Reviewer asked for changes:</b> @Model.LastReviewComment</div>
+}
+
+<form asp-action="Save" method="post" id="question-form">
+    <input type="hidden" asp-for="Input.Id" />
+    <div asp-validation-summary="All" class="alert alert-danger py-2 small"></div>
+    <div class="row g-3">
+        <div class="col-lg-8">
+            <div class="card lp-card">
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label asp-for="Input.Type" class="form-label"></label>
+                            <select asp-for="Input.Type" asp-items="Html.GetEnumSelectList<QuestionType>()" class="form-select" id="q-type"></select>
+                        </div>
+                        <div class="col-md-8"><div class="small text-muted mt-md-4 pt-md-2" id="type-hint"></div></div>
+                        <div class="col-12">
+                            <label asp-for="Input.Stem" class="form-label"></label>
+                            <textarea asp-for="Input.Stem" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div class="col-12" data-show="Translate ListenChoose Speak">
+                            <label asp-for="Input.Prompt" class="form-label"></label>
+                            <input asp-for="Input.Prompt" class="form-control" />
+                            <div class="form-text">Listen questions read this sentence with the device voice when there is no audio URL.</div>
+                        </div>
+                        <div class="col-md-8">
+                            <label asp-for="Input.MediaUrl" class="form-label"></label>
+                            <input asp-for="Input.MediaUrl" class="form-control" placeholder="https://…" />
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Input.Explanation" class="form-label"></label>
+                            <textarea asp-for="Input.Explanation" class="form-control" rows="2" placeholder="Shown after the learner answers"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card lp-card mt-3" data-hide="Writing Speak">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <b id="options-title">Options</b>
+                    <button type="button" class="btn btn-sm btn-outline-primary" id="add-option">Add row</button>
+                </div>
+                <div class="card-body">
+                    <div class="row g-2 small text-muted mb-1">
+                        <div class="col-6" id="col-text">Option</div>
+                        <div class="col-2 text-center" data-show="MultipleChoice TrueFalse ListenChoose">Correct</div>
+                        <div class="col-3" data-show="MatchPairs">Matches</div>
+                    </div>
+                    <div id="options">
+                        @for (var i = 0; i < options.Count; i++)
+                        {
+                            var o = options[i];
+                            <div class="row g-2 mb-2 lp-row align-items-center">
+                                <div class="col-6"><input name="Input.Options[@i].Text" value="@o.Text" class="form-control form-control-sm" /></div>
+                                <div class="col-2 text-center" data-show="MultipleChoice TrueFalse ListenChoose">
+                                    <input type="checkbox" name="Input.Options[@i].IsCorrect" value="true" class="form-check-input" checked="@o.IsCorrect" />
+                                </div>
+                                <div class="col-3" data-show="MatchPairs"><input name="Input.Options[@i].MatchKey" value="@o.MatchKey" class="form-control form-control-sm" /></div>
+                                <div class="col-1 text-end"><button type="button" class="btn btn-sm btn-link text-danger" data-remove-row>✕</button></div>
+                            </div>
+                        }
+                    </div>
+                    <template id="option-row">
+                        <div class="row g-2 mb-2 lp-row align-items-center">
+                            <div class="col-6"><input name="Input.Options[__i__].Text" class="form-control form-control-sm" /></div>
+                            <div class="col-2 text-center" data-show="MultipleChoice TrueFalse ListenChoose">
+                                <input type="checkbox" name="Input.Options[__i__].IsCorrect" value="true" class="form-check-input" />
+                            </div>
+                            <div class="col-3" data-show="MatchPairs"><input name="Input.Options[__i__].MatchKey" class="form-control form-control-sm" /></div>
+                            <div class="col-1 text-end"><button type="button" class="btn btn-sm btn-link text-danger" data-remove-row>✕</button></div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card lp-card mb-3">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="Input.LanguageId" class="form-label"></label>
+                        <select asp-for="Input.LanguageId" asp-items="ViewBag.Languages" class="form-select" id="q-language"><option value="0">Choose…</option></select>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Input.LectureId" class="form-label"></label>
+                        <select asp-for="Input.LectureId" asp-items="ViewBag.Lectures" class="form-select" id="q-lecture" data-url="@Url.Action("Lectures")"><option value="">None (general question)</option></select>
+                        <div class="form-text">Daily quizzes use questions of lectures the learner has completed.</div>
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6"><label asp-for="Input.Skill" class="form-label"></label><select asp-for="Input.Skill" asp-items="Html.GetEnumSelectList<Skill>()" class="form-select"></select></div>
+                        <div class="col-6"><label asp-for="Input.Level" class="form-label"></label><select asp-for="Input.Level" asp-items="Html.GetEnumSelectList<CefrLevel>()" class="form-select"></select></div>
+                        <div class="col-6"><label asp-for="Input.Difficulty" class="form-label"></label><input asp-for="Input.Difficulty" class="form-control" min="1" max="5" /></div>
+                        <div class="col-6"><label asp-for="Input.Points" class="form-label"></label><input asp-for="Input.Points" class="form-control" min="1" max="20" /></div>
+                    </div>
+                    @if (Model.Status != ContentStatus.Archived)
+                    {
+                        <button type="submit" class="btn btn-primary w-100 mb-2">Save</button>
+                        @if (Model.Status == ContentStatus.Draft)
+                        {
+                            <button type="submit" name="then" value="submit" class="btn btn-outline-primary w-100 mb-2">Save and send for review</button>
+                        }
+                        <button type="submit" name="then" value="new" class="btn btn-link w-100">Save and add another</button>
+                    }
+                </div>
+            </div>
+            @if (!isNew)
+            {
+                <div class="card lp-card">
+                    <div class="card-body">
+                        <h3 class="h6">Review history</h3>
+                        @if (history.Count == 0) { <p class="small text-muted mb-0">Not reviewed yet.</p> }
+                        @foreach (var h in history)
+                        {
+                            <div class="small mb-2">
+                                <span class="badge text-bg-light border">@h.Status</span> @h.SubmittedAt.ToLocalTime().ToString("d MMM")
+                                @if (h.Reviewer is not null) { <span>· @h.Reviewer</span> }
+                                @if (!string.IsNullOrEmpty(h.Comment)) { <div class="text-muted">"@h.Comment"</div> }
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <script src="~/js/question-editor.js" asp-append-version="true"></script>
+}

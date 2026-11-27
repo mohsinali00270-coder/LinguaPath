@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                x:Class="LinguaPath.Mobile.Pages.SplashPage"
+                x:DataType="vm:SplashViewModel"
+                Background="{StaticResource HeroGradient}">
+    <Grid Padding="32" RowDefinitions="*,Auto,*">
+        <VerticalStackLayout Grid.Row="1" Spacing="14" HorizontalOptions="Center">
+            <Border WidthRequest="92" HeightRequest="92" StrokeShape="RoundRectangle 28" StrokeThickness="0" HorizontalOptions="Center"
+                    Background="{StaticResource PurpleTealGradient}" Shadow="{StaticResource GlowShadow}">
+                <Label Text="L" FontSize="48" FontAttributes="Bold" TextColor="White"
+                       HorizontalOptions="Center" VerticalOptions="Center" />
+            </Border>
+            <Label Text="LinguaPath" FontSize="30" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center" />
+            <ActivityIndicator IsRunning="{Binding UpdateRequired, Converter={StaticResource Not}}" Color="{StaticResource SecondaryBright}" Margin="0,16,0,0" />
+
+            <!-- FR-A112 force update -->
+            <Border IsVisible="{Binding UpdateRequired}" Style="{StaticResource Card}" Margin="0,16,0,0">
+                <VerticalStackLayout Spacing="12">
+                    <Border Style="{StaticResource IconTile}">
+                        <Path Style="{StaticResource Icon}" Data="{StaticResource IconDownload}" />
+                    </Border>
+                    <Label Text="{l:Tr UpdateRequired}" Style="{StaticResource Headline}" />
+                    <Label Text="{Binding UpdateInfo.Message}" Style="{StaticResource Subtitle}" />
+                    <Button Text="{l:Tr UpdateNow}" Style="{StaticResource GradientButton}" Command="{Binding OpenStoreCommand}" />
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </Grid>
+</pages:BasePage>

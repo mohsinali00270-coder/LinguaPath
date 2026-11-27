@@ -1,0 +1,26 @@
+@model QuestionEditorModel
+@{
+    ViewData["Title"] = "Question preview";
+    var q = Model.Input;
+}
+<a asp-action="Index" class="small">&larr; Review queue</a>
+<div class="row g-4 mt-1">
+    <div class="col-lg-5">
+        <div class="lp-phone">
+            <div class="lp-phone-screen p-3">
+                <div class="small text-muted mb-1">@q.Type · @q.Skill · @q.Level · @q.Points pt</div>
+                <div class="fw-bold mb-2">@q.Stem</div>
+                @if (!string.IsNullOrEmpty(q.Prompt)) { <div class="p-2 bg-light rounded mb-2">@q.Prompt</div> }
+                @if (!string.IsNullOrEmpty(q.MediaUrl)) { <div class="small mb-2"><a href="@q.MediaUrl" target="_blank" rel="noopener noreferrer">Media</a></div> }
+                @foreach (var o in q.Options)
+                {
+                    <div class="border rounded p-2 mb-1 small @(o.IsCorrect && q.Type is QuestionType.MultipleChoice or QuestionType.TrueFalse or QuestionType.ListenChoose ? "border-success" : "")">
+                        @o.Text @if (!string.IsNullOrEmpty(o.MatchKey)) { <span>→ <b>@o.MatchKey</b></span> }
+                        @if (o.IsCorrect && q.Type is QuestionType.MultipleChoice or QuestionType.TrueFalse or QuestionType.ListenChoose) { <span class="text-success">✓</span> }
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(q.Explanation)) { <div class="small text-muted mt-2">Explanation: @q.Explanation</div> }
+            </div>
+        </div>
+    </div>
+</div>

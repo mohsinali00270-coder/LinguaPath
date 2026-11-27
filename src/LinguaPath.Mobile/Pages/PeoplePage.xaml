@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                xmlns:social="clr-namespace:LinguaPath.Shared.Contracts.Social;assembly=LinguaPath.Shared"
+                x:Class="LinguaPath.Mobile.Pages.PeoplePage"
+                x:DataType="vm:PeopleViewModel"
+                Title="{l:Tr People}">
+    <ScrollView>
+        <VerticalStackLayout Padding="16,8" Spacing="12">
+            <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+                <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+            </Border>
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                <Border Style="{StaticResource InputBox}">
+                    <Entry Text="{Binding Query}" Placeholder="{l:Tr SearchLearnersByName}" ReturnType="Search" ReturnCommand="{Binding SearchCommand}" />
+                </Border>
+                <Button Grid.Column="1" Text="{l:Tr Search}" Command="{Binding SearchCommand}" />
+            </Grid>
+
+            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Results}" Spacing="2" IsVisible="{Binding IsSearching}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="vm:PersonRow">
+                        <Grid ColumnDefinitions="40,*,Auto" ColumnSpacing="10" Padding="0,6">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PeopleViewModel}}, Path=OpenCommand}" CommandParameter="{Binding .}" />
+                            </Grid.GestureRecognizers>
+                            <Border WidthRequest="40" HeightRequest="40" StrokeShape="RoundRectangle 20" Background="{StaticResource PurpleTealGradient}" StrokeThickness="0">
+                                <Grid>
+                                    <Label Text="{Binding Initial}" HorizontalOptions="Center" VerticalOptions="Center" TextColor="White" FontAttributes="Bold" />
+                                    <Image SemanticProperties.Description="{l:Tr ProfilePhoto}" Source="{Binding PhotoUrl}" Aspect="AspectFill" IsVisible="{Binding HasPhoto}" />
+                                </Grid>
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                <Label Text="{Binding Name}" FontAttributes="Bold" />
+                                <Label Text="{Binding Detail}" Style="{StaticResource Subtitle}" FontSize="12" />
+                            </VerticalStackLayout>
+                            <Button Grid.Column="2" Text="{l:Tr Message}" Style="{StaticResource OutlineButton}" Padding="12,0"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PeopleViewModel}}, Path=MessageCommand}" CommandParameter="{Binding .}" />
+                        </Grid>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+            <Label Text="{l:Tr FriendRequests}" Style="{StaticResource SectionHeader}" IsVisible="{Binding HasRequests}" />
+            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Requests}" Spacing="6" IsVisible="{Binding HasRequests}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="vm:RequestRow">
+                        <Border Style="{StaticResource Card}">
+                            <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="6">
+                                <VerticalStackLayout VerticalOptions="Center">
+                                    <Label Text="{Binding Name}" FontAttributes="Bold" />
+                                    <Label Text="{Binding Detail}" Style="{StaticResource Subtitle}" FontSize="12" />
+                                </VerticalStackLayout>
+                                <Button Grid.Column="1" Text="{l:Tr Accept}" IsVisible="{Binding Incoming}" Padding="12,0"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PeopleViewModel}}, Path=AcceptCommand}" CommandParameter="{Binding .}" />
+                                <Button SemanticProperties.Description="{l:Tr Close}" Grid.Column="2" Text="✕" Style="{StaticResource OutlineButton}" Padding="12,0"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PeopleViewModel}}, Path=DeclineCommand}" CommandParameter="{Binding .}" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+            <Label Text="{l:Tr Friends}" Style="{StaticResource SectionHeader}" />
+            <Label Text="{l:Tr NoFriendsYetSearchForLearners}" Style="{StaticResource Subtitle}" IsVisible="{Binding NoFriends}" />
+            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Friends}" Spacing="2">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="vm:PersonRow">
+                        <Grid ColumnDefinitions="40,*,Auto" ColumnSpacing="10" Padding="0,6">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PeopleViewModel}}, Path=OpenCommand}" CommandParameter="{Binding .}" />
+                            </Grid.GestureRecognizers>
+                            <Border WidthRequest="40" HeightRequest="40" StrokeShape="RoundRectangle 20" Background="{StaticResource PurpleTealGradient}" StrokeThickness="0">
+                                <Grid>
+                                    <Label Text="{Binding Initial}" HorizontalOptions="Center" VerticalOptions="Center" TextColor="White" FontAttributes="Bold" />
+                                    <Image SemanticProperties.Description="{l:Tr ProfilePhoto}" Source="{Binding PhotoUrl}" Aspect="AspectFill" IsVisible="{Binding HasPhoto}" />
+                                </Grid>
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                                <Label Text="{Binding Name}" FontAttributes="Bold" />
+                                <Label Text="{Binding Detail}" Style="{StaticResource Subtitle}" FontSize="12" />
+                            </VerticalStackLayout>
+                            <Button SemanticProperties.Description="{l:Tr Message}" Grid.Column="2" Text="💬" Style="{StaticResource OutlineButton}" Padding="12,0"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PeopleViewModel}}, Path=MessageCommand}" CommandParameter="{Binding .}" />
+                        </Grid>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</pages:BasePage>

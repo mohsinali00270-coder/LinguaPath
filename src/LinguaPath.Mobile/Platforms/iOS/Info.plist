@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>LSRequiresIPhoneOS</key>
+    <true/>
+    <key>UIDeviceFamily</key>
+    <array>
+        <integer>1</integer>
+        <integer>2</integer>
+    </array>
+    <key>UIRequiredDeviceCapabilities</key>
+    <array>
+        <string>arm64</string>
+    </array>
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+    </array>
+    <key>UISupportedInterfaceOrientations~ipad</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationPortraitUpsideDown</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+    <key>XSAppIconAssets</key>
+    <string>Assets.xcassets/appicon.appiconset</string>
+
+    <!-- Google browser sign-in returns to linguapath://auth -->
+    <key>CFBundleURLTypes</key>
+    <array>
+        <dict>
+            <key>CFBundleURLName</key>
+            <string>com.linguapath.app</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>linguapath</string>
+            </array>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+        </dict>
+    </array>
+
+    <!-- Development only: allow plain HTTP to the API on localhost. Remove for release builds. -->
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsLocalNetworking</key>
+        <true/>
+    </dict>
+
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Choose a profile photo.</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Practise speaking and get pronunciation feedback.</string>
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>remote-notification</string>
+    </array>
+    <key>CFBundleLocalizations</key>
+    <array>
+        <string>en</string>
+        <string>ur</string>
+    </array>
+</dict>
+</plist>

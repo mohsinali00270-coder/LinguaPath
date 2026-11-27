@@ -1,0 +1,277 @@
+﻿@model LectureEditorModel
+@{
+    ViewData["Title"] = "Edit lecture";
+    var history = ViewBag.History as IReadOnlyList<ReviewHistoryItem> ?? [];
+    var dir = Model.Direction == TextDirection.Rtl ? "rtl" : "ltr";
+    var canEdit = Model.Status != ContentStatus.Archived;
+    var aiActive = ViewBag.AiActive as AiRequestListItem;
+    var aiInfo = ViewBag.AiProvenance as AiProvenance;
+    var canAi = Model.Status is ContentStatus.Draft or ContentStatus.InReview or ContentStatus.Approved;
+}
+@section Head {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" />
+    @if (aiActive is not null)
+    {
+        <meta http-equiv="refresh" content="15" />
+    }
+}
+
+<a asp-controller="Courses" asp-action="Builder" asp-route-id="@Model.CourseId" class="small">&larr; @Model.LanguageName · @Model.CourseTitle</a>
+
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mt-2 mb-3">
+    <div>
+        <div class="d-flex align-items-center gap-2">
+            <h2 class="h5 mb-0">@Model.Input.Title</h2>
+            <partial name="_ContentStatus" model="Model.Status" />
+            <span class="badge text-bg-light border">v@Model.Version</span>
+            @if (Model.Source == ContentSource.Ai) { <span class="badge text-bg-info">AI draft</span> }
+        </div>
+        <div class="small text-muted mt-1">Module: @Model.ModuleTitle</div>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        <a class="btn btn-sm btn-outline-secondary" asp-action="Preview" asp-route-id="@Model.Input.Id" target="_blank">Preview as learner</a>
+        <a class="btn btn-sm btn-outline-secondary" asp-action="Versions" asp-route-id="@Model.Input.Id">Versions</a>
+        @if (canAi && aiActive is null)
+        {
+            <form asp-controller="AiRequests" asp-action="Lecture" asp-route-lectureId="@Model.Input.Id" method="post"
+                  data-confirm="AI writes the lesson text, 10 examples and vocabulary for this lecture (FR-A42). Unsaved changes here are lost; the current text stays in the version history.">
+                <button class="btn btn-sm btn-outline-info" title="Uses the title, topic, level and objectives">Write with AI</button>
+            </form>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.Input.BodyHtml))
+        {
+            <a class="btn btn-sm btn-outline-info" asp-controller="AiRequests" asp-action="Questions" asp-route-lectureId="@Model.Input.Id">Questions with AI</a>
+        }
+        @if (Model.Status == ContentStatus.Draft)
+        {
+            <form asp-action="Submit" asp-route-id="@Model.Input.Id" method="post"><button class="btn btn-sm btn-primary">Send for review</button></form>
+        }
+        @if (Model.Status == ContentStatus.Approved)
+        {
+            <form asp-action="Publish" asp-route-id="@Model.Input.Id" method="post"><button class="btn btn-sm btn-success">Publish</button></form>
+        }
+        @if (Model.Status == ContentStatus.Published)
+        {
+            <form asp-action="Unpublish" asp-route-id="@Model.Input.Id" method="post" data-confirm="Unpublish? It disappears from learners' roadmaps until published again.">
+                <button class="btn btn-sm btn-outline-warning">Unpublish</button>
+            </form>
+        }
+        @if (canEdit)
+        {
+            <form asp-action="Archive" asp-route-id="@Model.Input.Id" method="post" data-confirm="Archive this lecture?">
+                <button class="btn btn-sm btn-outline-secondary">Archive</button>
+            </form>
+        }
+    </div>
+</div>
+
+@if (Model.LastReviewStatus == ReviewStatus.Rejected && Model.Status == ContentStatus.Draft)
+{
+    <div class="alert alert-warning small"><b>Reviewer asked for changes:</b> @Model.LastReviewComment</div>
+}
+@if (aiActive is not null)
+{
+    <div class="alert alert-info small py-2">AI is writing this lecture (<a asp-controller="AiRequests" asp-action="Details" asp-route-id="@aiActive.Id">request #@aiActive.Id</a>). This page refreshes by itself.</div>
+}
+@if (aiInfo is not null)
+{
+    <details class="alert alert-light border small py-2">
+        <summary>AI draft · @aiInfo.Model · @aiInfo.CreatedAt.ToLocalTime().ToString("g") @if (aiInfo.NeedsNativeCheck) { <span class="badge text-bg-warning">native speaker check required</span> }</summary>
+        <pre class="small mb-0 mt-2" style="white-space:pre-wrap;max-height:300px;overflow:auto">@aiInfo.Prompt</pre>
+    </details>
+}
+@if (Model.Status == ContentStatus.InReview)
+{
+    <div class="alert alert-info small py-2">Waiting for a reviewer. You can still make corrections.</div>
+}
+@if (Model.Status == ContentStatus.Published)
+{
+    <div class="alert alert-light border small py-2">This lecture is live. Changes go live when you save and are kept in the version history.</div>
+}
+
+<form asp-action="Edit" method="post" id="lecture-form">
+    <input type="hidden" asp-for="Input.Id" />
+    <div asp-validation-summary="All" class="alert alert-danger py-2 small"></div>
+
+    <div class="row g-3">
+        <div class="col-lg-8">
+            <div class="card lp-card mb-3">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="Input.Title" class="form-label"></label>
+                        <input asp-for="Input.Title" class="form-control" />
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="form-label mb-0">Lesson text</label>
+                        <div class="d-flex align-items-center gap-2">
+                            @if (canEdit)
+                            {
+                                <div class="btn-group btn-group-sm" role="group" aria-label="AI assist" id="ai-assist" data-url="@Url.Action("Assist", "AiRequests")" data-lecture="@Model.Input.Id">
+                                    <span class="btn btn-sm btn-light disabled">AI assist</span>
+                                    <button type="button" class="btn btn-outline-info" data-action="Expand" title="Turn an outline into full text">Expand</button>
+                                    <button type="button" class="btn btn-outline-info" data-action="Simplify" title="Simpler wording for the level">Simplify</button>
+                                    <button type="button" class="btn btn-outline-info" data-action="AddExamples">Add examples</button>
+                                </div>
+                            }
+                            <button type="button" class="btn btn-sm btn-link p-0" id="toggle-html">Edit HTML</button>
+                        </div>
+                    </div>
+                    <div id="editor" dir="@dir" style="min-height:360px"></div>
+                    <textarea asp-for="Input.BodyHtml" id="body-html" class="form-control font-monospace d-none" rows="18"></textarea>
+                    <div class="form-text">Headings, lists, tables, quotes, links and images (by URL). Scripts and inline styles are removed when saving.</div>
+                </div>
+            </div>
+
+            <!-- Examples (FR-A40) -->
+            <div class="card lp-card mb-3">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <b>Example sentences</b>
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-add-row="examples">Add example</button>
+                </div>
+                <div class="card-body" data-rows="examples" data-prefix="Input.Examples">
+                    @for (var i = 0; i < Model.Input.Examples.Count; i++)
+                    {
+                        var e = Model.Input.Examples[i];
+                        <div class="row g-2 mb-2 lp-row">
+                            <div class="col-md-5"><input name="Input.Examples[@i].TargetText" value="@e.TargetText" class="form-control form-control-sm" dir="@dir" placeholder="Sentence in @Model.LanguageName" /></div>
+                            <div class="col-md-4"><input name="Input.Examples[@i].Translation" value="@e.Translation" class="form-control form-control-sm" placeholder="Translation" /></div>
+                            <div class="col-md-2"><input name="Input.Examples[@i].Note" value="@e.Note" class="form-control form-control-sm" placeholder="Note" /></div>
+                            <div class="col-md-1 text-end"><button type="button" class="btn btn-sm btn-link text-danger" data-remove-row>Remove</button></div>
+                        </div>
+                    }
+                </div>
+                <template id="tpl-examples">
+                    <div class="row g-2 mb-2 lp-row">
+                        <div class="col-md-5"><input name="Input.Examples[__i__].TargetText" class="form-control form-control-sm" dir="@dir" placeholder="Sentence in @Model.LanguageName" /></div>
+                        <div class="col-md-4"><input name="Input.Examples[__i__].Translation" class="form-control form-control-sm" placeholder="Translation" /></div>
+                        <div class="col-md-2"><input name="Input.Examples[__i__].Note" class="form-control form-control-sm" placeholder="Note" /></div>
+                        <div class="col-md-1 text-end"><button type="button" class="btn btn-sm btn-link text-danger" data-remove-row>Remove</button></div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Vocabulary (FR-A40, FR-L33) -->
+            <div class="card lp-card mb-3">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <b>Vocabulary</b>
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-add-row="vocabulary">Add word</button>
+                </div>
+                <div class="card-body" data-rows="vocabulary" data-prefix="Input.Vocabulary">
+                    @for (var i = 0; i < Model.Input.Vocabulary.Count; i++)
+                    {
+                        var v = Model.Input.Vocabulary[i];
+                        <div class="row g-2 mb-2 lp-row">
+                            <div class="col-md-3"><input name="Input.Vocabulary[@i].Word" value="@v.Word" class="form-control form-control-sm" dir="@dir" placeholder="Word" /></div>
+                            <div class="col-md-4"><input name="Input.Vocabulary[@i].Meaning" value="@v.Meaning" class="form-control form-control-sm" placeholder="Meaning" /></div>
+                            <div class="col-md-2"><input name="Input.Vocabulary[@i].Pronunciation" value="@v.Pronunciation" class="form-control form-control-sm" placeholder="Pronunciation" /></div>
+                            <div class="col-md-2"><input name="Input.Vocabulary[@i].PartOfSpeech" value="@v.PartOfSpeech" class="form-control form-control-sm" placeholder="noun, verb…" /></div>
+                            <div class="col-md-1 text-end"><button type="button" class="btn btn-sm btn-link text-danger" data-remove-row>Remove</button></div>
+                        </div>
+                    }
+                </div>
+                <template id="tpl-vocabulary">
+                    <div class="row g-2 mb-2 lp-row">
+                        <div class="col-md-3"><input name="Input.Vocabulary[__i__].Word" class="form-control form-control-sm" dir="@dir" placeholder="Word" /></div>
+                        <div class="col-md-4"><input name="Input.Vocabulary[__i__].Meaning" class="form-control form-control-sm" placeholder="Meaning" /></div>
+                        <div class="col-md-2"><input name="Input.Vocabulary[__i__].Pronunciation" class="form-control form-control-sm" placeholder="Pronunciation" /></div>
+                        <div class="col-md-2"><input name="Input.Vocabulary[__i__].PartOfSpeech" class="form-control form-control-sm" placeholder="noun, verb…" /></div>
+                        <div class="col-md-1 text-end"><button type="button" class="btn btn-sm btn-link text-danger" data-remove-row>Remove</button></div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Links (FR-A41) -->
+            <div class="card lp-card mb-3">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <b>Links (videos, articles, PDFs, podcasts)</b>
+                    <button type="button" class="btn btn-sm btn-outline-primary" data-add-row="links">Add link</button>
+                </div>
+                <div class="card-body" data-rows="links" data-prefix="Input.Links">
+                    @for (var i = 0; i < Model.Input.Links.Count; i++)
+                    {
+                        var k = Model.Input.Links[i];
+                        <div class="row g-2 mb-2 lp-row">
+                            <div class="col-md-4"><input name="Input.Links[@i].Title" value="@k.Title" class="form-control form-control-sm" placeholder="Title" /></div>
+                            <div class="col-md-5"><input name="Input.Links[@i].Url" value="@k.Url" class="form-control form-control-sm" placeholder="https://…" /></div>
+                            <div class="col-md-2">
+                                <select name="Input.Links[@i].LinkType" class="form-select form-select-sm">
+                                    @foreach (var t in Enum.GetValues<LinkType>())
+                                    {
+                                        <option value="@t" selected="@(t == k.LinkType)">@t</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-1 text-end"><button type="button" class="btn btn-sm btn-link text-danger" data-remove-row>Remove</button></div>
+                        </div>
+                    }
+                </div>
+                <template id="tpl-links">
+                    <div class="row g-2 mb-2 lp-row">
+                        <div class="col-md-4"><input name="Input.Links[__i__].Title" class="form-control form-control-sm" placeholder="Title" /></div>
+                        <div class="col-md-5"><input name="Input.Links[__i__].Url" class="form-control form-control-sm" placeholder="https://…" /></div>
+                        <div class="col-md-2">
+                            <select name="Input.Links[__i__].LinkType" class="form-select form-select-sm">
+                                @foreach (var t in Enum.GetValues<LinkType>())
+                                {
+                                    <option value="@t">@t</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-1 text-end"><button type="button" class="btn btn-sm btn-link text-danger" data-remove-row>Remove</button></div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card lp-card mb-3">
+                <div class="card-body">
+                    <div class="mb-3"><label asp-for="Input.Topic" class="form-label"></label><input asp-for="Input.Topic" class="form-control" /></div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label asp-for="Input.Level" class="form-label"></label>
+                            <select asp-for="Input.Level" asp-items="Html.GetEnumSelectList<CefrLevel>()" class="form-select"></select>
+                        </div>
+                        <div class="col-6"><label asp-for="Input.EstimatedMinutes" class="form-label"></label><input asp-for="Input.EstimatedMinutes" class="form-control" /></div>
+                    </div>
+                    <div class="mb-3"><label asp-for="Input.Objectives" class="form-label"></label><textarea asp-for="Input.Objectives" class="form-control" rows="3"></textarea></div>
+                    <div class="mb-3"><label asp-for="Input.CoverUrl" class="form-label"></label><input asp-for="Input.CoverUrl" class="form-control" /></div>
+                    <div class="form-check mb-3"><input asp-for="Input.IsCore" class="form-check-input" /><label asp-for="Input.IsCore" class="form-check-label"></label></div>
+                    <div class="mb-3"><label asp-for="Input.ChangeNote" class="form-label"></label><input asp-for="Input.ChangeNote" class="form-control" placeholder="e.g. fixed the verb table" /></div>
+                    @if (canEdit)
+                    {
+                        <button type="submit" class="btn btn-primary w-100 mb-2">Save</button>
+                        @if (Model.Status == ContentStatus.Draft)
+                        {
+                            <button type="submit" name="then" value="submit" class="btn btn-outline-primary w-100">Save and send for review</button>
+                        }
+                    }
+                </div>
+            </div>
+
+            <div class="card lp-card">
+                <div class="card-body">
+                    <h3 class="h6">Review history</h3>
+                    @if (history.Count == 0)
+                    {
+                        <p class="small text-muted mb-0">Not reviewed yet.</p>
+                    }
+                    @foreach (var h in history)
+                    {
+                        <div class="small mb-2">
+                            <span class="badge text-bg-light border">@h.Status</span>
+                            sent by @(h.SubmittedBy ?? "—") on @h.SubmittedAt.ToLocalTime().ToString("d MMM")
+                            @if (h.Reviewer is not null) { <span>· @h.Reviewer</span> }
+                            @if (!string.IsNullOrEmpty(h.Comment)) { <div class="text-muted">"@h.Comment"</div> }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+    <script src="~/js/lecture-editor.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                xmlns:social="clr-namespace:LinguaPath.Shared.Contracts.Social;assembly=LinguaPath.Shared"
+                x:Class="LinguaPath.Mobile.Pages.ChatPage"
+                x:DataType="vm:ChatViewModel"
+                Title="{Binding Title}">
+    <Shell.TitleView>
+        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10" Padding="0,4">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding OpenInfoCommand}" />
+            </Grid.GestureRecognizers>
+            <Border WidthRequest="36" HeightRequest="36" StrokeShape="RoundRectangle 18" Background="{StaticResource PurpleTealGradient}" StrokeThickness="0">
+                <Label Text="{Binding Avatar}" HorizontalOptions="Center" VerticalOptions="Center" TextColor="White" FontAttributes="Bold" />
+            </Border>
+            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                <Label Text="{Binding Title}" FontAttributes="Bold" LineBreakMode="TailTruncation" />
+                <Label Text="{Binding Subtitle}" FontSize="12" Style="{StaticResource Subtitle}" />
+            </VerticalStackLayout>
+        </Grid>
+    </Shell.TitleView>
+    <Grid RowDefinitions="Auto,*,Auto" Padding="10,6">
+        <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+            <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+        </Border>
+
+        <CollectionView x:Name="List" Grid.Row="1" ItemsSource="{Binding Messages}" SelectionMode="None"
+                        RemainingItemsThreshold="0">
+            <CollectionView.Header>
+                <Button Text="{l:Tr LoadEarlierMessages}" Style="{StaticResource LinkButton}" Command="{Binding LoadOlderCommand}" HorizontalOptions="Center" />
+            </CollectionView.Header>
+            <CollectionView.EmptyView>
+                <Label Text="{l:Tr NoMessagesYetSayHello}" Style="{StaticResource Subtitle}" HorizontalTextAlignment="Center" Margin="0,40" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="vm:MessageRow">
+                    <Grid Padding="2,3">
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer NumberOfTapsRequired="2" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChatViewModel}}, Path=MessageActionsCommand}" CommandParameter="{Binding .}" />
+                        </Grid.GestureRecognizers>
+                        <FlyoutBase.ContextFlyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem Text="{l:Tr Options}" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChatViewModel}}, Path=MessageActionsCommand}" CommandParameter="{Binding .}" />
+                            </MenuFlyout>
+                        </FlyoutBase.ContextFlyout>
+
+                        <!-- system line -->
+                        <Label Text="{Binding DisplayText}" IsVisible="{Binding IsSystem}" FontSize="12" Style="{StaticResource Subtitle}"
+                               HorizontalTextAlignment="Center" HorizontalOptions="Center" />
+
+                        <!-- competition card (FR-Q07, FR-C28) -->
+                        <Border Style="{StaticResource Card}" Padding="14,10" HorizontalOptions="Center" MaximumWidthRequest="340" IsVisible="{Binding IsCard}"
+                                Stroke="{StaticResource Accent}" StrokeThickness="1.5"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource AccentLight}, Dark={StaticResource AccentLightDark}}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChatViewModel}}, Path=OpenCompetitionCommand}" CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="{Binding SenderName}" FontSize="12" Style="{StaticResource Subtitle}" />
+                                <Label Text="{Binding DisplayText}" FontAttributes="Bold" />
+                                <Label Text="{l:Tr TapToOpen}" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- mine -->
+                        <Border Style="{StaticResource CardFlat}" StrokeThickness="0" StrokeShape="RoundRectangle 18" Padding="14,8" HorizontalOptions="End" MaximumWidthRequest="320" IsVisible="{Binding IsMine}"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryLightDark}}">
+                            <VerticalStackLayout Spacing="3">
+                                <Label Text="{Binding ReplyText}" FontSize="12" Style="{StaticResource Subtitle}" IsVisible="{Binding HasReply}" MaxLines="2" LineBreakMode="TailTruncation" />
+                                <Label Text="{Binding DisplayText}">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding IsDeleted}" Value="True">
+                                            <Setter Property="FontAttributes" Value="Italic" />
+                                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSecondaryDark}}" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                                <Label Text="{l:Tr SomeWordsWereHiddenByThe}" FontSize="11" Style="{StaticResource Subtitle}" IsVisible="{Binding WasMasked}" />
+                                <Label Text="{Binding ReactionsText}" IsVisible="{Binding HasReactions}" />
+                                <HorizontalStackLayout Spacing="6" HorizontalOptions="End">
+                                    <Label Text="{l:Tr Sending}" FontSize="11" Style="{StaticResource Subtitle}" IsVisible="{Binding IsPending}" />
+                                    <Label Text="{Binding TimeText}" FontSize="11" Style="{StaticResource Subtitle}" />
+                                    <Label Text="{Binding StateIcon}" FontSize="11" TextColor="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}" />
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- others -->
+                        <Border Style="{StaticResource CardFlat}" StrokeShape="RoundRectangle 18" Padding="14,8" HorizontalOptions="Start" MaximumWidthRequest="320" IsVisible="{Binding IsOther}">
+                            <VerticalStackLayout Spacing="3">
+                                <Label Text="{Binding SenderName}" FontSize="12" FontAttributes="Bold" TextColor="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}" IsVisible="{Binding ShowSender}" />
+                                <Label Text="{Binding ReplyText}" FontSize="12" Style="{StaticResource Subtitle}" IsVisible="{Binding HasReply}" MaxLines="2" LineBreakMode="TailTruncation" />
+                                <Label Text="{Binding DisplayText}">
+                                    <Label.Triggers>
+                                        <DataTrigger TargetType="Label" Binding="{Binding IsDeleted}" Value="True">
+                                            <Setter Property="FontAttributes" Value="Italic" />
+                                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource TextSecondary}, Dark={StaticResource TextSecondaryDark}}" />
+                                        </DataTrigger>
+                                    </Label.Triggers>
+                                </Label>
+                                <Label Text="{Binding Translation}" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource Success}, Dark={StaticResource SuccessDark}}" IsVisible="{Binding HasTranslation}" />
+                                <Label Text="{Binding ReactionsText}" IsVisible="{Binding HasReactions}" />
+                                <Label Text="{Binding TimeText}" FontSize="11" Style="{StaticResource Subtitle}" HorizontalOptions="End" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <VerticalStackLayout Grid.Row="2" Spacing="4" Padding="0,6,0,0">
+            <Border Style="{StaticResource Card}" Padding="10,6" IsVisible="{Binding HasCannotSend}">
+                <Label Text="{Binding CannotSendReason}" Style="{StaticResource Subtitle}" HorizontalTextAlignment="Center" />
+            </Border>
+            <Grid ColumnDefinitions="*,Auto" IsVisible="{Binding HasReply}" Padding="6,0">
+                <Label Text="{Binding ReplyPreview}" FontSize="12" Style="{StaticResource Subtitle}" LineBreakMode="TailTruncation" VerticalOptions="Center" />
+                <Button SemanticProperties.Description="{l:Tr Close}" Grid.Column="1" Text="✕" Style="{StaticResource LinkButton}" Command="{Binding CancelReplyCommand}" />
+            </Grid>
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8" IsVisible="{Binding CanSend}">
+                <Border Style="{StaticResource InputBox}">
+                    <Editor Text="{Binding Draft}" Placeholder="{l:Tr MessageDoubleTapAMessageFor}" AutoSize="TextChanges" MaxLength="1000" MaximumHeightRequest="120" />
+                </Border>
+                <Button Grid.Column="1" Text="{l:Tr Send}" Style="{StaticResource GradientButton}" Command="{Binding SendCommand}" VerticalOptions="End" />
+            </Grid>
+            <Label Text="{l:Tr LinksPhoneNumbersAndSocialAccounts}" FontSize="11" Style="{StaticResource Subtitle}"
+                   HorizontalTextAlignment="Center" IsVisible="{Binding CanSend}" />
+        </VerticalStackLayout>
+    </Grid>
+</pages:BasePage>

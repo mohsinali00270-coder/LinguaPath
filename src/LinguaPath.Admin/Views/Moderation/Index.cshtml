@@ -1,0 +1,61 @@
+@model LinguaPath.Shared.Common.PagedResult<ModerationQueueItem>
+@{
+    ViewData["Title"] = "Moderation queue";
+    var all = (bool)ViewBag.All;
+    var detectedBy = ViewBag.DetectedBy as ModerationDetector?;
+    var pager = new PagerModel
+    {
+        Page = Model.Page, TotalPages = Model.TotalPages, TotalCount = Model.TotalCount,
+        UrlFor = p => Url.Action("Index", new { all, detectedBy, search = ViewBag.Search, page = p })!
+    };
+}
+<p class="small text-muted">Reports from learners and borderline AI results wait here (<b>@ViewBag.Open</b> open).
+    Blocked words, links and spam are handled automatically and appear under <i>All events</i>.</p>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-4"><input name="search" value="@ViewBag.Search" class="form-control" placeholder="Learner name, email or text" /></div>
+    <div class="col-md-3">
+        <select name="detectedBy" class="form-select">
+            <option value="">Any source</option>
+            @foreach (var d in Enum.GetValues<ModerationDetector>())
+            {
+                <option value="@d" selected="@(detectedBy == d)">@d</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-3">
+        <select name="all" class="form-select">
+            <option value="false" selected="@(!all)">Open items</option>
+            <option value="true" selected="@all">All events</option>
+        </select>
+    </div>
+    <div class="col-md-2"><button class="btn btn-outline-primary w-100" type="submit">Filter</button></div>
+</form>
+
+<div class="card lp-card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead><tr><th>#</th><th>Learner</th><th>Source</th><th>Text</th><th>Severity</th><th>Status</th><th>When</th></tr></thead>
+            <tbody>
+            @if (Model.Items.Count == 0)
+            {
+                <tr><td colspan="7" class="text-center text-muted py-4">Nothing to review. 🎉</td></tr>
+            }
+            @foreach (var e in Model.Items)
+            {
+                <tr>
+                    <td><a asp-action="Details" asp-route-id="@e.Id">#@e.Id</a></td>
+                    <td><a asp-controller="Learners" asp-action="Details" asp-route-id="@e.UserId">@e.UserName</a>
+                        <div class="small text-muted">@e.ActiveStrikes strike(s) @if (e.UserBlocked) { <span class="badge text-bg-danger">blocked</span> }</div></td>
+                    <td>@e.DetectedBy<div class="small text-muted">@e.Category @(e.Score is { } s ? $"· {s:0}%" : "") @(e.Reports > 0 ? $"· {e.Reports} report(s)" : "")</div></td>
+                    <td class="small" style="max-width:360px">@(e.Text is { Length: > 140 } t ? t[..140] + "…" : e.Text)</td>
+                    <td><span class="badge @(e.Severity == ModerationSeverity.Severe ? "text-bg-danger" : e.Severity == ModerationSeverity.Abusive ? "text-bg-warning" : "text-bg-light border")">@e.Severity</span></td>
+                    <td>@e.ActionTaken</td>
+                    <td class="small">@e.CreatedAt.ToLocalTime().ToString("d MMM HH:mm")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+<partial name="_Pager" model="pager" />

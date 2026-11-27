@@ -1,0 +1,26 @@
+# LinguaPath API. Build from the repository root: docker build -f deploy/Dockerfile.api -t linguapath-api .
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /src
+COPY Directory.Build.props Directory.Packages.props ./
+COPY src/LinguaPath.Shared/LinguaPath.Shared.csproj src/LinguaPath.Shared/
+COPY src/LinguaPath.Domain/LinguaPath.Domain.csproj src/LinguaPath.Domain/
+COPY src/LinguaPath.Application/LinguaPath.Application.csproj src/LinguaPath.Application/
+COPY src/LinguaPath.Infrastructure/LinguaPath.Infrastructure.csproj src/LinguaPath.Infrastructure/
+COPY src/LinguaPath.Api/LinguaPath.Api.csproj src/LinguaPath.Api/
+RUN dotnet restore src/LinguaPath.Api/LinguaPath.Api.csproj
+COPY src/ src/
+RUN dotnet publish src/LinguaPath.Api/LinguaPath.Api.csproj -c Release -o /app --no-restore
+
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+WORKDIR /app
+# QuestPDF needs fontconfig; ICU is in the base image (Urdu certificates and sorting).
+RUN apt-get update && apt-get install -y --no-install-recommends fontconfig libfontconfig1 curl && rm -rf /var/lib/apt/lists/*
+COPY --from=build /app .
+ENV ASPNETCORE_HTTP_PORTS=8080 \
+    DOTNET_RUNNING_IN_CONTAINER=true \
+    Storage__LocalRoot=/data
+VOLUME ["/data", "/app/logs"]
+EXPOSE 8080
+USER $APP_UID
+HEALTHCHECK --interval=30s --timeout=5s --start-period=40s CMD curl -fsS http://localhost:8080/health/live || exit 1
+ENTRYPOINT ["dotnet", "LinguaPath.Api.dll"]

@@ -1,0 +1,48 @@
+@model LectureInput
+@{
+    ViewData["Title"] = Model.Id == 0 ? "Add lecture" : "Edit lecture";
+}
+<div class="card lp-card" style="max-width:720px">
+    <div class="card-body">
+        <p class="small text-muted">Module: <b>@ViewBag.ModuleTitle</b>. This sets the lecture's place in the roadmap; the written lesson, examples and links are added in Phase 3.</p>
+        <form asp-action="SaveLecture" method="post">
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="ModuleId" />
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small"></div>
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label"></label>
+                <input asp-for="Title" class="form-control" placeholder="Present tense of regular -ar verbs" />
+                <span asp-validation-for="Title" class="text-danger small"></span>
+            </div>
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label asp-for="Topic" class="form-label"></label>
+                    <input asp-for="Topic" class="form-control" list="topics" placeholder="Grammar" />
+                    <datalist id="topics">
+                        <option value="Grammar"></option><option value="Vocabulary"></option><option value="Pronunciation"></option>
+                        <option value="Conversation"></option><option value="Reading"></option><option value="Writing"></option><option value="Culture"></option>
+                    </datalist>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="Level" class="form-label"></label>
+                    <select asp-for="Level" asp-items="Html.GetEnumSelectList<CefrLevel>()" class="form-select"></select>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="EstimatedMinutes" class="form-label"></label>
+                    <input asp-for="EstimatedMinutes" class="form-control" />
+                    <span asp-validation-for="EstimatedMinutes" class="text-danger small"></span>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Objectives" class="form-label"></label>
+                <textarea asp-for="Objectives" class="form-control" rows="2"></textarea>
+            </div>
+            <div class="form-check mb-4">
+                <input asp-for="IsCore" class="form-check-input" />
+                <label asp-for="IsCore" class="form-check-label"></label>
+            </div>
+            <button type="submit" class="btn btn-primary">Save lecture</button>
+            <a asp-action="Builder" asp-route-id="@ViewBag.CourseId" class="btn btn-link">Back to roadmap</a>
+        </form>
+    </div>
+</div>

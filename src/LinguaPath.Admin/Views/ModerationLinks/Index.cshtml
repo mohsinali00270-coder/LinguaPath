@@ -1,0 +1,77 @@
+@model IReadOnlyList<LinkPatternItem>
+@{
+    ViewData["Title"] = "Link and contact rules";
+    var test = ViewBag.TestResult as FilterTestResult;
+}
+<p class="small text-muted">Links, emails, phone numbers and social handles are always blocked in chat, including disguised forms
+    ("example dot com", "name at gmail", numbers written as words). Add extra <b>blocked patterns</b> here, or <b>exceptions</b> that are allowed
+    (for example your own help site). Patterns are .NET regular expressions, case-insensitive. Five blocked attempts in a day add a strike.</p>
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="card lp-card">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead><tr><th>Pattern</th><th>Type</th><th>Active</th><th></th></tr></thead>
+                    <tbody>
+                    @if (Model.Count == 0) { <tr><td colspan="4" class="text-center text-muted py-4">Only the built-in detection is active.</td></tr> }
+                    @foreach (var p in Model)
+                    {
+                        <tr>
+                            <td colspan="3">
+                                <form asp-action="Save" method="post" class="d-flex gap-2 align-items-center">
+                                    <input type="hidden" name="id" value="@p.Id" />
+                                    <input name="pattern" value="@p.Pattern" class="form-control form-control-sm font-monospace" />
+                                    <input name="description" value="@p.Description" class="form-control form-control-sm" placeholder="Description" />
+                                    <select name="isException" class="form-select form-select-sm" style="width:130px">
+                                        <option value="false" selected="@(!p.IsException)">Blocked</option>
+                                        <option value="true" selected="@p.IsException">Exception</option>
+                                    </select>
+                                    <input type="checkbox" name="isActive" value="true" class="form-check-input" checked="@p.IsActive" />
+                                    <button class="btn btn-sm btn-outline-primary">Save</button>
+                                </form>
+                            </td>
+                            <td class="text-end">
+                                <form asp-action="Delete" method="post" onsubmit="return confirm('Delete this rule?')"><input type="hidden" name="id" value="@p.Id" /><button class="btn btn-sm btn-link text-danger">Delete</button></form>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card lp-card">
+            <div class="card-body">
+                <h2 class="h6">Add a rule</h2>
+                <form asp-action="Save" method="post" class="vstack gap-2">
+                    <input name="pattern" class="form-control form-control-sm font-monospace" placeholder="e.g. \bdiscord\b" required />
+                    <input name="description" class="form-control form-control-sm" placeholder="Description" />
+                    <select name="isException" class="form-select form-select-sm">
+                        <option value="false">Blocked pattern</option>
+                        <option value="true">Allowed exception</option>
+                    </select>
+                    <input type="hidden" name="isActive" value="true" />
+                    <button class="btn btn-sm btn-primary">Add</button>
+                </form>
+            </div>
+        </div>
+        <div class="card lp-card mt-3">
+            <div class="card-body">
+                <h2 class="h6">Test</h2>
+                <form method="get" class="vstack gap-2">
+                    <textarea name="test" class="form-control form-control-sm" rows="3">@ViewBag.Test</textarea>
+                    <button class="btn btn-sm btn-outline-primary">Test</button>
+                </form>
+                @if (test is not null)
+                {
+                    <div class="small mt-2">
+                        @if (test.Contacts.Count == 0) { <div class="text-success">No links or contacts found.</div> }
+                        @foreach (var c in test.Contacts) { <div class="text-danger">• @c</div> }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- LinguaPath brand: royal purple, deep navy, teal -->
+    <color name="colorPrimary">#6D28D9</color>
+    <color name="colorPrimaryDark">#0B1530</color>
+    <color name="colorAccent">#14B8A6</color>
+</resources>

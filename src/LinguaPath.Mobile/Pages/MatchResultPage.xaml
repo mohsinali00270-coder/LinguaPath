@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                xmlns:comp="clr-namespace:LinguaPath.Shared.Contracts.Competitions;assembly=LinguaPath.Shared"
+                x:Class="LinguaPath.Mobile.Pages.MatchResultPage"
+                x:DataType="vm:MatchResultViewModel"
+                Title="{l:Tr Result}">
+    <ScrollView>
+        <VerticalStackLayout Padding="16,12" Spacing="12">
+        <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+            <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+        </Border>
+            <Label Text="{Binding Headline}" Style="{StaticResource Title}" HorizontalTextAlignment="Center" />
+            <Label Text="{Binding Detail}" Style="{StaticResource Subtitle}" HorizontalTextAlignment="Center" />
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Players}" Spacing="4">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="comp:PlayerDto">
+                            <Grid ColumnDefinitions="30,*,Auto,Auto" ColumnSpacing="8">
+                                <Label Text="{Binding Rank}" />
+                                <Label Grid.Column="1" Text="{Binding DisplayName}" FontAttributes="Bold" />
+                                <Label Grid.Column="2" Text="{Binding Correct, StringFormat='{0} ✓'}" Style="{StaticResource Subtitle}" />
+                                <Label Grid.Column="3" Text="{Binding Score}" FontAttributes="Bold" />
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </Border>
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="8" IsVisible="{Binding IsFinished}">
+                <Button Text="{l:Tr Rematch}" Command="{Binding RematchCommand}" IsVisible="{Binding CanRematch}" />
+                <Button Grid.Column="1" Text="{l:Tr ShareToChat}" Style="{StaticResource OutlineButton}" Command="{Binding ShareCommand}" />
+            </Grid>
+            <Label Text="{l:Tr Review}" Style="{StaticResource SectionHeader}" />
+            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Review}" Spacing="6">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="comp:ReviewItemDto">
+                        <Border Style="{StaticResource Card}" Padding="10,8">
+                            <VerticalStackLayout Spacing="2">
+                                <Label Text="{Binding Stem}" FontAttributes="Bold" />
+                                <Label Text="{Binding MyAnswer, StringFormat='Your answer: {0}'}" FontSize="13" />
+                                <Label Text="{Binding CorrectAnswer, StringFormat='Answer: {0}'}" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource Success}, Dark={StaticResource SuccessDark}}" />
+                                <Label Text="{Binding Score, StringFormat='+{0} points'}" FontSize="12" Style="{StaticResource Subtitle}" />
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+            <Button Text="{l:Tr Done2}" Style="{StaticResource OutlineButton}" Command="{Binding DoneCommand}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</pages:BasePage>

@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:controls="clr-namespace:LinguaPath.Mobile.Controls"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                xmlns:learning="clr-namespace:LinguaPath.Shared.Contracts.Learning;assembly=LinguaPath.Shared"
+                x:Class="LinguaPath.Mobile.Pages.HomePage"
+                x:DataType="vm:HomeViewModel"
+                Shell.NavBarIsVisible="False">
+    <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
+        <ScrollView>
+            <VerticalStackLayout Spacing="0" Padding="0,0,0,28">
+
+                <!-- ============ Hero ============ -->
+                <Border Style="{StaticResource HeaderBand}" Padding="20,44,20,52">
+                    <VerticalStackLayout Spacing="20">
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                            <VerticalStackLayout Spacing="2" VerticalOptions="Center">
+                                <Label Text="{Binding Greeting}" Style="{StaticResource HeroTitle}" />
+                                <Label Text="{l:Tr Ui_KeepGoing}" Style="{StaticResource HeroText}" />
+                            </VerticalStackLayout>
+                            <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="Start">
+                                <!-- Inbox (FR-L112) with an unread badge -->
+                                <Grid WidthRequest="44" HeightRequest="44">
+                                    <Border Style="{StaticResource IconTileOnHero}" StrokeShape="RoundRectangle 22" />
+                                    <Path Style="{StaticResource IconOnHero}" Data="{StaticResource IconBell}" WidthRequest="20" HeightRequest="20" />
+                                    <Button Style="{StaticResource HitTarget}" SemanticProperties.Description="{l:Tr A11y_Notifications}"
+                                            Command="{Binding OpenNotificationsCommand}" />
+                                    <Border IsVisible="{Binding HasUnread}" BackgroundColor="{StaticResource Danger}" Stroke="White" StrokeThickness="2"
+                                            StrokeShape="RoundRectangle 10" Padding="5,0" HeightRequest="20" MinimumWidthRequest="20"
+                                            HorizontalOptions="End" VerticalOptions="Start" Margin="0,-6,-6,0" InputTransparent="True">
+                                        <Label Text="{Binding UnreadBadge}" TextColor="White" FontSize="10" FontAttributes="Bold"
+                                               HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                                    </Border>
+                                </Grid>
+                                <Grid WidthRequest="44" HeightRequest="44">
+                                    <Border Style="{StaticResource IconTileOnHero}" StrokeShape="RoundRectangle 22" />
+                                    <Path Style="{StaticResource IconOnHero}" Data="{StaticResource IconSwords}" WidthRequest="20" HeightRequest="20" />
+                                    <Button Style="{StaticResource HitTarget}" SemanticProperties.Description="{l:Tr Compete}" Command="{Binding OpenCompeteCommand}" />
+                                </Grid>
+                                <Grid WidthRequest="44" HeightRequest="44">
+                                    <Border Style="{StaticResource IconTileOnHero}" StrokeShape="RoundRectangle 22" />
+                                    <Path Style="{StaticResource IconOnHero}" Data="{StaticResource IconChat}" WidthRequest="20" HeightRequest="20" />
+                                    <Button Style="{StaticResource HitTarget}" SemanticProperties.Description="{l:Tr Chats}" Command="{Binding OpenChatsCommand}" />
+                                </Grid>
+                            </HorizontalStackLayout>
+                        </Grid>
+
+                        <!-- No course yet: start onboarding -->
+                        <VerticalStackLayout Spacing="12" IsVisible="{Binding NoCourse}">
+                            <Border Style="{StaticResource IconTileOnHero}" WidthRequest="56" HeightRequest="56" StrokeShape="RoundRectangle 18">
+                                <Path Style="{StaticResource IconOnHero}" Data="{StaticResource IconGlobe}" WidthRequest="28" HeightRequest="28" />
+                            </Border>
+                            <Label Text="{l:Tr StartYourFirstCourse}" FontSize="22" FontAttributes="Bold" TextColor="White" />
+                            <Label Text="{l:Tr PickALanguageTellUsYour}" Style="{StaticResource HeroText}" />
+                            <Button Text="{l:Tr ChooseALanguage}" Style="{StaticResource OnHeroButton}"
+                                    Command="{Binding StartCourseCommand}" HorizontalOptions="Start" Padding="24,0" />
+                        </VerticalStackLayout>
+
+                        <!-- Current course: progress ring + plan -->
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="18" IsVisible="{Binding HasCourse}">
+                            <Grid WidthRequest="112" HeightRequest="112" VerticalOptions="Center">
+                                <controls:ProgressRing Progress="{Binding ProgressFraction}" Thickness="11"
+                                                       RingColor="{StaticResource SecondaryBright}" TrackColor="#33FFFFFF" />
+                                <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="0">
+                                    <Label Text="{Binding Today.Course.ProgressPercent, StringFormat='{0}%'}" FontSize="26" FontAttributes="Bold"
+                                           TextColor="White" HorizontalTextAlignment="Center" />
+                                    <Label Text="{l:Tr Ui_Complete}" FontSize="11" TextColor="{StaticResource OnHeroMuted}" HorizontalTextAlignment="Center" />
+                                </VerticalStackLayout>
+                            </Grid>
+                            <VerticalStackLayout Grid.Column="1" Spacing="6" VerticalOptions="Center">
+                                <Label Text="{Binding CourseTitle}" FontAttributes="Bold" FontSize="17" TextColor="White" />
+                                <Border Style="{StaticResource PillOnHero}">
+                                    <Label Text="{Binding LevelText}" FontSize="12" FontAttributes="Bold" TextColor="White" />
+                                </Border>
+                                <Label Text="{Binding ProgressText}" FontSize="13" TextColor="{StaticResource OnHeroMuted}" />
+                                <Label Text="{Binding DaysLeftText}" FontSize="13" TextColor="{StaticResource OnHeroMuted}" />
+                                <Label Text="{Binding NextExamText}" IsVisible="{Binding HasNextExam}" FontSize="13" TextColor="{StaticResource OnHeroMuted}" />
+                                <Button Text="{l:Tr Plan}" Style="{StaticResource HeroChipButton}" Command="{Binding OpenSettingsCommand}" Margin="0,4,0,0" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- ============ Stats (float over the hero edge) ============ -->
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10" Margin="16,-32,16,0" IsVisible="{Binding HasCourse}">
+                    <Border Style="{StaticResource Card}" Padding="12,14">
+                        <VerticalStackLayout Spacing="6">
+                            <Border Style="{StaticResource IconTileAmber}" WidthRequest="36" HeightRequest="36" StrokeShape="RoundRectangle 12">
+                                <Path Style="{StaticResource IconAmber}" Data="{StaticResource IconFlame}" Fill="{StaticResource Accent}" WidthRequest="18" HeightRequest="18" />
+                            </Border>
+                            <Label Text="{Binding Today.StreakDays}" Style="{StaticResource StatValue}" />
+                            <Label Text="{l:Tr DayStreak}" Style="{StaticResource StatLabel}" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="1" Style="{StaticResource Card}" Padding="12,14">
+                        <VerticalStackLayout Spacing="6">
+                            <Border Style="{StaticResource IconTile}" WidthRequest="36" HeightRequest="36" StrokeShape="RoundRectangle 12">
+                                <Path Style="{StaticResource Icon}" Data="{StaticResource IconZap}" WidthRequest="18" HeightRequest="18" />
+                            </Border>
+                            <Label Text="{Binding Today.Points, StringFormat='{0:N0}'}" Style="{StaticResource StatValue}" />
+                            <Label Text="{l:Tr Points}" Style="{StaticResource StatLabel}" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Border Grid.Column="2" Style="{StaticResource Card}" Padding="12,14">
+                        <VerticalStackLayout Spacing="6">
+                            <Border Style="{StaticResource IconTileTeal}" WidthRequest="36" HeightRequest="36" StrokeShape="RoundRectangle 12">
+                                <Path Style="{StaticResource IconTeal}" Data="{StaticResource IconTarget}" WidthRequest="18" HeightRequest="18" />
+                            </Border>
+                            <Label Text="{Binding Today.Course.ProgressPercent, StringFormat='{0}%'}" Style="{StaticResource StatValue}" />
+                            <Label Text="{l:Tr Roadmap}" Style="{StaticResource StatLabel}" />
+                        </VerticalStackLayout>
+                    </Border>
+                </Grid>
+
+                <VerticalStackLayout Padding="16,16,16,0" Spacing="14">
+                    <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+                        <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+                    </Border>
+
+                    <VerticalStackLayout IsVisible="{Binding HasCourse}" Spacing="14">
+                        <Border Style="{StaticResource CardFlat}" IsVisible="{Binding HasSeveralCourses}" Padding="14,2">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                                <Path Style="{StaticResource IconSmall}" Data="{StaticResource IconGlobe}" />
+                                <Picker Grid.Column="1" ItemsSource="{Binding MyCourses}" SelectedItem="{Binding SelectedCourse}" Title="{l:Tr Course}"
+                                        ItemDisplayBinding="{Binding LanguageName, x:DataType=learning:LearnerCourseDto}" />
+                            </Grid>
+                        </Border>
+
+                        <Border Style="{StaticResource WarningBanner}" IsVisible="{Binding IsPaused}">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                                <Path Style="{StaticResource IconAmber}" Data="{StaticResource IconClock}" WidthRequest="18" HeightRequest="18" />
+                                <Label Grid.Column="1" Text="{Binding PausedText}" />
+                            </Grid>
+                        </Border>
+                        <Border Style="{StaticResource WarningBanner}" IsVisible="{Binding IsBehind}">
+                            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                                <Path Style="{StaticResource IconAmber}" Data="{StaticResource IconFlame}" WidthRequest="18" HeightRequest="18" />
+                                <Label Grid.Column="1" Text="{Binding BehindText}" TextColor="{AppThemeBinding Light={StaticResource Warning}, Dark={StaticResource WarningDark}}" FontAttributes="Bold" />
+                            </Grid>
+                        </Border>
+
+                        <!-- Daily quiz (FR-L50) -->
+                        <Border Style="{StaticResource Card}" IsVisible="{Binding HasDailyQuiz}">
+                            <VerticalStackLayout Spacing="12">
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                    <Border Style="{StaticResource IconTile}">
+                                        <Path Style="{StaticResource Icon}" Data="{StaticResource IconSparkle}" />
+                                    </Border>
+                                    <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="2">
+                                        <Label Text="{l:Tr DailyQuiz}" Style="{StaticResource CardTitle}" />
+                                        <Label Text="{Binding DailyQuizText}" Style="{StaticResource Caption}" />
+                                    </VerticalStackLayout>
+                                    <Border Grid.Column="2" Style="{StaticResource PillSuccess}" IsVisible="{Binding DailyQuizDone}" VerticalOptions="Start">
+                                        <Label Text="{l:Tr Done}" Style="{StaticResource PillTextSuccess}" />
+                                    </Border>
+                                </Grid>
+                                <Border Style="{StaticResource InfoBanner}" Padding="12,8" IsVisible="{Binding ReviewDueText, Converter={StaticResource HasText}}">
+                                    <Label Text="{Binding ReviewDueText}" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}" />
+                                </Border>
+                                <Button Text="{Binding DailyQuizButton}" Style="{StaticResource GradientButton}" Command="{Binding StartDailyQuizCommand}" IsVisible="{Binding CanStartDailyQuiz}" />
+                            </VerticalStackLayout>
+                        </Border>
+
+                        <!-- Quick actions -->
+                        <Label Text="{l:Tr Ui_QuickActions}" Style="{StaticResource SectionHeader}" Margin="4,6,4,0" />
+                        <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" ColumnSpacing="12" RowSpacing="12">
+                            <Border Style="{StaticResource CardFlat}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OpenExamsCommand}" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="10" SemanticProperties.Description="{l:Tr MonthlyExams2}">
+                                    <Border Style="{StaticResource IconTile}">
+                                        <Path Style="{StaticResource Icon}" Data="{StaticResource IconGrad}" />
+                                    </Border>
+                                    <Label Text="{l:Tr MonthlyExams2}" FontAttributes="Bold" FontSize="14" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Column="1" Style="{StaticResource CardFlat}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OpenMarksCommand}" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="10" SemanticProperties.Description="{l:Tr MyMarks}">
+                                    <Border Style="{StaticResource IconTileTeal}">
+                                        <Path Style="{StaticResource IconTeal}" Data="{StaticResource IconChart}" />
+                                    </Border>
+                                    <Label Text="{l:Tr MyMarks}" FontAttributes="Bold" FontSize="14" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Row="1" Style="{StaticResource CardFlat}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OpenPostsCommand}" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="10" SemanticProperties.Description="{l:Tr TipsPosts}">
+                                    <Border Style="{StaticResource IconTileAmber}">
+                                        <Path Style="{StaticResource IconAmber}" Data="{StaticResource IconBulb}" />
+                                    </Border>
+                                    <Label Text="{l:Tr TipsPosts}" FontAttributes="Bold" FontSize="14" />
+                                </VerticalStackLayout>
+                            </Border>
+                            <Border Grid.Row="1" Grid.Column="1" Style="{StaticResource CardFlat}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding OpenBookmarksCommand}" />
+                                </Border.GestureRecognizers>
+                                <VerticalStackLayout Spacing="10" SemanticProperties.Description="{l:Tr Bookmarks2}">
+                                    <Border Style="{StaticResource IconTile}">
+                                        <Path Style="{StaticResource Icon}" Data="{StaticResource IconBookmark}" />
+                                    </Border>
+                                    <Label Text="{l:Tr Bookmarks2}" FontAttributes="Bold" FontSize="14" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </Grid>
+
+                        <!-- Today / up next -->
+                        <Grid ColumnDefinitions="*,Auto" Margin="0,6,0,0">
+                            <Label Text="{Binding TodayHeader}" Style="{StaticResource SectionHeader}" Margin="4,0" VerticalOptions="Center" />
+                            <Button Grid.Column="1" Text="{l:Tr SeeFullRoadmap}" Style="{StaticResource LinkButton}" FontSize="13" Command="{Binding OpenRoadmapCommand}" />
+                        </Grid>
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding NextLectures}" Spacing="10">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="learning:RoadmapLectureDto">
+                                    <Border Style="{StaticResource Card}" Padding="14">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HomeViewModel}}, Path=OpenLectureCommand}"
+                                                                  CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                            <Border Style="{StaticResource IconTile}" BackgroundColor="{Binding State, Converter={StaticResource StateTint}}">
+                                                <Path Style="{StaticResource Icon}" Data="{Binding State, Converter={StaticResource StateIcon}}"
+                                                      Stroke="{Binding State, Converter={StaticResource StateColor}}" WidthRequest="18" HeightRequest="18" />
+                                            </Border>
+                                            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                                <Label Text="{Binding Title}" FontAttributes="Bold" />
+                                                <Label Style="{StaticResource Caption}">
+                                                    <Label.FormattedText>
+                                                        <FormattedString>
+                                                            <Span Text="{Binding Topic}" />
+                                                            <Span Text=" · " />
+                                                            <Span Text="{Binding EstimatedMinutes, StringFormat='{0} min'}" />
+                                                            <Span Text=" · " />
+                                                            <Span Text="{Binding PlannedDate, StringFormat='{0:ddd d MMM}'}" />
+                                                        </FormattedString>
+                                                    </Label.FormattedText>
+                                                </Label>
+                                            </VerticalStackLayout>
+                                            <Border Grid.Column="2" Style="{StaticResource Pill}" BackgroundColor="{Binding State, Converter={StaticResource StateTint}}">
+                                                <Label Text="{Binding State, Converter={StaticResource StateText}}" FontSize="12" FontAttributes="Bold"
+                                                       TextColor="{Binding State, Converter={StaticResource StateColor}}" />
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+
+                        <Button Text="{l:Tr LearnAnotherLanguage}" Style="{StaticResource TonalButton}" Command="{Binding StartCourseCommand}" Margin="0,6,0,0" />
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+</pages:BasePage>

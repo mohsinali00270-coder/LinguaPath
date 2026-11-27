@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                xmlns:social="clr-namespace:LinguaPath.Shared.Contracts.Social;assembly=LinguaPath.Shared"
+                x:Class="LinguaPath.Mobile.Pages.ChatsPage"
+                x:DataType="vm:ChatsViewModel"
+                Title="{Binding Title}">
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="{l:Tr Archived}" Command="{Binding ToggleArchivedCommand}" Order="Secondary" />
+        <ToolbarItem Text="{l:Tr FindGroups}" Command="{Binding FindGroupsCommand}" Order="Secondary" />
+    </ContentPage.ToolbarItems>
+    <Grid RowDefinitions="Auto,*,Auto" Padding="12,8">
+        <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+            <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+        </Border>
+        <RefreshView Grid.Row="1" Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsRefreshing}">
+            <CollectionView ItemsSource="{Binding Chats}" SelectionMode="None">
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout Padding="24,60" Spacing="8">
+                        <Label Text="{l:Tr NoChatsYet}" Style="{StaticResource Title}" HorizontalTextAlignment="Center" />
+                        <Label Text="{l:Tr FindLearnersInPeopleOrJoin}" Style="{StaticResource Subtitle}" HorizontalTextAlignment="Center" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:ChatRow">
+                        <Grid ColumnDefinitions="48,*,Auto" ColumnSpacing="12" Padding="4,10">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChatsViewModel}}, Path=OpenCommand}" CommandParameter="{Binding .}" />
+                            </Grid.GestureRecognizers>
+                            <FlyoutBase.ContextFlyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem Text="{l:Tr Options}" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChatsViewModel}}, Path=ActionsCommand}" CommandParameter="{Binding .}" />
+                                </MenuFlyout>
+                            </FlyoutBase.ContextFlyout>
+                            <Border WidthRequest="48" HeightRequest="48" StrokeShape="RoundRectangle 24" Background="{StaticResource PurpleTealGradient}" StrokeThickness="0">
+                                <Grid>
+                                    <Label Text="{Binding Avatar}" FontSize="20" HorizontalOptions="Center" VerticalOptions="Center" TextColor="White" FontAttributes="Bold" />
+                                    <Image SemanticProperties.Description="{l:Tr ProfilePhoto}" Source="{Binding PhotoUrl}" Aspect="AspectFill" IsVisible="{Binding HasPhoto}" />
+                                </Grid>
+                            </Border>
+                            <Ellipse WidthRequest="12" HeightRequest="12" Fill="{StaticResource Success}" HorizontalOptions="End" VerticalOptions="End" IsVisible="{Binding IsOnline}" />
+                            <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                <Label Text="{Binding Title}" FontAttributes="Bold" LineBreakMode="TailTruncation" />
+                                <Label Text="{Binding Preview}" Style="{StaticResource Subtitle}" FontSize="13" LineBreakMode="TailTruncation" MaxLines="1" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="2" Spacing="4" HorizontalOptions="End" VerticalOptions="Center">
+                                <Label Text="{Binding TimeText}" FontSize="12" Style="{StaticResource Subtitle}" HorizontalTextAlignment="End" />
+                                <HorizontalStackLayout Spacing="4" HorizontalOptions="End">
+                                    <Label Text="🔕" FontSize="12" IsVisible="{Binding IsMuted}" />
+                                    <Border BackgroundColor="{StaticResource Primary}" StrokeShape="RoundRectangle 10" Padding="7,1" StrokeThickness="0" IsVisible="{Binding HasUnread}">
+                                        <Label Text="{Binding UnreadText}" TextColor="White" FontSize="12" FontAttributes="Bold" />
+                                    </Border>
+                                    <Button SemanticProperties.Description="{l:Tr MoreOptions}" Text="⋯" Style="{StaticResource LinkButton}" Padding="4,0" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ChatsViewModel}}, Path=ActionsCommand}" CommandParameter="{Binding .}" />
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+        <Grid Grid.Row="2" ColumnDefinitions="*,*" ColumnSpacing="8" Padding="0,8,0,0">
+            <Button Text="{l:Tr NewChat}" Command="{Binding NewChatCommand}" />
+            <Button Grid.Column="1" Text="{l:Tr NewGroup}" Style="{StaticResource OutlineButton}" Command="{Binding NewGroupCommand}" />
+        </Grid>
+    </Grid>
+</pages:BasePage>

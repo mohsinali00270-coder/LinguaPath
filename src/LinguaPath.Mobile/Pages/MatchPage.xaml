@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                xmlns:comp="clr-namespace:LinguaPath.Shared.Contracts.Competitions;assembly=LinguaPath.Shared"
+                x:Class="LinguaPath.Mobile.Pages.MatchPage"
+                x:DataType="vm:MatchViewModel"
+                Title="{Binding Title}">
+    <Grid RowDefinitions="Auto,Auto,*" Padding="14,8" RowSpacing="8">
+        <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+            <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+        </Border>
+        <!-- players and their progress (FR-Q03) -->
+        <VerticalStackLayout Grid.Row="1" Spacing="4">
+            <Label Text="{Binding Subtitle}" Style="{StaticResource Subtitle}" FontSize="12" HorizontalTextAlignment="Center" />
+            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Players}" Spacing="4">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="vm:PlayerRow">
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                            <Label Text="{Binding RankText}" FontSize="12" VerticalOptions="Center" WidthRequest="28" />
+                            <VerticalStackLayout Grid.Column="1" Spacing="2">
+                                <Label Text="{Binding Name}" FontSize="13" LineBreakMode="TailTruncation" />
+                                <ProgressBar Progress="{Binding Progress}" ProgressColor="{StaticResource Primary}" />
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Text="{Binding Score}" FontAttributes="Bold" VerticalOptions="Center" />
+                        </Grid>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+
+        <ScrollView Grid.Row="2">
+            <VerticalStackLayout Spacing="12">
+                <!-- lobby -->
+                <Border Style="{StaticResource Card}" IsVisible="{Binding IsLobby}">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="{Binding LobbyText}" FontSize="16" HorizontalTextAlignment="Center" />
+                        <ActivityIndicator IsRunning="{Binding IsLobby}" HeightRequest="24" />
+                        <Button Text="{l:Tr Accept}" Command="{Binding AcceptCommand}" IsVisible="{Binding CanAccept}" />
+                        <Button Text="{l:Tr Decline}" Style="{StaticResource OutlineButton}" Command="{Binding DeclineCommand}" IsVisible="{Binding CanAccept}" />
+                        <Button Text="{l:Tr PlayMyRun}" Command="{Binding PlayCommand}" IsVisible="{Binding CanPlay}" />
+                        <Button Text="{l:Tr PlayThePracticeBot}" Command="{Binding BotCommand}" IsVisible="{Binding CanBot}" />
+                        <Button Text="{l:Tr JoinTheBattle}" Command="{Binding JoinCommand}" IsVisible="{Binding CanJoin}" />
+                        <Button Text="{l:Tr StartNow}" Command="{Binding StartNowCommand}" IsVisible="{Binding CanStart}" />
+                        <Button Text="{l:Tr Cancel}" Style="{StaticResource LinkButton}" Command="{Binding CancelCommand}" IsVisible="{Binding CanCancel}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- question -->
+                <VerticalStackLayout Spacing="10" IsVisible="{Binding HasQuestion}">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="{Binding QuestionNumber}" Style="{StaticResource Subtitle}" />
+                        <Label Grid.Column="1" Text="{Binding SecondsLeft, StringFormat='{0} s'}" FontAttributes="Bold" FontSize="18" />
+                    </Grid>
+                    <ProgressBar Progress="{Binding TimeProgress}" ProgressColor="{StaticResource Accent}" />
+                    <Label Text="{Binding Stem}" FontSize="20" FontAttributes="Bold" />
+                    <Button Text="{l:Tr Listen}" Style="{StaticResource OutlineButton}" Command="{Binding ListenCommand}" IsVisible="{Binding IsListen}" HorizontalOptions="Start" />
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Options}" Spacing="8">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="vm:OptionRow">
+                                <Border Style="{StaticResource ChoiceCard}">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:MatchViewModel}}, Path=ChooseCommand}" CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsRight}" Value="True">
+                                            <Setter Property="BackgroundColor" Value="#D1FADF" />
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsWrong}" Value="True">
+                                            <Setter Property="BackgroundColor" Value="#FEE4E2" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Label Text="{Binding Text}" FontSize="16" />
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8" IsVisible="{Binding IsFillBlank}">
+                        <Border Style="{StaticResource InputBox}">
+                            <Entry Text="{Binding FillText}" Placeholder="{l:Tr TypeTheMissingWord}" ReturnCommand="{Binding SubmitTextCommand}" IsEnabled="{Binding IsOpen}" />
+                        </Border>
+                        <Button Grid.Column="1" Text="{l:Tr Send}" Command="{Binding SubmitTextCommand}" IsEnabled="{Binding IsOpen}" />
+                    </Grid>
+                    <Label Text="{Binding StatusLine}" Style="{StaticResource Subtitle}" HorizontalTextAlignment="Center" />
+                </VerticalStackLayout>
+
+                <!-- result after each question (FR-Q10 live leaderboard) -->
+                <Border Style="{StaticResource Card}" IsVisible="{Binding ShowingResult}">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="{Binding ResultText}" FontAttributes="Bold" FontSize="16" />
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Leaderboard}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="comp:PlayerScoreDto">
+                                    <Grid ColumnDefinitions="30,*,Auto">
+                                        <Label Text="{Binding Rank}" FontSize="13" />
+                                        <Label Grid.Column="1" Text="{Binding DisplayName}" FontSize="13" />
+                                        <Label Grid.Column="2" Text="{Binding Score}" FontSize="13" FontAttributes="Bold" />
+                                    </Grid>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Button Text="{l:Tr LeaveMatch}" Style="{StaticResource LinkButton}" Command="{Binding LeaveCommand}" IsVisible="{Binding CanLeave}" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</pages:BasePage>

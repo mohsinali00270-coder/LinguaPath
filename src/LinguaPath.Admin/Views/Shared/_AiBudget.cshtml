@@ -1,0 +1,17 @@
+@model LinguaPath.Application.Features.Ai.AiBudgetStatus
+@{
+    var bar = Model.IsExceeded ? "bg-danger" : Model.IsAlert ? "bg-warning" : "bg-success";
+}
+<div class="small mb-1 d-flex justify-content-between">
+    <span>AI budget this month</span>
+    <span><b>$@Model.Spent.ToString("0.00")</b> of $@Model.Budget.ToString("0.##") (@Model.Percent%)</span>
+</div>
+<div class="progress" style="height:8px"><div class="progress-bar @bar" style="width:@Math.Min(100, Model.Percent)%"></div></div>
+@if (Model.IsExceeded)
+{
+    <div class="small text-danger mt-1">Budget used up: new AI jobs pause until next month or until the budget is raised in Settings.</div>
+}
+else if (Model.IsAlert)
+{
+    <div class="small text-warning mt-1">@Model.Percent% of the budget is used.</div>
+}

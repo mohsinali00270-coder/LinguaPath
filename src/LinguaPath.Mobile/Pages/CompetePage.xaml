@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                xmlns:comp="clr-namespace:LinguaPath.Shared.Contracts.Competitions;assembly=LinguaPath.Shared"
+                x:Class="LinguaPath.Mobile.Pages.CompetePage"
+                x:DataType="vm:CompeteViewModel"
+                Title="{l:Tr Compete}">
+    <ScrollView>
+        <VerticalStackLayout Padding="16,10" Spacing="12">
+        <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+            <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+        </Border>
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="{l:Tr Language}" Style="{StaticResource FieldLabel}" />
+                    <Picker ItemsSource="{Binding Languages}" ItemDisplayBinding="{Binding Label, x:DataType=vm:LanguageChoice}" SelectedItem="{Binding Language}" />
+                    <Label Text="{l:Tr StartACourseToCompeteIn}" Style="{StaticResource Subtitle}" IsVisible="{Binding NoCourse}" />
+                    <Button Text="{l:Tr QuickMatch}" Command="{Binding QuickMatchCommand}" />
+                    <Button Text="{l:Tr ChallengeAFriend}" Style="{StaticResource OutlineButton}" Command="{Binding ChallengeCommand}" />
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                        <Button Text="{l:Tr Tournaments}" Style="{StaticResource OutlineButton}" Command="{Binding TournamentsCommand}" />
+                        <Button Grid.Column="1" Text="{l:Tr MyLeague}" Style="{StaticResource OutlineButton}" Command="{Binding LeagueCommand}" />
+                    </Grid>
+                    <Label Text="{Binding StatsText}" Style="{StaticResource Subtitle}" FontSize="12" />
+                    <Label Text="{Binding LimitText}" Style="{StaticResource Subtitle}" FontSize="12" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="{l:Tr Now}" Style="{StaticResource SectionHeader}" IsVisible="{Binding HasActive}" />
+            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Active}" Spacing="6">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="vm:CompetitionRow">
+                        <Border Style="{StaticResource Card}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CompeteViewModel}}, Path=OpenCommand}" CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="*,Auto">
+                                <VerticalStackLayout Spacing="2">
+                                    <Label Text="{Binding Title}" FontAttributes="Bold" />
+                                    <Label Text="{Binding Detail}" Style="{StaticResource Subtitle}" FontSize="12" />
+                                    <Label Text="{Binding Status}" FontSize="13" TextColor="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}" />
+                                </VerticalStackLayout>
+                                <Label Grid.Column="1" Text="👉" FontSize="20" IsVisible="{Binding NeedsAction}" VerticalOptions="Center" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+            <Label Text="{l:Tr RecentMatches}" Style="{StaticResource SectionHeader}" />
+            <Label Text="{l:Tr NoMatchesYetTryAQuick}" Style="{StaticResource Subtitle}" IsVisible="{Binding NoHistory}" />
+            <VerticalStackLayout BindableLayout.ItemsSource="{Binding History}" Spacing="2">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="vm:CompetitionRow">
+                        <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10" Padding="0,6">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CompeteViewModel}}, Path=OpenCommand}" CommandParameter="{Binding .}" />
+                            </Grid.GestureRecognizers>
+                            <Label Text="{Binding Mode}" FontSize="12" VerticalOptions="Center" />
+                            <VerticalStackLayout Grid.Column="1">
+                                <Label Text="{Binding Title}" LineBreakMode="TailTruncation" />
+                                <Label Text="{Binding Status}" Style="{StaticResource Subtitle}" FontSize="12" />
+                            </VerticalStackLayout>
+                            <Label Grid.Column="2" Text="{Binding When}" Style="{StaticResource Subtitle}" FontSize="12" VerticalOptions="Center" />
+                        </Grid>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</pages:BasePage>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                xmlns:social="clr-namespace:LinguaPath.Shared.Contracts.Social;assembly=LinguaPath.Shared"
+                x:Class="LinguaPath.Mobile.Pages.GroupCreatePage"
+                x:DataType="vm:GroupCreateViewModel"
+                Title="{l:Tr NewGroup2}">
+    <Grid RowDefinitions="*,Auto" Padding="16,8">
+        <ScrollView>
+            <VerticalStackLayout Spacing="10">
+                <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+                    <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+                </Border>
+                <Label Text="{l:Tr Icon}" Style="{StaticResource FieldLabel}" />
+                <FlexLayout BindableLayout.ItemsSource="{Binding Icons}" Wrap="Wrap">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:IconChoice">
+                            <Border Style="{StaticResource Chip}" Margin="3" Padding="10,6">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:GroupCreateViewModel}}, Path=PickIconCommand}" CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Border.Triggers>
+                                    <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                        <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryLightDark}}" />
+                                    </DataTrigger>
+                                </Border.Triggers>
+                                <Label Text="{Binding Emoji}" FontSize="20" />
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </FlexLayout>
+                <Label Text="{l:Tr Name}" Style="{StaticResource FieldLabel}" />
+                <Border Style="{StaticResource InputBox}"><Entry Text="{Binding Name}" MaxLength="80" Placeholder="{l:Tr EGSpanishB1Practice}" /></Border>
+                <Label Text="{Binding Errors[Name]}" Style="{StaticResource FieldError}" IsVisible="{Binding Errors[Name], Converter={StaticResource HasText}}" />
+                <Label Text="{l:Tr DescriptionOptional}" Style="{StaticResource FieldLabel}" />
+                <Border Style="{StaticResource InputBox}"><Editor Text="{Binding Description}" MaxLength="500" AutoSize="TextChanges" /></Border>
+                <Grid ColumnDefinitions="*,Auto">
+                    <VerticalStackLayout>
+                        <Label Text="{l:Tr PublicGroup}" FontAttributes="Bold" />
+                        <Label Text="{l:Tr AnyoneCanFindAndJoinIt}" Style="{StaticResource Subtitle}" FontSize="12" />
+                    </VerticalStackLayout>
+                    <Switch Grid.Column="1" IsToggled="{Binding IsPublic}" />
+                </Grid>
+                <Label Text="{l:Tr AddFriends}" Style="{StaticResource SectionHeader}" />
+                <Label Text="{l:Tr YouCanInviteFriendsLaterToo}" Style="{StaticResource Subtitle}" IsVisible="{Binding NoFriends}" />
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Friends}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:SelectablePerson">
+                            <Grid ColumnDefinitions="Auto,*" Padding="0,4">
+                                <CheckBox IsChecked="{Binding IsSelected}" />
+                                <Label Grid.Column="1" Text="{Binding Name}" VerticalOptions="Center" />
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+        <Button Grid.Row="1" Text="{l:Tr CreateGroup}" Command="{Binding CreateCommand}" IsEnabled="{Binding IsNotBusy}" Margin="0,8,0,0" />
+    </Grid>
+</pages:BasePage>

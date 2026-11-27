@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                x:Class="LinguaPath.Mobile.Pages.ExamsPage"
+                x:DataType="vm:ExamsViewModel"
+                Title="{l:Tr MonthlyExams}">
+    <Grid RowDefinitions="Auto,*" Padding="16,8,16,0" RowSpacing="8">
+        <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+            <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+        </Border>
+        <RefreshView Grid.Row="1" IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshCommand}">
+            <CollectionView ItemsSource="{Binding Exams}">
+                <CollectionView.Header>
+                    <Border Style="{StaticResource InfoBanner}" Margin="0,0,0,12">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Path Style="{StaticResource Icon}" Data="{StaticResource IconGrad}" WidthRequest="20" HeightRequest="20" />
+                            <Label Grid.Column="1" Text="{l:Tr OneExamPerMonthOfYour}" FontSize="13"
+                                   TextColor="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}" />
+                        </Grid>
+                    </Border>
+                </CollectionView.Header>
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout IsVisible="{Binding IsEmpty}" Spacing="12" Margin="0,40" HorizontalOptions="Center">
+                        <Border Style="{StaticResource IconTile}" WidthRequest="64" HeightRequest="64" StrokeShape="RoundRectangle 22" HorizontalOptions="Center">
+                            <Path Style="{StaticResource Icon}" Data="{StaticResource IconGrad}" WidthRequest="30" HeightRequest="30" />
+                        </Border>
+                        <Label Text="{l:Tr NoExamsForThisCourseYet}" HorizontalTextAlignment="Center" Style="{StaticResource Subtitle}" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:ExamItem">
+                        <Border Style="{StaticResource Card}" Margin="0,0,0,10">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border" Binding="{Binding IsLocked}" Value="True">
+                                    <Setter Property="Opacity" Value="0.6" />
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <VerticalStackLayout Spacing="10">
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                                    <Border Style="{StaticResource IconTile}">
+                                        <Path Style="{StaticResource Icon}" Data="{StaticResource IconGrad}" />
+                                    </Border>
+                                    <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                                        <Label Text="{Binding Title}" Style="{StaticResource CardTitle}" />
+                                        <Label Text="{Binding Meta}" Style="{StaticResource Caption}" />
+                                    </VerticalStackLayout>
+                                    <Border Grid.Column="2" Style="{StaticResource PillSuccess}" IsVisible="{Binding IsPassed}" VerticalOptions="Start">
+                                        <Path Style="{StaticResource IconSmall}" Data="{StaticResource IconCheck}" WidthRequest="14" HeightRequest="14"
+                                              Stroke="{AppThemeBinding Light={StaticResource Success}, Dark={StaticResource SuccessDark}}" />
+                                    </Border>
+                                </Grid>
+                                <Label Text="{Binding Status}" FontAttributes="Bold" />
+                                <Label Text="{Binding Progress}" Style="{StaticResource Caption}" FontSize="12" />
+                                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                    <Button Text="{Binding ActionText}" Style="{StaticResource GradientButton}" IsVisible="{Binding CanStart}"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ExamsViewModel}}, Path=StartCommand}" CommandParameter="{Binding .}" />
+                                    <Button Grid.Column="1" Text="{l:Tr SeeResult}" Style="{StaticResource TonalButton}" IsVisible="{Binding HasResult}"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ExamsViewModel}}, Path=OpenResultCommand}" CommandParameter="{Binding .}" />
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</pages:BasePage>

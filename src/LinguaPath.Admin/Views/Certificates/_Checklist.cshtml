@@ -1,0 +1,10 @@
+@model LinguaPath.Shared.Contracts.Certificates.CertificateProgressDto
+<ul class="list-unstyled mb-0">
+    @foreach (var item in Model.Checklist)
+    {
+        <li class="mb-1">
+            @(item.Done ? "✅" : "⬜") @item.Text
+            @if (!string.IsNullOrEmpty(item.Detail)) { <span class="small text-muted">· @item.Detail</span> }
+        </li>
+    }
+</ul>

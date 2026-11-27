@@ -1,0 +1,28 @@
+@model IReadOnlyList<CertificateTemplateListItem>
+@{
+    ViewData["Title"] = "Certificate templates";
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <p class="small text-muted mb-0">The active template for a language is used for its new certificates; otherwise the active default (no language).</p>
+    <a asp-action="Create" class="btn btn-primary btn-sm">New template</a>
+</div>
+<div class="card lp-card">
+    <table class="table table-hover align-middle mb-0">
+        <thead><tr><th>Name</th><th>Language</th><th>Status</th><th>Updated</th><th></th></tr></thead>
+        <tbody>
+        @foreach (var t in Model)
+        {
+            <tr>
+                <td><a asp-action="Edit" asp-route-id="@t.Id"><b>@t.Name</b></a></td>
+                <td>@(t.Language ?? "Default (all languages)")</td>
+                <td>@(t.IsActive ? "Active" : "Inactive")</td>
+                <td>@t.UpdatedAt?.ToLocalTime().ToString("d MMM yyyy")</td>
+                <td class="text-end">
+                    <a class="btn btn-sm btn-outline-secondary" asp-action="Preview" asp-route-id="@t.Id" target="_blank">Preview</a>
+                    <form asp-action="Delete" asp-route-id="@t.Id" method="post" class="d-inline" data-confirm="Delete this template?"><button class="btn btn-sm btn-outline-danger">Delete</button></form>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

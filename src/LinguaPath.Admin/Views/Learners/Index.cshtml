@@ -1,0 +1,50 @@
+@model LearnerIndexViewModel
+@{
+    ViewData["Title"] = "Learners";
+    var pager = new PagerModel
+    {
+        Page = Model.Results.Page,
+        TotalPages = Model.Results.TotalPages,
+        TotalCount = Model.Results.TotalCount,
+        UrlFor = p => Url.Action("Index", new { search = Model.Search, status = Model.Status, page = p })!
+    };
+}
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-5">
+        <input name="search" value="@Model.Search" class="form-control" placeholder="Search name or email" />
+    </div>
+    <div class="col-md-3">
+        <select class="form-select" asp-for="Status" asp-items="Html.GetEnumSelectList<LearnerStatusFilter>()"></select>
+    </div>
+    <div class="col-md-2">
+        <button class="btn btn-outline-primary w-100" type="submit">Filter</button>
+    </div>
+</form>
+
+<div class="card lp-card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+            <tr><th>Name</th><th>Email</th><th>Native language</th><th>Status</th><th>Joined</th><th>Last sign-in</th></tr>
+            </thead>
+            <tbody>
+            @if (Model.Results.Items.Count == 0)
+            {
+                <tr><td colspan="6" class="text-center text-muted py-4">No learners match.</td></tr>
+            }
+            @foreach (var l in Model.Results.Items)
+            {
+                <tr>
+                    <td><a asp-action="Details" asp-route-id="@l.Id">@l.FullName</a></td>
+                    <td>@l.Email</td>
+                    <td>@(l.NativeLanguage ?? "—")</td>
+                    <td><partial name="_LearnerStatus" model="(l.EmailConfirmed, l.IsActive, l.IsBlocked)" /></td>
+                    <td class="small text-muted">@l.CreatedAt.ToLocalTime().ToString("d")</td>
+                    <td class="small text-muted">@(l.LastLoginAt?.ToLocalTime().ToString("g") ?? "Never")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+<partial name="_Pager" model="pager" />

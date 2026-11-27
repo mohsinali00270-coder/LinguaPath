@@ -1,0 +1,46 @@
+﻿@model IReadOnlyList<CourseListItem>
+@{
+    ViewData["Title"] = "Courses & roadmaps";
+    var languageId = ViewBag.LanguageId as int?;
+}
+<form method="get" class="row g-2 mb-3 align-items-center">
+    <div class="col-md-4">
+        <select name="languageId" class="form-select" asp-items="ViewBag.Languages" onchange="this.form.submit()">
+            <option value="">All languages</option>
+        </select>
+    </div>
+    <div class="col text-end">
+        <a class="btn btn-outline-info btn-sm" asp-controller="AiRequests" asp-action="Roadmap" asp-route-languageId="@languageId">Generate roadmap with AI</a>
+        <a class="btn btn-primary btn-sm" asp-action="Create" asp-route-languageId="@languageId">Add course</a>
+    </div>
+</form>
+
+<div class="card lp-card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+            <tr><th>Course</th><th>Language</th><th>Levels</th><th>Status</th><th class="text-end">Modules</th><th class="text-end">Lectures</th><th class="text-end">Hours</th><th class="text-end">Learners</th><th></th></tr>
+            </thead>
+            <tbody>
+            @if (Model.Count == 0)
+            {
+                <tr><td colspan="9" class="text-center text-muted py-4">No courses yet. Add one to start building a roadmap.</td></tr>
+            }
+            @foreach (var c in Model)
+            {
+                <tr>
+                    <td><a asp-action="Builder" asp-route-id="@c.Id"><b>@c.Title</b></a></td>
+                    <td>@c.LanguageName</td>
+                    <td>@c.StartLevel → @c.EndLevel</td>
+                    <td><partial name="_ContentStatus" model="c.Status" /></td>
+                    <td class="text-end">@c.Modules</td>
+                    <td class="text-end">@c.Lectures</td>
+                    <td class="text-end">@c.Hours</td>
+                    <td class="text-end">@c.Learners</td>
+                    <td class="text-end"><a class="btn btn-sm btn-outline-secondary" asp-action="Builder" asp-route-id="@c.Id">Roadmap</a></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

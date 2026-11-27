@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                x:Class="LinguaPath.Mobile.Pages.ConversationPage"
+                x:DataType="vm:ConversationViewModel"
+                Title="{Binding Title}">
+    <Grid RowDefinitions="Auto,*,Auto" Padding="12,8">
+        <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+            <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+        </Border>
+
+        <!-- Pick a topic -->
+        <ScrollView Grid.Row="1" IsVisible="{Binding HasNotStarted}">
+            <VerticalStackLayout Spacing="10" Padding="4">
+                <Label Text="{l:Tr WhatDoYouWantToTalk}" Style="{StaticResource Title}" />
+                <Label Text="{l:Tr YourPartnerWritesShortRepliesAt}" Style="{StaticResource Subtitle}" />
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Topics}" Spacing="8">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="x:String">
+                            <Border Style="{StaticResource ChoiceCard}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ConversationViewModel}}, Path=StartCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Label Text="{Binding .}" FontSize="16" />
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Chat -->
+        <CollectionView x:Name="Chat" Grid.Row="1" ItemsSource="{Binding Messages}" IsVisible="{Binding HasStarted}">
+            <CollectionView.Header>
+                <Grid ColumnDefinitions="*,Auto" Padding="4,0,4,8">
+                    <Label Text="{Binding Topic}" FontAttributes="Bold" VerticalOptions="Center" />
+                    <Button Grid.Column="1" Text="{l:Tr ChangeTopic}" Style="{StaticResource LinkButton}" Command="{Binding ChangeTopicCommand}" />
+                </Grid>
+            </CollectionView.Header>
+            <CollectionView.EmptyView>
+                <Label Text="{l:Tr SayHelloToStart}" Style="{StaticResource Subtitle}" HorizontalTextAlignment="Center" Margin="0,40" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="vm:ChatMessage">
+                    <Grid Padding="4">
+                        <Border Style="{StaticResource Card}" HorizontalOptions="End" MaximumWidthRequest="320" IsVisible="{Binding IsLearner}"
+                                BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryLightDark}}">
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="{Binding Text}" />
+                                <Label Text="{Binding CorrectionText}" TextColor="{AppThemeBinding Light={StaticResource Success}, Dark={StaticResource SuccessDark}}" FontSize="13" IsVisible="{Binding HasCorrection}" />
+                            </VerticalStackLayout>
+                        </Border>
+                        <Border Style="{StaticResource Card}" HorizontalOptions="Start" MaximumWidthRequest="320" IsVisible="{Binding IsPartner}">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:ConversationViewModel}}, Path=SpeakCommand}"
+                                                      CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <Label Text="{Binding Text}" />
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <VerticalStackLayout Grid.Row="2" Spacing="4" IsVisible="{Binding HasStarted}">
+            <Label Text="{Binding Errors[Message]}" Style="{StaticResource FieldError}" IsVisible="{Binding Errors[Message], Converter={StaticResource HasText}}" />
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                <Border Style="{StaticResource InputBox}">
+                    <Entry Text="{Binding Draft}" Placeholder="{l:Tr WriteAMessage}" ReturnType="Send" ReturnCommand="{Binding SendCommand}" MaxLength="500" />
+                </Border>
+                <Button Grid.Column="1" Text="{l:Tr Send}" Command="{Binding SendCommand}" IsEnabled="{Binding IsNotBusy}" />
+            </Grid>
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <CheckBox IsChecked="{Binding ReadReplies}" />
+                <Label Grid.Column="1" Text="{l:Tr ReadRepliesAloudTapAReply}" VerticalOptions="Center" FontSize="12" />
+                <Label Grid.Column="2" Text="{Binding RemainingText}" VerticalOptions="Center" FontSize="12" Style="{StaticResource Subtitle}" />
+            </Grid>
+        </VerticalStackLayout>
+    </Grid>
+</pages:BasePage>

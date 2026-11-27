@@ -1,0 +1,132 @@
+@model LinguaPath.Admin.Controllers.AnalyticsReportsViewModel
+@{
+    var f = Model.Filter;
+    var r = Model.Report;
+    ViewData["Title"] = "Analytics reports";
+    var kinds = new (ReportKind Kind, string Name)[]
+    {
+        (ReportKind.CourseCompletion, "Completion by course"),
+        (ReportKind.LearnerProgress, "Learner progress"),
+        (ReportKind.AssessmentPerformance, "Quiz and exam performance"),
+        (ReportKind.LectureDropOff, "Drop-off per lecture"),
+        (ReportKind.AiAndTranslationUsage, "Translation and AI usage"),
+        (ReportKind.Certificates, "Certificates")
+    };
+    object Route(string? format) => new { format, kind = f.Kind, from = f.From.ToString("yyyy-MM-dd"), to = f.To.ToString("yyyy-MM-dd"), languageId = f.LanguageId, courseId = f.CourseId };
+    string Cell(object? v, ReportColumnKind k) => v switch
+    {
+        null => "—",
+        DateOnly d => d.ToString("d MMM yyyy"),
+        double x when k == ReportColumnKind.Percent => x.ToString("0.0") + "%",
+        int i when k == ReportColumnKind.Percent => i + "%",
+        decimal m => m.ToString("0.0000"),
+        int i => i.ToString("N0"),
+        double x => x.ToString("0.#"),
+        _ => v.ToString() ?? ""
+    };
+}
+<ul class="nav nav-pills mb-3 flex-wrap gap-1">
+    @foreach (var k in kinds)
+    {
+        <li class="nav-item">
+            <a class="nav-link @(k.Kind == f.Kind ? "active" : "")" asp-action="Index"
+               asp-route-kind="@k.Kind" asp-route-from="@f.From.ToString("yyyy-MM-dd")" asp-route-to="@f.To.ToString("yyyy-MM-dd")"
+               asp-route-languageId="@f.LanguageId" asp-route-courseId="@f.CourseId">@k.Name</a>
+        </li>
+    }
+</ul>
+
+<form method="get" class="row g-2 mb-3 align-items-end">
+    <input type="hidden" name="kind" value="@f.Kind" />
+    <div class="col-md-2"><label class="form-label small" for="from">From</label><input id="from" type="date" name="from" value="@f.From.ToString("yyyy-MM-dd")" class="form-control" /></div>
+    <div class="col-md-2"><label class="form-label small" for="to">To</label><input id="to" type="date" name="to" value="@f.To.ToString("yyyy-MM-dd")" class="form-control" /></div>
+    <div class="col-md-2">
+        <label class="form-label small" for="languageId">Language</label>
+        <select id="languageId" name="languageId" class="form-select">
+            <option value="">All languages</option>
+            @foreach (var l in Model.Languages)
+            {
+                <option value="@l.Id" selected="@(l.Id == f.LanguageId)">@l.Name</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label small" for="courseId">Course</label>
+        <select id="courseId" name="courseId" class="form-select">
+            <option value="">All courses</option>
+            @foreach (var c in Model.Courses.Where(c => f.LanguageId is null || c.LanguageId == f.LanguageId))
+            {
+                <option value="@c.Id" selected="@(c.Id == f.CourseId)">@c.Name</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-1"><button class="btn btn-outline-primary w-100" type="submit">Run</button></div>
+    <div class="col-md-2 d-flex gap-1">
+        <a class="btn btn-outline-success w-50" href="@Url.Action("Export", Route("xlsx"))">Excel</a>
+        <a class="btn btn-outline-danger w-50" href="@Url.Action("Export", Route("pdf"))">PDF</a>
+    </div>
+</form>
+
+<div class="d-flex justify-content-between align-items-baseline mb-2">
+    <h2 class="h5 mb-0">@r.Title</h2>
+    <span class="text-muted small">@r.Subtitle</span>
+</div>
+
+@if (r.Totals.Count > 0)
+{
+    <div class="row g-2 mb-3">
+        @foreach (var t in r.Totals)
+        {
+            <div class="col-6 col-md-3">
+                <div class="card lp-card p-3 h-100">
+                    <div class="text-muted small">@t.Key</div>
+                    <div class="fs-5 fw-semibold">@t.Value</div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@if (r.Notice is not null)
+{
+    <div class="alert alert-info">@r.Notice</div>
+}
+@if (r.Truncated)
+{
+    <div class="alert alert-warning">Only the first 5,000 rows are shown and exported. Narrow the dates, language or course for the rest.</div>
+}
+
+<div class="card lp-card">
+    <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0">
+            <thead>
+                <tr>
+                    @foreach (var c in r.Columns)
+                    {
+                        <th class="@(c.Kind == ReportColumnKind.Text ? "" : "text-end") text-nowrap" scope="col">@c.Header</th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+            @if (r.Rows.Count == 0)
+            {
+                <tr><td colspan="@r.Columns.Count" class="text-center text-muted py-4">No data for these filters.</td></tr>
+            }
+            @foreach (var row in r.Rows.Take(1000))
+            {
+                <tr>
+                    @for (var i = 0; i < r.Columns.Count; i++)
+                    {
+                        var k = r.Columns[i].Kind;
+                        <td class="@(k == ReportColumnKind.Text ? "" : "text-end") small">@Cell(i < row.Length ? row[i] : null, k)</td>
+                    }
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+@if (r.Rows.Count > 1000)
+{
+    <p class="text-muted small mt-2">The page shows the first 1,000 of @r.Rows.Count.ToString("N0") rows; the Excel and PDF files have them all.</p>
+}

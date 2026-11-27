@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+    LinguaPath design tokens.
+    Palette: deep navy (structure), royal purple (brand / primary actions), teal (progress / secondary actions),
+    amber (streaks / XP), on clean white and soft cool-grey surfaces. Dark theme uses layered navy surfaces.
+    Text colours are chosen for WCAG AA contrast (4.5:1+) on the surface they sit on, in both themes.
+    Key names from the original palette are kept so every page picks up the new look.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- Brand: royal purple -->
+    <Color x:Key="Primary">#6D28D9</Color>
+    <Color x:Key="PrimaryDark">#5B21B6</Color>
+    <Color x:Key="PrimaryBright">#8B5CF6</Color>
+    <Color x:Key="PrimaryLight">#F1EBFE</Color>
+    <Color x:Key="PrimaryLightDark">#2A1D52</Color>
+    <!-- Primary used as text/links: purple on light, soft lavender on dark -->
+    <Color x:Key="PrimaryText">#6D28D9</Color>
+    <Color x:Key="PrimaryTextDark">#C4B5FD</Color>
+
+    <!-- Secondary: teal -->
+    <Color x:Key="Secondary">#0D9488</Color>
+    <Color x:Key="SecondaryBright">#14B8A6</Color>
+    <Color x:Key="SecondaryLight">#E3F8F5</Color>
+    <Color x:Key="SecondaryLightDark">#0E3B3B</Color>
+    <Color x:Key="SecondaryText">#0F766E</Color>
+    <Color x:Key="SecondaryTextDark">#5EEAD4</Color>
+
+    <!-- Navy -->
+    <Color x:Key="Navy">#0B1530</Color>
+    <Color x:Key="Navy800">#111D3F</Color>
+    <Color x:Key="Navy700">#1B2A56</Color>
+    <Color x:Key="Navy600">#27396F</Color>
+
+    <!-- Status -->
+    <Color x:Key="Accent">#F59E0B</Color>
+    <Color x:Key="AccentLight">#FEF3C7</Color>
+    <Color x:Key="AccentLightDark">#3D2C0B</Color>
+    <Color x:Key="Warning">#B45309</Color>
+    <Color x:Key="WarningDark">#FBBF24</Color>
+    <Color x:Key="Success">#047857</Color>
+    <Color x:Key="SuccessDark">#34D399</Color>
+    <Color x:Key="SuccessLight">#DCFCE7</Color>
+    <Color x:Key="SuccessLightDark">#0B3A2A</Color>
+    <Color x:Key="Danger">#DC2626</Color>
+    <Color x:Key="DangerDark">#F87171</Color>
+    <Color x:Key="DangerLight">#FEF2F2</Color>
+    <Color x:Key="DangerLightDark">#3B1219</Color>
+    <Color x:Key="Gold">#FBBF24</Color>
+    <Color x:Key="Silver">#CBD5E1</Color>
+    <Color x:Key="Bronze">#D97745</Color>
+
+    <!-- Light neutrals -->
+    <Color x:Key="TextPrimary">#0F172A</Color>
+    <Color x:Key="TextSecondary">#5B6478</Color>
+    <Color x:Key="TextTertiary">#8A93A6</Color>
+    <Color x:Key="Border">#E4E7F0</Color>
+    <Color x:Key="Surface">#FFFFFF</Color>
+    <Color x:Key="SurfaceMuted">#F4F5FA</Color>
+    <Color x:Key="Background">#F6F7FB</Color>
+
+    <!-- Dark neutrals (layered navy) -->
+    <Color x:Key="TextPrimaryDark">#F1F5F9</Color>
+    <Color x:Key="TextSecondaryDark">#A3AEC4</Color>
+    <Color x:Key="TextTertiaryDark">#6E7A93</Color>
+    <Color x:Key="BorderDark">#243250</Color>
+    <Color x:Key="SurfaceDark">#111B33</Color>
+    <Color x:Key="SurfaceMutedDark">#172340</Color>
+    <Color x:Key="BackgroundDark">#080F22</Color>
+
+    <!-- On-colour text -->
+    <Color x:Key="OnPrimary">#FFFFFF</Color>
+    <Color x:Key="OnHeroMuted">#D9D3F5</Color>
+
+    <!-- Gradients -->
+    <LinearGradientBrush x:Key="HeroGradient" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#0B1530" Offset="0.0" />
+        <GradientStop Color="#2B1F6B" Offset="0.55" />
+        <GradientStop Color="#6D28D9" Offset="1.0" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="PrimaryGradient" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="#6D28D9" Offset="0.0" />
+        <GradientStop Color="#7C3AED" Offset="1.0" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="TealGradient" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#0F766E" Offset="0.0" />
+        <GradientStop Color="#14B8A6" Offset="1.0" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="PurpleTealGradient" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#6D28D9" Offset="0.0" />
+        <GradientStop Color="#0D9488" Offset="1.0" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="AmberGradient" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="#F59E0B" Offset="0.0" />
+        <GradientStop Color="#F97316" Offset="1.0" />
+    </LinearGradientBrush>
+    <LinearGradientBrush x:Key="NavyGradient" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Color="#111D3F" Offset="0.0" />
+        <GradientStop Color="#0B1530" Offset="1.0" />
+    </LinearGradientBrush>
+</ResourceDictionary>

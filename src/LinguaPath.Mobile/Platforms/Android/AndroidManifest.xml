@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <application android:allowBackup="false"
+                 android:icon="@mipmap/appicon"
+                 android:roundIcon="@mipmap/appicon_round"
+                 android:supportsRtl="true"
+                 android:networkSecurityConfig="@xml/network_security_config" />
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Android 13+: asked at run time before the first push (FR-L110). -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- Speaking questions record the learner's voice -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Profile photo picker (Android 13+ uses the system photo picker and needs no permission) -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+
+    <queries>
+        <!-- Needed by WebAuthenticator / Browser to find a browser -->
+        <intent>
+            <action android:name="android.support.customtabs.action.CustomTabsService" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="https" />
+        </intent>
+    </queries>
+</manifest>

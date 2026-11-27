@@ -1,0 +1,52 @@
+﻿@model IReadOnlyList<LanguageListItem>
+@{
+    ViewData["Title"] = "Languages";
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <p class="text-muted small mb-0">Published languages appear in the app. "Coming soon" shows them greyed out with a request button.</p>
+    <a class="btn btn-primary btn-sm" asp-action="Create">Add language</a>
+</div>
+
+<div class="card lp-card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+            <tr><th>Language</th><th>Code</th><th>Script</th><th>Status</th><th class="text-end">Courses</th><th class="text-end">Active learners</th><th class="text-end">Requests</th><th></th></tr>
+            </thead>
+            <tbody>
+            @foreach (var l in Model)
+            {
+                <tr>
+                    <td><b>@l.Name</b> <span class="text-muted" dir="auto">@l.NativeName</span></td>
+                    <td><code>@l.IsoCode</code></td>
+                    <td>@(l.Direction == TextDirection.Rtl ? "Right to left" : "Left to right")</td>
+                    <td>
+                        @{
+                            var css = l.Status switch
+                            {
+                                LanguageStatus.Published => "text-bg-success",
+                                LanguageStatus.ComingSoon => "text-bg-info",
+                                LanguageStatus.Disabled => "text-bg-secondary",
+                                _ => "text-bg-light border"
+                            };
+                        }
+                        <span class="badge @css">@(l.Status == LanguageStatus.ComingSoon ? "Coming soon" : l.Status.ToString())</span>
+                    </td>
+                    <td class="text-end"><a asp-controller="Courses" asp-action="Index" asp-route-languageId="@l.Id">@l.PublishedCourses / @l.Courses</a></td>
+                    <td class="text-end">@l.ActiveLearners</td>
+                    <td class="text-end">@(l.PendingRequests > 0 ? l.PendingRequests.ToString() : "—")</td>
+                    <td class="text-end text-nowrap">
+                        <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@l.Id">Edit</a>
+                        <a class="btn btn-sm btn-outline-primary" asp-controller="Courses" asp-action="Create" asp-route-languageId="@l.Id">Add course</a>
+                        @if (l.Courses == 0)
+                        {
+                            <a class="btn btn-sm btn-outline-info" asp-controller="AiRequests" asp-action="NewLanguage" asp-route-languageId="@l.Id" title="FR-A21: draft a full course with AI after Super Admin approval">Generate with AI</a>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+<p class="small text-muted mt-2">Courses column: published / all.</p>

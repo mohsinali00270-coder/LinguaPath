@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                xmlns:social="clr-namespace:LinguaPath.Shared.Contracts.Social;assembly=LinguaPath.Shared"
+                x:Class="LinguaPath.Mobile.Pages.GroupInfoPage"
+                x:DataType="vm:GroupInfoViewModel"
+                Title="{l:Tr GroupInfo}">
+    <ScrollView>
+        <VerticalStackLayout Padding="16,12" Spacing="10">
+            <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+                <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+            </Border>
+            <Label Text="{Binding Icon}" FontSize="48" HorizontalOptions="Center" />
+            <Label Text="{Binding Name}" Style="{StaticResource Title}" HorizontalTextAlignment="Center" />
+            <Label Text="{Binding Description}" Style="{StaticResource Subtitle}" HorizontalTextAlignment="Center" />
+            <Label Text="{Binding PublicText}" FontSize="12" Style="{StaticResource Subtitle}" HorizontalTextAlignment="Center" />
+
+            <Button Text="{Binding MuteText}" Style="{StaticResource OutlineButton}" Command="{Binding ToggleMuteCommand}" />
+            <Button Text="{l:Tr StartAGroupBattle}" Command="{Binding StartBattleCommand}" IsVisible="{Binding IsAdmin}" />
+
+            <Border Style="{StaticResource Card}" IsVisible="{Binding IsAdmin}">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="{l:Tr GroupSettings}" Style="{StaticResource SectionHeader}" />
+                    <Button Text="{l:Tr Rename}" Style="{StaticResource LinkButton}" Command="{Binding RenameCommand}" HorizontalOptions="Start" />
+                    <Button Text="{l:Tr EditDescription}" Style="{StaticResource LinkButton}" Command="{Binding EditDescriptionCommand}" HorizontalOptions="Start" />
+                    <Button Text="{Binding AnnouncementText}" Style="{StaticResource LinkButton}" Command="{Binding ToggleAnnouncementCommand}" HorizontalOptions="Start" />
+                    <Button Text="{Binding SlowModeText}" Style="{StaticResource LinkButton}" Command="{Binding SlowModeCommand}" HorizontalOptions="Start" />
+                    <Button Text="{Binding ApprovalText}" Style="{StaticResource LinkButton}" Command="{Binding ToggleApprovalCommand}" HorizontalOptions="Start" />
+                    <Button Text="{l:Tr SwitchPublicPrivate}" Style="{StaticResource LinkButton}" Command="{Binding TogglePublicCommand}" HorizontalOptions="Start" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Grid ColumnDefinitions="*,Auto">
+                <Label Text="{Binding MembersTitle}" Style="{StaticResource SectionHeader}" VerticalOptions="Center" />
+                <Button Grid.Column="1" Text="{l:Tr Add}" Style="{StaticResource LinkButton}" Command="{Binding AddMemberCommand}" IsVisible="{Binding IsAdmin}" />
+            </Grid>
+            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Members}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="vm:MemberRow">
+                        <Grid ColumnDefinitions="36,*,Auto" ColumnSpacing="10" Padding="0,6">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:GroupInfoViewModel}}, Path=MemberActionsCommand}" CommandParameter="{Binding .}" />
+                            </Grid.GestureRecognizers>
+                            <Border WidthRequest="36" HeightRequest="36" StrokeShape="RoundRectangle 18" Background="{StaticResource PurpleTealGradient}" StrokeThickness="0">
+                                <Label Text="{Binding Initial}" HorizontalOptions="Center" VerticalOptions="Center" TextColor="White" FontAttributes="Bold" />
+                            </Border>
+                            <Ellipse WidthRequest="10" HeightRequest="10" Fill="{StaticResource Success}" HorizontalOptions="End" VerticalOptions="End" IsVisible="{Binding IsOnline}" />
+                            <Label Grid.Column="1" Text="{Binding Name}" VerticalOptions="Center" />
+                            <Label Grid.Column="2" Text="{Binding RoleText}" FontSize="12" Style="{StaticResource Subtitle}" VerticalOptions="Center" />
+                        </Grid>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+
+            <Button Text="{l:Tr LeaveGroup}" Style="{StaticResource DangerButton}" Command="{Binding LeaveCommand}" Margin="0,12,0,0" />
+        </VerticalStackLayout>
+    </ScrollView>
+</pages:BasePage>

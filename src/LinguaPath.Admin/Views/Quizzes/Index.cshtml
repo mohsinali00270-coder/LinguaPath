@@ -1,0 +1,78 @@
+@model IReadOnlyList<ExamListItem>
+@{
+    ViewData["Title"] = "Quizzes & exams";
+    var rule = (DailyQuizRuleInput)ViewBag.Rule;
+    int? courseId = ViewBag.CourseId;
+}
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h2 class="h6 mb-0">Monthly exams</h2>
+        </div>
+        <form method="get" class="row g-2 mb-3">
+            <div class="col-md-8"><select name="courseId" class="form-select" asp-items="ViewBag.Courses" onchange="this.form.submit()"><option value="">All courses</option></select></div>
+            <div class="col-md-4">
+                @if (courseId is not null)
+                {
+                    <a class="btn btn-primary w-100" asp-action="Create" asp-route-courseId="@courseId">New exam for this course</a>
+                }
+                else
+                {
+                    <span class="small text-muted">Choose a course to add an exam.</span>
+                }
+            </div>
+        </form>
+
+        <div class="card lp-card">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead><tr><th>Exam</th><th>Course</th><th>Month</th><th>Questions</th><th>Time</th><th>Status</th><th>Attempts</th></tr></thead>
+                    <tbody>
+                    @if (Model.Count == 0)
+                    {
+                        <tr><td colspan="7" class="text-center text-muted py-4">No monthly exams yet.</td></tr>
+                    }
+                    @foreach (var e in Model)
+                    {
+                        <tr>
+                            <td><a asp-action="Edit" asp-route-id="@e.Id"><b>@e.Title</b></a><div class="small text-muted">@e.Sections section(s)</div></td>
+                            <td class="small">@e.LanguageName · @e.CourseTitle</td>
+                            <td>@e.MonthNo</td>
+                            <td>@e.Questions</td>
+                            <td>@e.TimeLimitMinutes min</td>
+                            <td><partial name="_ContentStatus" model="e.Status" /></td>
+                            <td>@e.Attempts</td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <p class="small text-muted mt-2">An exam opens for a learner when they finish the share of that month's lectures set in <i>Assessment.MonthlyExamUnlockPercent</i>, or on the date of the month's last planned lecture.</p>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card lp-card">
+            <div class="card-body">
+                <h2 class="h6">Daily quiz rule</h2>
+                <p class="small text-muted">Each learner gets one quiz a day from the lectures they have completed, plus questions they got wrong before.</p>
+                <form asp-action="SaveRule" method="post">
+                    <div class="mb-2"><label class="form-label small" for="FromRecent">From lectures done in the last 2 days</label><input name="FromRecent" id="FromRecent" type="number" min="0" max="20" value="@rule.FromRecent" class="form-control form-control-sm" /></div>
+                    <div class="mb-2"><label class="form-label small" for="FromWeek">From lectures done in the last 7 days</label><input name="FromWeek" id="FromWeek" type="number" min="0" max="20" value="@rule.FromWeek" class="form-control form-control-sm" /></div>
+                    <div class="mb-2"><label class="form-label small" for="FromReview">From the review list (past mistakes)</label><input name="FromReview" id="FromReview" type="number" min="0" max="20" value="@rule.FromReview" class="form-control form-control-sm" /></div>
+                    <hr />
+                    <div class="mb-3"><label class="form-label small" for="PlacementPerLevel">Placement test: questions per level</label><input name="PlacementPerLevel" id="PlacementPerLevel" type="number" min="1" max="10" value="@rule.PlacementPerLevel" class="form-control form-control-sm" /></div>
+                    @if (User.IsInRole(Roles.SuperAdmin))
+                    {
+                        <button class="btn btn-sm btn-outline-primary w-100">Save rule</button>
+                    }
+                    else
+                    {
+                        <p class="small text-muted mb-0">Only a Super Admin can change the rule.</p>
+                    }
+                </form>
+                <p class="small text-muted mt-3 mb-0">Daily quizzes and the placement test use objective questions only; writing and speaking appear in monthly exams.</p>
+            </div>
+        </div>
+    </div>
+</div>

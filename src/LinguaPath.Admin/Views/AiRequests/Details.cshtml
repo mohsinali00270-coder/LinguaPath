@@ -1,0 +1,164 @@
+@model AiRequestDetail
+@{
+    var r = Model.Item;
+    ViewData["Title"] = r.Title;
+    var isSuper = User.IsInRole(Roles.SuperAdmin);
+}
+@section Head {
+    @if (r.Status is AiRequestStatus.Queued or AiRequestStatus.Running)
+    {
+        <meta http-equiv="refresh" content="10" />
+    }
+}
+<a asp-action="Index" class="small">&larr; AI generation</a>
+
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mt-2 mb-3">
+    <div>
+        <h2 class="h5 mb-1">@r.Title <partial name="_AiStatus" model="r.Status" /></h2>
+        <div class="small text-muted">#@r.Id · @r.Type · requested by @(r.RequestedBy ?? "system") on @r.CreatedAt.ToLocalTime().ToString("g")</div>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        @if (r.CourseId is { } courseId)
+        {
+            <a class="btn btn-sm btn-outline-secondary" asp-controller="Courses" asp-action="Builder" asp-route-id="@courseId">Open course builder</a>
+        }
+        @if (Model.LectureId is { } lectureId)
+        {
+            <a class="btn btn-sm btn-outline-secondary" asp-controller="Lectures" asp-action="Edit" asp-route-id="@lectureId">Open lecture</a>
+        }
+        @if (r.Status is AiRequestStatus.Failed or AiRequestStatus.Paused)
+        {
+            <form asp-action="Retry" asp-route-id="@r.Id" method="post"><button class="btn btn-sm btn-primary">@(r.Status == AiRequestStatus.Paused ? "Resume" : "Retry")</button></form>
+        }
+        @if (r.Status is not (AiRequestStatus.Completed or AiRequestStatus.Rejected or AiRequestStatus.Cancelled))
+        {
+            <form asp-action="Cancel" asp-route-id="@r.Id" method="post" data-confirm="Cancel this AI request? Drafts made so far are kept.">
+                <button class="btn btn-sm btn-outline-danger">Cancel</button>
+            </form>
+        }
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(r.Error))
+{
+    <div class="alert @(r.Status == AiRequestStatus.Paused ? "alert-warning" : "alert-danger") small">@r.Error</div>
+}
+@if (!string.IsNullOrEmpty(Model.Summary))
+{
+    <div class="alert alert-success small">@Model.Summary</div>
+}
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        @if (r.Status == AiRequestStatus.PendingApproval)
+        {
+            <div class="card lp-card border-warning mb-3">
+                <div class="card-body">
+                    <h3 class="h6">Approval needed (Super Admin)</h3>
+                    <p class="small mb-2">
+                        Estimated scope: <b>@Model.EstimatedModules modules</b>, <b>@Model.EstimatedLectures lectures</b>, <b>@Model.EstimatedQuestions questions</b> ·
+                        estimated AI cost <b>$@r.EstimatedCost.ToString("0.00")</b>.
+                        The roadmap is drafted first; lectures and questions are written only after the roadmap is approved.
+                    </p>
+                    @if (isSuper)
+                    {
+                        <form asp-action="Decide" asp-route-id="@r.Id" method="post">
+                            <textarea name="notes" class="form-control form-control-sm mb-2" rows="2" maxlength="1000"
+                                      placeholder="Notes for the AI (added to every prompt), e.g. focus on Gulf Arabic, business context. Required when rejecting."></textarea>
+                            <button name="approve" value="true" class="btn btn-sm btn-success">Approve and start</button>
+                            <button name="approve" value="false" class="btn btn-sm btn-outline-danger">Reject</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <p class="small text-muted mb-0">Only a Super Admin can approve this.</p>
+                    }
+                </div>
+            </div>
+        }
+        @if (r.Status == AiRequestStatus.AwaitingRoadmapReview)
+        {
+            <div class="card lp-card border-info mb-3">
+                <div class="card-body">
+                    <h3 class="h6">Review the roadmap</h3>
+                    <p class="small mb-2">Check and edit the modules and lectures in the course builder (rename, reorder, delete, change minutes). When it looks right, AI writes the lectures and questions module by module.</p>
+                    <form asp-action="ApproveRoadmap" asp-route-id="@r.Id" method="post" class="d-inline">
+                        <button class="btn btn-sm btn-primary">Approve roadmap and write the content</button>
+                    </form>
+                </div>
+            </div>
+        }
+
+        <div class="card lp-card">
+            <div class="card-header bg-white"><b>Drafts created (@Model.Items.Count)</b></div>
+            <div class="table-responsive">
+                <table class="table table-sm align-middle mb-0">
+                    <thead><tr><th>Item</th><th>Status</th><th>Model</th><th></th></tr></thead>
+                    <tbody>
+                    @if (Model.Items.Count == 0)
+                    {
+                        <tr><td colspan="4" class="text-muted text-center py-3">Nothing yet.</td></tr>
+                    }
+                    @foreach (var i in Model.Items)
+                    {
+                        <tr>
+                            <td style="max-width:420px">
+                                <span class="badge text-bg-light border">@i.EntityType</span>
+                                @(i.Title.Length > 100 ? i.Title[..100] + "…" : i.Title)
+                                @if (i.NeedsNativeCheck) { <span class="badge text-bg-warning">native speaker check</span> }
+                            </td>
+                            <td>@if (i.Status is { } st) { <partial name="_ContentStatus" model="st" /> }</td>
+                            <td class="small text-muted">@i.Model</td>
+                            <td class="text-end">
+                                @switch (i.EntityType)
+                                {
+                                    case ReviewEntityType.Lecture:
+                                        <a class="btn btn-sm btn-link" asp-controller="Lectures" asp-action="Edit" asp-route-id="@i.EntityId">Open</a>
+                                        break;
+                                    case ReviewEntityType.Question:
+                                        <a class="btn btn-sm btn-link" asp-controller="Questions" asp-action="Edit" asp-route-id="@i.EntityId">Open</a>
+                                        break;
+                                    case ReviewEntityType.Post:
+                                        <a class="btn btn-sm btn-link" asp-controller="Posts" asp-action="Edit" asp-route-id="@i.EntityId">Open</a>
+                                        break;
+                                    case ReviewEntityType.Course:
+                                        <a class="btn btn-sm btn-link" asp-controller="Courses" asp-action="Builder" asp-route-id="@i.EntityId">Open</a>
+                                        break;
+                                    case ReviewEntityType.PracticeItem:
+                                        <a class="btn btn-sm btn-link" asp-controller="Practice" asp-action="Edit" asp-route-id="@i.EntityId">Open</a>
+                                        break;
+                                }
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card lp-card mb-3">
+            <div class="card-body small">
+                <h3 class="h6">Progress</h3>
+                @if (r.ProgressTotal > 0)
+                {
+                    <div class="progress mb-1" style="height:8px"><div class="progress-bar" style="width:@r.ProgressPercent%"></div></div>
+                    <div class="text-muted mb-2">@r.ProgressDone of @r.ProgressTotal @(Model.Stage == "content" ? "lectures" : "steps")</div>
+                }
+                <div>AI calls: @Model.Calls · tokens in @Model.InputTokens.ToString("N0") / out @Model.OutputTokens.ToString("N0")</div>
+                <div>Cost so far: $@r.ActualCost.ToString("0.0000")@(r.EstimatedCost > 0 ? $" (estimate ${r.EstimatedCost:0.00})" : "")</div>
+                @if (Model.StartedAt is { } s) { <div>Started @s.ToLocalTime().ToString("g")</div> }
+                @if (Model.CompletedAt is { } c) { <div>Finished @c.ToLocalTime().ToString("g")</div> }
+                @if (Model.DecidedBy is not null) { <div class="mt-2">Decided by @Model.DecidedBy on @Model.DecidedAt?.ToLocalTime().ToString("g")@(Model.DecisionComment is null ? "" : $": \"{Model.DecisionComment}\"")</div> }
+            </div>
+        </div>
+        <div class="card lp-card">
+            <div class="card-body small">
+                <h3 class="h6">Request</h3>
+                @if (!string.IsNullOrEmpty(Model.Notes)) { <div class="mb-2"><b>Notes for the AI:</b> <span style="white-space:pre-wrap">@Model.Notes</span></div> }
+                <pre class="small bg-light p-2 rounded mb-0" style="white-space:pre-wrap">@Model.ParametersJson</pre>
+            </div>
+        </div>
+    </div>
+</div>

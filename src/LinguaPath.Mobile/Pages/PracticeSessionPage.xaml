@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                x:Class="LinguaPath.Mobile.Pages.PracticeSessionPage"
+                x:DataType="vm:PracticeSessionViewModel"
+                Title="{Binding Heading}">
+    <Grid RowDefinitions="*,Auto">
+        <ScrollView>
+            <VerticalStackLayout Padding="16" Spacing="12">
+                <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+                    <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+                </Border>
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+
+                <VerticalStackLayout IsVisible="{Binding HasItem}" Spacing="12">
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="{Binding Title}" Style="{StaticResource Title}" />
+                        <Label Text="{Binding Subtitle}" Style="{StaticResource Subtitle}" FontSize="13" />
+                    </VerticalStackLayout>
+
+                    <!-- ============ READ: passage with tappable words, read-aloud speed, questions ============ -->
+                    <VerticalStackLayout IsVisible="{Binding IsRead}" Spacing="10">
+                        <Label Text="{l:Tr TapAWordToTranslateIt}" Style="{StaticResource Subtitle}" FontSize="12" />
+                        <Border Style="{StaticResource Card}">
+                            <FlexLayout BindableLayout.ItemsSource="{Binding Tokens}" Wrap="Wrap" Direction="Row"
+                                        FlowDirection="{Binding IsRtl, Converter={StaticResource RtlFlow}}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:WordToken">
+                                        <Label Text="{Binding Text}" FontSize="17" Margin="0,2,6,2">
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PracticeSessionViewModel}}, Path=TapWordCommand}"
+                                                                      CommandParameter="{Binding .}" />
+                                            </Label.GestureRecognizers>
+                                        </Label>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </FlexLayout>
+                        </Border>
+                        <Grid ColumnDefinitions="Auto,*,Auto,Auto" ColumnSpacing="8">
+                            <Label Text="{Binding SpeedText}" VerticalOptions="Center" WidthRequest="60" />
+                            <Slider Grid.Column="1" Minimum="0.5" Maximum="1.5" Value="{Binding Speed}" VerticalOptions="Center" />
+                            <Button Grid.Column="2" Text="{l:Tr Read}" Command="{Binding PlayCommand}" />
+                            <Button SemanticProperties.Description="{l:Tr Stop}" Grid.Column="3" Text="■" Style="{StaticResource OutlineButton}" Command="{Binding StopCommand}" />
+                        </Grid>
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Questions}" Spacing="12">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="vm:ReadingQuestion">
+                                    <VerticalStackLayout Spacing="6">
+                                        <Label Text="{Binding Text}" FontAttributes="Bold" />
+                                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Options}" Spacing="6">
+                                            <BindableLayout.ItemTemplate>
+                                                <DataTemplate x:DataType="vm:ReadingOption">
+                                                    <Border Style="{StaticResource ChoiceCard}">
+                                                        <Border.Triggers>
+                                                            <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                                                <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                                                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryLightDark}}" />
+                                                            </DataTrigger>
+                                                            <DataTrigger TargetType="Border" Binding="{Binding Marked}" Value="True">
+                                                                <Setter Property="Stroke" Value="{StaticResource Success}" />
+                                                            </DataTrigger>
+                                                            <DataTrigger TargetType="Border" Binding="{Binding Marked}" Value="False">
+                                                                <Setter Property="Stroke" Value="{StaticResource Danger}" />
+                                                            </DataTrigger>
+                                                        </Border.Triggers>
+                                                        <Border.GestureRecognizers>
+                                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PracticeSessionViewModel}}, Path=SelectOptionCommand}"
+                                                                                  CommandParameter="{Binding .}" />
+                                                        </Border.GestureRecognizers>
+                                                        <Label Text="{Binding Text}" />
+                                                    </Border>
+                                                </DataTemplate>
+                                            </BindableLayout.ItemTemplate>
+                                        </VerticalStackLayout>
+                                        <Label Text="{Binding Explanation}" Style="{StaticResource Subtitle}" FontSize="13"
+                                               IsVisible="{Binding Explanation, Converter={StaticResource HasText}}" />
+                                    </VerticalStackLayout>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                        <Button Text="{l:Tr CheckAnswers}" Command="{Binding CheckReadingCommand}" IsVisible="{Binding IsChecked, Converter={StaticResource Not}}" />
+                    </VerticalStackLayout>
+
+                    <!-- ============ WRITE: task, text box, corrections ============ -->
+                    <VerticalStackLayout IsVisible="{Binding IsWrite}" Spacing="10">
+                        <Border Style="{StaticResource Card}">
+                            <Label Text="{Binding Item.Text}" FontSize="16" />
+                        </Border>
+                        <Border Style="{StaticResource InputBox}">
+                            <Editor Text="{Binding LearnerText}" Placeholder="{l:Tr WriteHere}" AutoSize="TextChanges" MinimumHeightRequest="140"
+                                    FlowDirection="{Binding IsRtl, Converter={StaticResource RtlFlow}}" />
+                        </Border>
+                        <Label Text="{Binding Errors[Text]}" Style="{StaticResource FieldError}" IsVisible="{Binding Errors[Text], Converter={StaticResource HasText}}" />
+                        <Button Text="{l:Tr CheckMyWriting}" Command="{Binding CheckWritingCommand}" />
+                        <VerticalStackLayout BindableLayout.ItemsSource="{Binding Corrections}" Spacing="8">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="vm:CorrectionRow">
+                                    <Border Style="{StaticResource Card}">
+                                        <VerticalStackLayout Spacing="2">
+                                            <Label>
+                                                <Label.FormattedText>
+                                                    <FormattedString>
+                                                        <Span Text="{Binding Original}" TextDecorations="Strikethrough" TextColor="{AppThemeBinding Light={StaticResource Danger}, Dark={StaticResource DangerDark}}" />
+                                                        <Span Text="  →  " />
+                                                        <Span Text="{Binding Corrected}" TextColor="{AppThemeBinding Light={StaticResource Success}, Dark={StaticResource SuccessDark}}" FontAttributes="Bold" />
+                                                    </FormattedString>
+                                                </Label.FormattedText>
+                                            </Label>
+                                            <Label Text="{Binding Explanation}" Style="{StaticResource Subtitle}" FontSize="13" IsVisible="{Binding HasExplanation}" />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </VerticalStackLayout>
+                        <Label Text="{Binding RemainingText}" Style="{StaticResource Subtitle}" FontSize="12" />
+                    </VerticalStackLayout>
+
+                    <!-- ============ SPEAK: sentence, listen, record, per-word scores ============ -->
+                    <VerticalStackLayout IsVisible="{Binding IsSpeak}" Spacing="10">
+                        <Label Text="{l:Tr ReadThisAloud}" Style="{StaticResource Subtitle}" />
+                        <Border Style="{StaticResource Card}">
+                            <Label Text="{Binding Item.Text}" FontSize="22" HorizontalTextAlignment="Center"
+                                   FlowDirection="{Binding IsRtl, Converter={StaticResource RtlFlow}}" />
+                        </Border>
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                            <Button Text="{l:Tr ListenFirst}" Style="{StaticResource OutlineButton}" Command="{Binding PlayCommand}" />
+                            <Button Grid.Column="1" Text="{l:Tr Slowly}" Style="{StaticResource OutlineButton}" Command="{Binding PlaySlowCommand}" />
+                        </Grid>
+                        <Button Text="{Binding RecordText}" Command="{Binding ToggleRecordingCommand}" HeightRequest="56" FontSize="18" />
+                        <VerticalStackLayout IsVisible="{Binding IsChecked}" Spacing="8">
+                            <Label Text="{Binding Transcript, StringFormat='We heard: {0}'}" />
+                            <FlexLayout BindableLayout.ItemsSource="{Binding WordScores}" Wrap="Wrap">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:WordScoreRow">
+                                        <Border Style="{StaticResource Chip}" Stroke="{Binding Band, Converter={StaticResource ScoreColor}}" Margin="0,0,6,6">
+                                            <Label Text="{Binding Label}" TextColor="{Binding Band, Converter={StaticResource ScoreColor}}" />
+                                        </Border>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </FlexLayout>
+                            <Button Text="{l:Tr PlayMyRecording}" Style="{StaticResource OutlineButton}" Command="{Binding PlayMineCommand}" />
+                        </VerticalStackLayout>
+                    </VerticalStackLayout>
+
+                    <!-- ============ LISTEN: dictation ============ -->
+                    <VerticalStackLayout IsVisible="{Binding IsListen}" Spacing="10">
+                        <Label Text="{l:Tr ListenAndTypeWhatYouHear}" Style="{StaticResource Subtitle}" />
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                            <Button Text="{l:Tr Play}" Command="{Binding PlayCommand}" />
+                            <Button Grid.Column="1" Text="{l:Tr Slowly}" Style="{StaticResource OutlineButton}" Command="{Binding PlaySlowCommand}" />
+                        </Grid>
+                        <Border Style="{StaticResource InputBox}">
+                            <Editor Text="{Binding LearnerText}" Placeholder="{l:Tr TypeTheSentence}" AutoSize="TextChanges" MinimumHeightRequest="80"
+                                    IsReadOnly="{Binding IsChecked}" FlowDirection="{Binding IsRtl, Converter={StaticResource RtlFlow}}" />
+                        </Border>
+                        <Label Text="{Binding Errors[Text]}" Style="{StaticResource FieldError}" IsVisible="{Binding Errors[Text], Converter={StaticResource HasText}}" />
+                        <Button Text="{l:Tr Check}" Command="{Binding CheckListeningCommand}" IsVisible="{Binding IsChecked, Converter={StaticResource Not}}" />
+                        <FlexLayout BindableLayout.ItemsSource="{Binding Diff}" Wrap="Wrap" IsVisible="{Binding IsChecked}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="vm:DiffRow">
+                                    <Label Text="{Binding Display}" FontSize="17" Margin="0,2,8,2" TextColor="{Binding Kind, Converter={StaticResource ScoreColor}}" />
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </FlexLayout>
+                        <Border Style="{StaticResource Card}" IsVisible="{Binding ShowText}">
+                            <Label Text="{Binding Item.Text}" FontAttributes="Bold" />
+                        </Border>
+                    </VerticalStackLayout>
+
+                    <!-- ============ result ============ -->
+                    <Border Style="{StaticResource Card}" IsVisible="{Binding IsChecked}">
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="{Binding ScoreText}" FontSize="32" FontAttributes="Bold" HorizontalTextAlignment="Center" TextColor="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}" />
+                            <Label Text="{Binding Feedback}" HorizontalTextAlignment="Center" />
+                            <Label Text="{l:Tr SampleResultTheSpeechOrAI}" IsVisible="{Binding IsSample}"
+                                   Style="{StaticResource Subtitle}" FontSize="12" HorizontalTextAlignment="Center" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- translation (after reading, writing task, speaking, dictation) -->
+                    <Button Text="{l:Tr ShowTranslation}" Style="{StaticResource LinkButton}" Command="{Binding ToggleTranslationCommand}" IsVisible="{Binding HasTranslation}" />
+                    <Label Text="{Binding Item.Translation}" Style="{StaticResource Subtitle}" IsVisible="{Binding ShowTranslation}" />
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <Button Grid.Row="1" Text="{l:Tr NextExercise}" Margin="16,8,16,16" Style="{StaticResource OutlineButton}" Command="{Binding NextCommand}" />
+    </Grid>
+</pages:BasePage>

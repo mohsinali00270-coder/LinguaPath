@@ -1,0 +1,58 @@
+@model IReadOnlyList<AdminUserListItem>
+@{
+    ViewData["Title"] = "Admin users";
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <p class="text-muted mb-0 small">People who can sign in to this panel and what each role can do.</p>
+    <a class="btn btn-primary btn-sm" asp-action="Create">Add admin</a>
+</div>
+
+<div class="card lp-card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+            <tr><th>Name</th><th>Email</th><th>Roles</th><th>Status</th><th>Last sign-in</th><th></th></tr>
+            </thead>
+            <tbody>
+            @foreach (var a in Model)
+            {
+                <tr>
+                    <td>@a.FullName</td>
+                    <td>@a.Email</td>
+                    <td>
+                        @foreach (var r in a.Roles)
+                        {
+                            <span class="badge text-bg-secondary me-1">@r</span>
+                        }
+                    </td>
+                    <td>
+                        @if (a.IsActive)
+                        {
+                            <span class="badge text-bg-success">Active</span>
+                        }
+                        else
+                        {
+                            <span class="badge text-bg-warning">Deactivated</span>
+                        }
+                    </td>
+                    <td class="small text-muted">@(a.LastLoginAt?.ToLocalTime().ToString("g") ?? "Never")</td>
+                    <td class="text-end"><a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@a.Id">Edit</a></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card lp-card mt-4">
+    <div class="card-body">
+        <h2 class="h6">Roles</h2>
+        <dl class="row small mb-0">
+            @foreach (var role in Roles.AdminRoles)
+            {
+                <dt class="col-sm-3">@role</dt>
+                <dd class="col-sm-9">@Roles.Describe(role)</dd>
+            }
+        </dl>
+    </div>
+</div>

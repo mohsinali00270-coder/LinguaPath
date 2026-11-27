@@ -1,0 +1,149 @@
+﻿@model CourseBuilderModel
+@{
+    ViewData["Title"] = Model.Title;
+    var months = Model.Modules.Select(m => m.MonthNo).Distinct().Count();
+}
+@Html.AntiForgeryToken()
+
+<a asp-action="Index" asp-route-languageId="@Model.LanguageId" class="small">&larr; @Model.LanguageName courses</a>
+
+<div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mt-2 mb-3">
+    <div>
+        <div class="d-flex align-items-center gap-2">
+            <h2 class="h5 mb-0">@Model.Title</h2>
+            <partial name="_ContentStatus" model="Model.Status" />
+        </div>
+        <div class="small text-muted mt-1">
+            @Model.LanguageName · @Model.StartLevel → @Model.EndLevel · @Model.Modules.Count modules · @Model.LectureCount lectures ·
+            @Math.Round(Model.TotalMinutes / 60.0, 1) h (@Math.Round(Model.CoreMinutes / 60.0, 1) h core) · @months month(s) · @Model.Learners active learner(s)
+        </div>
+        @if (Model.LanguageStatus != LanguageStatus.Published && Model.Status == ContentStatus.Published)
+        {
+            <div class="small text-warning mt-1">The language itself is not published yet, so learners can't see this course. <a asp-controller="Languages" asp-action="Edit" asp-route-id="@Model.LanguageId">Publish the language</a>.</div>
+        }
+    </div>
+    <div class="d-flex gap-2">
+        <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@Model.Id">Course details</a>
+        @if (Model.Status != ContentStatus.Published)
+        {
+            <form asp-action="SetStatus" asp-route-id="@Model.Id" asp-route-status="@ContentStatus.Published" method="post">
+                <button class="btn btn-sm btn-success" type="submit">Publish</button>
+            </form>
+        }
+        else
+        {
+            <form asp-action="SetStatus" asp-route-id="@Model.Id" asp-route-status="@ContentStatus.Draft" method="post"
+                  data-confirm="Unpublish? New learners won't be able to pick this course; enrolled learners keep their roadmap.">
+                <button class="btn btn-sm btn-outline-warning" type="submit">Unpublish</button>
+            </form>
+        }
+        @if (Model.Status != ContentStatus.Archived)
+        {
+            <form asp-action="SetStatus" asp-route-id="@Model.Id" asp-route-status="@ContentStatus.Archived" method="post"
+                  data-confirm="Archive this course?">
+                <button class="btn btn-sm btn-outline-secondary" type="submit">Archive</button>
+            </form>
+            <form asp-controller="AiRequests" asp-action="AutoFill" asp-route-courseId="@Model.Id" method="post"
+                  data-confirm="Queue AI to write every lecture of this course that has no text yet? Results are Drafts for review.">
+                <button class="btn btn-sm btn-outline-info" type="submit" title="FR-A44">Fill empty lectures with AI</button>
+            </form>
+        }
+    </div>
+</div>
+
+@if (ViewBag.AiReview is AiRequestListItem aiReview)
+{
+    <div class="alert alert-info d-flex flex-wrap justify-content-between align-items-center gap-2">
+        <div class="small"><b>AI drafted this roadmap.</b> Rename, reorder or delete modules and lectures until it looks right, then let AI write the lectures and questions module by module.</div>
+        <form asp-controller="AiRequests" asp-action="ApproveRoadmap" asp-route-id="@aiReview.Id" asp-route-courseId="@Model.Id" method="post">
+            <button class="btn btn-sm btn-primary">Approve roadmap and write the content</button>
+        </form>
+    </div>
+}
+
+@if (Model.Learners > 0)
+{
+    <div class="alert alert-info small py-2">
+        @Model.Learners learner(s) follow this roadmap. Roadmap changes (publishing, deleting or reordering lectures, changing minutes) are applied to their roadmaps right away; completed lectures stay completed.
+    </div>
+}
+
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <span class="small text-muted">Drag modules and lectures to reorder. Lectures can be dragged into another module.</span>
+    <a class="btn btn-primary btn-sm" asp-action="CreateModule" asp-route-courseId="@Model.Id">Add module</a>
+</div>
+
+<div id="lp-reorder-status" class="small mb-2" role="status"></div>
+
+<div data-sortable="modules" data-parent-id="@Model.Id" data-url="@Url.Action("ReorderModules")">
+    @if (Model.Modules.Count == 0)
+    {
+        <div class="card lp-card"><div class="card-body text-center text-muted py-5">No modules yet. Add the first module of the roadmap.</div></div>
+    }
+    @foreach (var m in Model.Modules)
+    {
+        var minutes = m.Lectures.Sum(l => l.EstimatedMinutes);
+        <div class="card lp-card mb-3 lp-module" draggable="true" data-id="@m.Id">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center lp-drag-handle">
+                <div>
+                    <span class="text-muted me-2" aria-hidden="true">⋮⋮</span>
+                    <b>@m.Title</b>
+                    <span class="badge text-bg-light border ms-1">@m.Level</span>
+                    <span class="badge text-bg-light border">Month @m.MonthNo</span>
+                    <span class="small text-muted ms-1">@m.Lectures.Count lectures · @minutes min</span>
+                    @if (m.PrerequisiteTitle is not null)
+                    {
+                        <span class="small text-muted ms-1">· after "@m.PrerequisiteTitle"</span>
+                    }
+                </div>
+                <div class="d-flex gap-1">
+                    <a class="btn btn-sm btn-outline-primary" asp-action="CreateLecture" asp-route-moduleId="@m.Id">Add lecture</a>
+                    <a class="btn btn-sm btn-outline-secondary" asp-action="EditModule" asp-route-id="@m.Id">Edit</a>
+                    <form asp-action="DeleteModule" asp-route-id="@m.Id" method="post" data-confirm="Delete this module and its @m.Lectures.Count lecture(s)?">
+                        <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                    </form>
+                </div>
+            </div>
+            @if (!string.IsNullOrWhiteSpace(m.Objective))
+            {
+                <div class="px-3 pt-2 small text-muted">@m.Objective</div>
+            }
+            <ul class="list-group list-group-flush lp-lectures" data-sortable="lectures" data-parent-id="@m.Id" data-url="@Url.Action("ReorderLectures")">
+                @foreach (var l in m.Lectures)
+                {
+                    <li class="list-group-item d-flex justify-content-between align-items-center" draggable="true" data-id="@l.Id">
+                        <div>
+                            <span class="text-muted me-2" aria-hidden="true">⋮⋮</span>
+                            <a asp-controller="Lectures" asp-action="Edit" asp-route-id="@l.Id" title="Write the lesson text">@l.Title</a>
+                            @if (!string.IsNullOrWhiteSpace(l.Topic))
+                            {
+                                <span class="badge text-bg-light border ms-1">@l.Topic</span>
+                            }
+                            @if (!l.IsCore)
+                            {
+                                <span class="badge text-bg-warning ms-1" title="Dropped first when a learner's time is short">optional</span>
+                            }
+                            @if (l.Source == ContentSource.Ai)
+                            {
+                                <span class="badge text-bg-info ms-1">AI</span>
+                            }
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="small text-muted">@l.EstimatedMinutes min</span>
+                            <partial name="_ContentStatus" model="l.Status" />
+                            <a class="btn btn-sm btn-link" asp-controller="Lectures" asp-action="Edit" asp-route-id="@l.Id">Content</a>
+                            <a class="btn btn-sm btn-link" asp-action="EditLecture" asp-route-id="@l.Id">Settings</a>
+                            <form asp-action="DeleteLecture" asp-route-id="@l.Id" method="post" data-confirm="Delete this lecture?">
+                                <button class="btn btn-sm btn-link text-danger" type="submit">Delete</button>
+                            </form>
+                        </div>
+                    </li>
+                }
+                @if (m.Lectures.Count == 0)
+                {
+                    <li class="list-group-item small text-muted lp-empty">No lectures yet — add one or drag one here.</li>
+                }
+            </ul>
+        </div>
+    }
+</div>

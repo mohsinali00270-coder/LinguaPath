@@ -1,0 +1,32 @@
+@model IReadOnlyList<LinguaPath.Domain.Entities.PointRule>
+@{
+    ViewData["Title"] = "Points rules";
+}
+<p class="small text-muted">Points per action (FR-S03). <b>Times a day</b> limits how often an action earns points (0 = no limit).
+    The overall daily cap (<code>Points.DailyCap</code>), and the study-ahead bonus, are in <a asp-controller="Settings" asp-action="Index">Settings</a>.
+    Exams, certificates, tournament prizes and adjustments don't count toward the cap. Changes apply to new awards only.</p>
+<div class="card lp-card">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead><tr><th>Action</th><th style="width:130px">Points</th><th style="width:130px">Times a day</th><th style="width:90px">Active</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var r in Model)
+            {
+                <tr>
+                    <td><b>@r.Action</b><div class="small text-muted">@r.Description</div>
+                        @if (r.UpdatedAt is { } u) { <div class="small text-muted">changed @u.ToLocalTime().ToString("d MMM yyyy") by @r.UpdatedByEmail</div> }</td>
+                    <td colspan="4">
+                        <form asp-action="UpdateRule" method="post" class="d-flex gap-2 align-items-center">
+                            <input type="hidden" name="rule" value="@r.Action" />
+                            <input type="number" name="value" value="@r.Points" min="0" max="10000" class="form-control form-control-sm" style="width:110px" />
+                            <input type="number" name="dailyCap" value="@r.DailyCap" min="0" max="1000" class="form-control form-control-sm" style="width:110px" />
+                            <div class="form-check" style="width:70px"><input type="checkbox" name="isActive" value="true" class="form-check-input" checked="@r.IsActive" /></div>
+                            <button class="btn btn-sm btn-outline-primary">Save</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                xmlns:comp="clr-namespace:LinguaPath.Shared.Contracts.Competitions;assembly=LinguaPath.Shared"
+                x:Class="LinguaPath.Mobile.Pages.ChallengeSetupPage"
+                x:DataType="vm:ChallengeSetupViewModel"
+                Title="{l:Tr NewChallenge}">
+    <ScrollView>
+        <VerticalStackLayout Padding="16,10" Spacing="10">
+        <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+            <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+        </Border>
+            <Label Text="{l:Tr Opponent}" Style="{StaticResource FieldLabel}" />
+            <Label Text="{Binding OpponentName}" FontAttributes="Bold" IsVisible="{Binding PickOpponent, Converter={StaticResource Not}}" />
+            <Picker ItemsSource="{Binding Friends}" ItemDisplayBinding="{Binding Name, x:DataType=vm:PersonRow}" SelectedItem="{Binding Opponent}"
+                    IsVisible="{Binding PickOpponent}" Title="{l:Tr ChooseAFriend}" />
+            <Label Text="{l:Tr Language}" Style="{StaticResource FieldLabel}" />
+            <Picker ItemsSource="{Binding Languages}" ItemDisplayBinding="{Binding Label, x:DataType=vm:LanguageChoice}" SelectedItem="{Binding Language}" />
+            <Label Text="{l:Tr Questions}" Style="{StaticResource FieldLabel}" />
+            <Picker ItemsSource="{Binding QuestionCounts}" SelectedItem="{Binding QuestionCount}" />
+            <Label Text="{l:Tr SecondsPerQuestion}" Style="{StaticResource FieldLabel}" />
+            <Picker ItemsSource="{Binding SecondOptions}" SelectedItem="{Binding Seconds}" />
+            <Grid ColumnDefinitions="*,Auto">
+                <VerticalStackLayout>
+                    <Label Text="{l:Tr PlayLive}" FontAttributes="Bold" />
+                    <Label Text="{l:Tr OffEachOfYouPlaysThe}" Style="{StaticResource Subtitle}" FontSize="12" />
+                </VerticalStackLayout>
+                <Switch Grid.Column="1" IsToggled="{Binding Live}" />
+            </Grid>
+            <Label Text="{l:Tr TheyHave24HoursToAccept}" Style="{StaticResource Subtitle}" FontSize="12" />
+            <Button Text="{l:Tr SendChallenge}" Command="{Binding SendCommand}" IsEnabled="{Binding IsNotBusy}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</pages:BasePage>

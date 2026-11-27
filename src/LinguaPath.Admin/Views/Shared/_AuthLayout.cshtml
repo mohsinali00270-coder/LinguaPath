@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>@ViewData["Title"] · LinguaPath Admin</title>
+    <partial name="_ThemeInit" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="lp-auth">
+<main class="lp-auth-card">
+    <div class="text-center mb-4">
+        <span class="lp-logo lp-logo-lg">L</span>
+        <h1 class="h4 mt-3 mb-1">LinguaPath Admin</h1>
+        <p class="small text-muted mb-0">Content, learners and quality — in one place.</p>
+    </div>
+    @RenderBody()
+</main>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                x:Class="LinguaPath.Mobile.Pages.EditProfilePage"
+                x:DataType="vm:EditProfileViewModel"
+                Title="{l:Tr EditProfile}">
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="14">
+            <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+                <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+            </Border>
+
+            <Label Text="{l:Tr AboutYou}" Style="{StaticResource SectionHeader}" />
+            <VerticalStackLayout>
+                <Label Text="{l:Tr FullName}" Style="{StaticResource FieldLabel}" />
+                <Border Style="{StaticResource InputBox}"><Entry Text="{Binding FullName}" /></Border>
+                <Label Text="{Binding Errors[FullName]}" Style="{StaticResource FieldError}" />
+            </VerticalStackLayout>
+            <VerticalStackLayout>
+                <Label Text="{l:Tr DisplayNameShownToOtherLearners}" Style="{StaticResource FieldLabel}" />
+                <Border Style="{StaticResource InputBox}"><Entry Text="{Binding DisplayName}" MaxLength="50" /></Border>
+                <Label Text="{Binding Errors[DisplayName]}" Style="{StaticResource FieldError}" />
+            </VerticalStackLayout>
+            <VerticalStackLayout>
+                <Label Text="{l:Tr Bio}" Style="{StaticResource FieldLabel}" />
+                <Border Style="{StaticResource InputBox}"><Editor Text="{Binding Bio}" MaxLength="300" AutoSize="TextChanges" MinimumHeightRequest="80" /></Border>
+                <Label Text="{Binding Errors[Bio]}" Style="{StaticResource FieldError}" />
+            </VerticalStackLayout>
+            <VerticalStackLayout>
+                <Label Text="{l:Tr NativeLanguage}" Style="{StaticResource FieldLabel}" />
+                <Border Style="{StaticResource InputBox}">
+                    <Picker ItemsSource="{Binding Languages}" SelectedItem="{Binding NativeLanguage}" Title="{l:Tr ChooseALanguage}" />
+                </Border>
+            </VerticalStackLayout>
+            <!-- BR-32: optional date of birth. -->
+            <VerticalStackLayout>
+                <HorizontalStackLayout Spacing="4">
+                    <CheckBox IsChecked="{Binding HasDateOfBirth}" IsEnabled="{Binding CanEditDateOfBirth}" VerticalOptions="Center" />
+                    <Label Text="{l:Tr Dob_Label}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <Border Style="{StaticResource InputBox}" IsVisible="{Binding HasDateOfBirth}">
+                    <DatePicker Date="{Binding DateOfBirth}" IsEnabled="{Binding CanEditDateOfBirth}" MinimumDate="{Binding MinBirthDate}" MaximumDate="{Binding MaxBirthDate}"
+                                SemanticProperties.Description="{l:Tr Dob_Label}" />
+                </Border>
+                <Label Text="{l:Tr Dob_Hint}" Style="{StaticResource Subtitle}" FontSize="12" IsVisible="{Binding HasDateOfBirth}" />
+                <Label Text="{Binding Errors[DateOfBirth]}" Style="{StaticResource FieldError}" />
+            </VerticalStackLayout>
+
+            <Label Text="{l:Tr App}" Style="{StaticResource SectionHeader}" />
+            <VerticalStackLayout>
+                <Label Text="{l:Tr AppLanguage}" Style="{StaticResource FieldLabel}" />
+                <Border Style="{StaticResource InputBox}">
+                    <Picker ItemsSource="{Binding UiLanguages}" SelectedItem="{Binding UiLanguage}" Title="{l:Tr AppLanguage}" />
+                </Border>
+            </VerticalStackLayout>
+            <VerticalStackLayout>
+                <Label Text="{l:Tr TimeZone}" Style="{StaticResource FieldLabel}" />
+                <Grid ColumnDefinitions="*,Auto" ColumnSpacing="8">
+                    <Border Style="{StaticResource InputBox}"><Entry Text="{Binding TimeZone}" /></Border>
+                    <Button Grid.Column="1" Text="{l:Tr UseThisPhoneS}" Style="{StaticResource LinkButton}" Command="{Binding UseDeviceTimeZoneCommand}" />
+                </Grid>
+                <Label Text="{Binding Errors[TimeZone]}" Style="{StaticResource FieldError}" />
+            </VerticalStackLayout>
+
+            <Label Text="{l:Tr StudyReminders}" Style="{StaticResource SectionHeader}" />
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="8">
+                    <Grid ColumnDefinitions="*,Auto">
+                        <Label Text="{l:Tr RemindMeAtASetTime}" VerticalOptions="Center" />
+                        <Switch Grid.Column="1" IsToggled="{Binding HasStudyTime}" />
+                    </Grid>
+                    <TimePicker Time="{Binding StudyTime}" IsVisible="{Binding HasStudyTime}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="{l:Tr Notifications}" Style="{StaticResource SectionHeader}" />
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="4">
+                    <Grid ColumnDefinitions="*,Auto"><Label Text="{l:Tr DailyStudyReminders}" VerticalOptions="Center" /><Switch Grid.Column="1" IsToggled="{Binding StudyReminders}" /></Grid>
+                    <Grid ColumnDefinitions="*,Auto"><Label Text="{l:Tr DailyQuizIsReady}" VerticalOptions="Center" /><Switch Grid.Column="1" IsToggled="{Binding QuizReady}" /></Grid>
+                    <Grid ColumnDefinitions="*,Auto"><Label Text="{l:Tr ExamReminders}" VerticalOptions="Center" /><Switch Grid.Column="1" IsToggled="{Binding ExamReminders}" /></Grid>
+                    <Grid ColumnDefinitions="*,Auto"><Label Text="{l:Tr StreakAtRisk}" VerticalOptions="Center" /><Switch Grid.Column="1" IsToggled="{Binding StreakAlerts}" /></Grid>
+                    <Grid ColumnDefinitions="*,Auto"><Label Text="{l:Tr Certificates}" VerticalOptions="Center" /><Switch Grid.Column="1" IsToggled="{Binding Certificates}" /></Grid>
+                    <Grid ColumnDefinitions="*,Auto"><Label Text="{l:Tr NewPostsInMyLanguage}" VerticalOptions="Center" /><Switch Grid.Column="1" IsToggled="{Binding NewPosts}" /></Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="{l:Tr Save}" Command="{Binding SaveCommand}" Margin="0,12,0,0" />
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</pages:BasePage>

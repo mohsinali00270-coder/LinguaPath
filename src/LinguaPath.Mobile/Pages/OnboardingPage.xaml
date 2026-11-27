@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                xmlns:learning="clr-namespace:LinguaPath.Shared.Contracts.Learning;assembly=LinguaPath.Shared"
+                x:Class="LinguaPath.Mobile.Pages.OnboardingPage"
+                x:DataType="vm:OnboardingViewModel"
+                Title="{l:Tr GetStarted}">
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- Header: progress + question -->
+        <VerticalStackLayout Padding="20,12,20,8" Spacing="10">
+            <ProgressBar Progress="{Binding Progress}" ProgressColor="{StaticResource Primary}" />
+            <Label Text="{Binding StepTitle}" Style="{StaticResource Title}" FontSize="22" />
+            <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+                <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+            </Border>
+        </VerticalStackLayout>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="20,4,20,20" Spacing="12">
+
+                <!-- STEP 0: language (FR-L10) -->
+                <VerticalStackLayout IsVisible="{Binding IsLanguageStep}" Spacing="10">
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Languages}" Spacing="10">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="vm:LanguageCard">
+                                <Border Style="{StaticResource ChoiceCard}">
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryLightDark}}" />
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsComingSoon}" Value="True">
+                                            <Setter Property="Opacity" Value="0.6" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:OnboardingViewModel}}, Path=SelectLanguageCommand}"
+                                                              CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <VerticalStackLayout>
+                                            <Label Text="{Binding Name}" FontSize="17" FontAttributes="Bold" />
+                                            <Label Text="{Binding NativeName}" Style="{StaticResource Subtitle}" />
+                                        </VerticalStackLayout>
+                                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" IsVisible="{Binding IsComingSoon}">
+                                            <Label Text="{l:Tr ComingSoon}" FontSize="12" Style="{StaticResource Subtitle}" HorizontalOptions="End" />
+                                            <Label Text="{Binding ActionText}" FontSize="14" TextColor="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}" HorizontalOptions="End" />
+                                        </VerticalStackLayout>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                    <Button Text="{l:Tr DonTSeeYourLanguageRequest}" Style="{StaticResource LinkButton}"
+                            Command="{Binding RequestOtherLanguageCommand}" HorizontalOptions="Center" />
+                </VerticalStackLayout>
+
+                <!-- STEP 1: current level (FR-L11) -->
+                <VerticalStackLayout IsVisible="{Binding IsLevelStep}" Spacing="10">
+                    <Label Text="{l:Tr BeHonestYourRoadmapStartsFrom}" Style="{StaticResource Subtitle}" />
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Levels}" Spacing="10">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="vm:SelectableOption">
+                                <Border Style="{StaticResource ChoiceCard}">
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryLightDark}}" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:OnboardingViewModel}}, Path=SelectLevelCommand}"
+                                                              CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <VerticalStackLayout>
+                                        <Label Text="{Binding Title}" FontAttributes="Bold" />
+                                        <Label Text="{Binding Description}" Style="{StaticResource Subtitle}" FontSize="14" />
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                    <Button Text="{l:Tr NotSureTakeA10Question}" Style="{StaticResource LinkButton}"
+                            Command="{Binding TakePlacementTestCommand}" HorizontalOptions="Center" />
+
+                    <Border Style="{StaticResource Card}" IsVisible="{Binding HasManyCourses}">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="{l:Tr Course}" Style="{StaticResource FieldLabel}" />
+                            <Picker ItemsSource="{Binding Courses}" SelectedItem="{Binding SelectedCourse}"
+                                    ItemDisplayBinding="{Binding Title, x:DataType=learning:CourseDto}" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Label Text="{Binding CourseSummary}" Style="{StaticResource Subtitle}" FontSize="13" />
+                </VerticalStackLayout>
+
+                <!-- STEP 2: target level and goal (FR-L12) -->
+                <VerticalStackLayout IsVisible="{Binding IsGoalStep}" Spacing="10">
+                    <Label Text="{l:Tr LevelYouWantToReach}" Style="{StaticResource SectionHeader}" />
+                    <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding TargetLevels}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="vm:SelectableOption">
+                                <Border Style="{StaticResource Chip}">
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryLightDark}}" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:OnboardingViewModel}}, Path=SelectTargetCommand}"
+                                                              CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="{Binding Title}" />
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </FlexLayout>
+
+                    <Label Text="{l:Tr MainGoal}" Style="{StaticResource SectionHeader}" />
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Goals}" Spacing="10">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="vm:SelectableOption">
+                                <Border Style="{StaticResource ChoiceCard}">
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryLightDark}}" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:OnboardingViewModel}}, Path=SelectGoalCommand}"
+                                                              CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <VerticalStackLayout>
+                                        <Label Text="{Binding Title}" FontAttributes="Bold" />
+                                        <Label Text="{Binding Description}" Style="{StaticResource Subtitle}" FontSize="14" />
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+                    <VerticalStackLayout IsVisible="{Binding IsExamGoal}">
+                        <Label Text="{l:Tr WhichExamOptional}" Style="{StaticResource FieldLabel}" />
+                        <Border Style="{StaticResource InputBox}">
+                            <Entry Text="{Binding ExamName}" Placeholder="{l:Tr EGDELEA2}" MaxLength="100" />
+                        </Border>
+                    </VerticalStackLayout>
+                </VerticalStackLayout>
+
+                <!-- STEP 3: duration, daily time, days, reminder, focus (FR-L13, FR-L14) -->
+                <VerticalStackLayout IsVisible="{Binding IsScheduleStep}" Spacing="6">
+                    <Label Text="{l:Tr FinishIn}" Style="{StaticResource SectionHeader}" />
+                    <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding Durations}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="vm:SelectableOption">
+                                <Border Style="{StaticResource Chip}">
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryLightDark}}" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:OnboardingViewModel}}, Path=SelectDurationCommand}"
+                                                              CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="{Binding Title}" />
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </FlexLayout>
+                    <Border Style="{StaticResource InputBox}" IsVisible="{Binding IsCustomEnd}">
+                        <DatePicker Date="{Binding CustomEndDate}" MinimumDate="{Binding MinEndDate}" MaximumDate="{Binding MaxEndDate}" Format="D" />
+                    </Border>
+
+                    <Label Text="{l:Tr StudyTimePerDay}" Style="{StaticResource SectionHeader}" />
+                    <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding MinuteOptions}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="vm:SelectableOption">
+                                <Border Style="{StaticResource Chip}">
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryLightDark}}" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:OnboardingViewModel}}, Path=SelectMinutesCommand}"
+                                                              CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <VerticalStackLayout>
+                                        <Label Text="{Binding Title}" FontAttributes="Bold" HorizontalOptions="Center" />
+                                        <Label Text="{Binding Description}" FontSize="12" Style="{StaticResource Subtitle}" HorizontalOptions="Center" />
+                                    </VerticalStackLayout>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </FlexLayout>
+
+                    <Label Text="{l:Tr StudyDays}" Style="{StaticResource SectionHeader}" />
+                    <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding Days}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="vm:SelectableOption">
+                                <Border Style="{StaticResource Chip}" Padding="12,8">
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryLightDark}}" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:OnboardingViewModel}}, Path=ToggleDayCommand}"
+                                                              CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="{Binding Title}" />
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </FlexLayout>
+
+                    <Label Text="{l:Tr DailyReminder}" Style="{StaticResource SectionHeader}" />
+                    <Border Style="{StaticResource Card}">
+                        <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                            <Label Text="{l:Tr RemindMeToStudy}" VerticalOptions="Center" />
+                            <Switch Grid.Column="1" IsToggled="{Binding HasStudyTime}" />
+                            <TimePicker Grid.Row="1" Grid.ColumnSpan="2" Time="{Binding StudyTime}" IsVisible="{Binding HasStudyTime}" />
+                        </Grid>
+                    </Border>
+
+                    <Label Text="{l:Tr FocusOn}" Style="{StaticResource SectionHeader}" />
+                    <FlexLayout Wrap="Wrap" BindableLayout.ItemsSource="{Binding Skills}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="vm:SelectableOption">
+                                <Border Style="{StaticResource Chip}">
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryLightDark}}" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:OnboardingViewModel}}, Path=ToggleSkillCommand}"
+                                                              CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="{Binding Title}" />
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </FlexLayout>
+                </VerticalStackLayout>
+
+                <!-- STEP 4: plan check (FR-L15) -->
+                <VerticalStackLayout IsVisible="{Binding IsSummaryStep}" Spacing="12">
+                    <Border Style="{StaticResource Card}">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border" Binding="{Binding PlanIsOk}" Value="True">
+                                <Setter Property="Stroke" Value="{StaticResource Success}" />
+                            </DataTrigger>
+                            <DataTrigger TargetType="Border" Binding="{Binding PlanHasWarning}" Value="True">
+                                <Setter Property="Stroke" Value="{StaticResource Accent}" />
+                            </DataTrigger>
+                            <DataTrigger TargetType="Border" Binding="{Binding PlanNotFeasible}" Value="True">
+                                <Setter Property="Stroke" Value="{StaticResource Danger}" />
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <VerticalStackLayout Spacing="8">
+                            <Label Text="{Binding Plan.Message}" FontSize="17" FontAttributes="Bold" />
+                            <Label Text="{Binding PlanStats}" Style="{StaticResource Subtitle}" />
+                            <Label Text="{Binding CourseSummary}" Style="{StaticResource Subtitle}" FontSize="13" />
+                        </VerticalStackLayout>
+                    </Border>
+                    <Button Text="{Binding Plan.SuggestedDailyMinutes, StringFormat='Study {0} minutes a day instead'}"
+                            Style="{StaticResource OutlineButton}" IsVisible="{Binding HasSuggestedMinutes}"
+                            Command="{Binding UseSuggestedMinutesCommand}" />
+                    <Button Text="{Binding Plan.SuggestedEndDate, StringFormat='Finish on {0:d MMM yyyy} instead'}"
+                            Style="{StaticResource OutlineButton}" IsVisible="{Binding HasSuggestedEnd}"
+                            Command="{Binding UseSuggestedEndCommand}" />
+                    <Label Text="{l:Tr YouCanChangeAnyOfThis}" Style="{StaticResource Subtitle}" FontSize="13" />
+                </VerticalStackLayout>
+
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Footer buttons -->
+        <Grid Grid.Row="2" ColumnDefinitions="Auto,*" ColumnSpacing="12" Padding="20,8,20,20">
+            <Button Text="{l:Tr Back}" Style="{StaticResource OutlineButton}" Command="{Binding BackCommand}" IsVisible="{Binding CanGoBack}" Padding="20,0" />
+            <Button Grid.Column="1" Text="{Binding NextText}" Command="{Binding NextCommand}" />
+        </Grid>
+    </Grid>
+</pages:BasePage>

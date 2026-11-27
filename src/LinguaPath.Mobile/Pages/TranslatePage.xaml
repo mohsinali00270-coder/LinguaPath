@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                x:Class="LinguaPath.Mobile.Pages.TranslatePage"
+                x:DataType="vm:TranslateViewModel"
+                Title="{l:Tr Translate}">
+    <CollectionView ItemsSource="{Binding History}" Margin="16,0">
+        <CollectionView.Header>
+            <VerticalStackLayout Spacing="12" Padding="0,8,0,8">
+                <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+                    <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+                </Border>
+
+                <!-- Composer card -->
+                <Border Style="{StaticResource Card}" Padding="14">
+                    <VerticalStackLayout Spacing="12">
+                        <Grid ColumnDefinitions="*,Auto,*" ColumnSpacing="8">
+                            <Border Style="{StaticResource CardMuted}" Padding="12,0" StrokeShape="RoundRectangle 12">
+                                <Picker Title="{l:Tr From}" ItemsSource="{Binding FromLanguages}" SelectedItem="{Binding From}" FontSize="15" />
+                            </Border>
+                            <Grid Grid.Column="1" WidthRequest="44" HeightRequest="44" VerticalOptions="Center">
+                                <Border Style="{StaticResource IconTile}" StrokeShape="RoundRectangle 22" />
+                                <Path Style="{StaticResource Icon}" Data="{StaticResource IconTranslate}" WidthRequest="18" HeightRequest="18" />
+                                <Button Style="{StaticResource HitTarget}" SemanticProperties.Description="{l:Tr SwapLanguages}" Command="{Binding SwapCommand}" />
+                            </Grid>
+                            <Border Grid.Column="2" Style="{StaticResource CardMuted}" Padding="12,0" StrokeShape="RoundRectangle 12">
+                                <Picker Title="{l:Tr To}" ItemsSource="{Binding ToLanguages}" SelectedItem="{Binding To}" FontSize="15" />
+                            </Border>
+                        </Grid>
+
+                        <Border Style="{StaticResource InputBox}" Padding="12,4">
+                            <Editor Text="{Binding SourceText}" Placeholder="{l:Tr TypePasteOrSpeak}" AutoSize="TextChanges" MinimumHeightRequest="110" MaxLength="500" FontSize="17" />
+                        </Border>
+                        <Label Text="{Binding Errors[Text]}" Style="{StaticResource FieldError}" IsVisible="{Binding Errors[Text], Converter={StaticResource HasText}}" />
+
+                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                            <Button Text="{l:Tr Translate}" Style="{StaticResource GradientButton}" Command="{Binding TranslateCommand}" />
+                            <Button Grid.Column="1" Text="{Binding VoiceText}" Style="{StaticResource TonalButton}" Command="{Binding VoiceCommand}" />
+                            <Button SemanticProperties.Description="{l:Tr ReadAloud}" Grid.Column="2" Text="🔊" Style="{StaticResource IconButton}"
+                                    WidthRequest="52" HeightRequest="52" CornerRadius="16" Command="{Binding SpeakSourceCommand}" />
+                        </Grid>
+                        <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <!-- Result -->
+                <Border Style="{StaticResource TintCard}" IsVisible="{Binding HasResult}" Padding="18">
+                    <VerticalStackLayout Spacing="10">
+                        <Label Text="{Binding Result.TranslatedText}" FontSize="22" FontAttributes="Bold" />
+                        <Label Text="{Binding DetectedText}" Style="{StaticResource Caption}" FontSize="12" />
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                            <Button Text="{l:Tr Listen}" Style="{StaticResource OutlineButton}" Command="{Binding SpeakResultCommand}" />
+                            <Button Grid.Column="1" Text="{l:Tr SaveToMyWords}" Style="{StaticResource OutlineButton}" Command="{Binding SaveWordCommand}" />
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+                <Label Text="{Binding RemainingText}" Style="{StaticResource Caption}" FontSize="12" HorizontalTextAlignment="Center" />
+
+                <Grid ColumnDefinitions="*,Auto" Margin="0,4,0,0">
+                    <Label Text="{l:Tr History}" Style="{StaticResource SectionHeader}" Margin="4,0" VerticalOptions="Center" />
+                    <Button Grid.Column="1" Text="{l:Tr Clear}" Style="{StaticResource LinkButton}" FontSize="13" Command="{Binding ClearHistoryCommand}" />
+                </Grid>
+            </VerticalStackLayout>
+        </CollectionView.Header>
+        <CollectionView.EmptyView>
+            <VerticalStackLayout Spacing="10" Margin="0,24" HorizontalOptions="Center">
+                <Border Style="{StaticResource IconTileTeal}" WidthRequest="56" HeightRequest="56" StrokeShape="RoundRectangle 18" HorizontalOptions="Center">
+                    <Path Style="{StaticResource IconTeal}" Data="{StaticResource IconClock}" WidthRequest="26" HeightRequest="26" />
+                </Border>
+                <Label Text="{l:Tr YourLast100TranslationsAppearHere}" Style="{StaticResource Subtitle}" HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+        </CollectionView.EmptyView>
+        <CollectionView.ItemTemplate>
+            <DataTemplate x:DataType="vm:TranslationRow">
+                <Border Style="{StaticResource CardFlat}" Margin="0,0,0,8">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:TranslateViewModel}}, Path=UseCommand}"
+                                              CommandParameter="{Binding .}" />
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                        <VerticalStackLayout Spacing="3">
+                            <Label Text="{Binding Source}" FontAttributes="Bold" LineBreakMode="TailTruncation" />
+                            <Label Text="{Binding Result}" Style="{StaticResource Subtitle}" LineBreakMode="TailTruncation" />
+                        </VerticalStackLayout>
+                        <Border Grid.Column="1" Style="{StaticResource PillTeal}" Padding="8,3">
+                            <Label Text="{Binding Pair}" Style="{StaticResource PillTextTeal}" FontSize="11" />
+                        </Border>
+                    </Grid>
+                </Border>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+    </CollectionView>
+</pages:BasePage>

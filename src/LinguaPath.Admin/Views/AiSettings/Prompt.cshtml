@@ -1,0 +1,54 @@
+@model PromptEditorModel
+@{
+    ViewData["Title"] = $"Prompt: {Model.Input.Key}";
+}
+<a asp-action="Index" class="small">&larr; AI usage & prompts</a>
+<div class="row g-3 mt-1">
+    <div class="col-lg-8">
+        <div class="card lp-card">
+            <div class="card-body">
+                <p class="small text-muted mb-2">Saving creates a new version and makes it active. Answers must stay JSON matching the schema at the end of the prompt; the server checks it and retries once.</p>
+                <form asp-action="Prompt" method="post">
+                    <input type="hidden" asp-for="Input.Key" />
+                    <div asp-validation-summary="All" class="alert alert-danger py-2 small"></div>
+                    <div class="mb-3"><label asp-for="Input.SystemText" class="form-label"></label><textarea asp-for="Input.SystemText" class="form-control font-monospace small" rows="3"></textarea></div>
+                    <div class="mb-3"><label asp-for="Input.PromptText" class="form-label"></label><textarea asp-for="Input.PromptText" class="form-control font-monospace small" rows="18"></textarea></div>
+                    <div class="row g-2">
+                        <div class="col-md-4"><label asp-for="Input.Model" class="form-label"></label><input asp-for="Input.Model" class="form-control" placeholder="uses Ai.Model" /></div>
+                        <div class="col-md-2"><label asp-for="Input.Temperature" class="form-label"></label><input asp-for="Input.Temperature" class="form-control" step="0.1" /></div>
+                        <div class="col-md-6"><label asp-for="Input.Notes" class="form-label"></label><input asp-for="Input.Notes" class="form-control" /></div>
+                    </div>
+                    <button class="btn btn-primary mt-3">Save as new version</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card lp-card mb-3">
+            <div class="card-body small">
+                <h3 class="h6">Placeholders</h3>
+                @foreach (var p in Model.Placeholders) { <code class="me-2">@p</code> }
+            </div>
+        </div>
+        <div class="card lp-card">
+            <div class="card-body small">
+                <h3 class="h6">Versions</h3>
+                @if (Model.Versions.Count == 0) { <p class="text-muted mb-0">Using the built-in version.</p> }
+                @foreach (var v in Model.Versions)
+                {
+                    <div class="d-flex justify-content-between align-items-center border-bottom py-1">
+                        <div>
+                            <a asp-action="Prompt" asp-route-key="@Model.Input.Key" asp-route-versionId="@v.Id">v@v.Version</a>
+                            @if (v.IsActive) { <span class="badge text-bg-success">active</span> }
+                            <div class="text-muted">@(v.CreatedBy ?? "—") · @v.CreatedAt.ToLocalTime().ToString("g")@(v.Notes is null ? "" : $" · {v.Notes}")</div>
+                        </div>
+                        @if (!v.IsActive)
+                        {
+                            <form asp-action="Activate" asp-route-id="@v.Id" asp-route-key="@Model.Input.Key" method="post"><button class="btn btn-sm btn-link">Use</button></form>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,17 @@
+@{
+    ViewData["Title"] = "No access";
+    Layout = User.Identity?.IsAuthenticated == true ? "_Layout" : "_AuthLayout";
+}
+<div class="card lp-card">
+    <div class="card-body text-center py-5">
+        <p class="mb-4">Your role does not have access to this page.</p>
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <a class="btn btn-primary" asp-controller="Dashboard" asp-action="Index">Back to dashboard</a>
+        }
+        else
+        {
+            <a class="btn btn-primary" asp-action="Login">Sign in</a>
+        }
+    </div>
+</div>

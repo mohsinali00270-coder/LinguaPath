@@ -1,0 +1,171 @@
+@model ExamEditorModel
+@{
+    var isNew = Model.Input.Id == 0;
+    ViewData["Title"] = isNew ? "New monthly exam" : Model.Input.Title;
+    var skillNames = Enum.GetValues<Skill>();
+    var typeNames = Enum.GetValues<QuestionType>();
+}
+<a asp-action="Index" asp-route-courseId="@Model.Input.CourseId" class="small">&larr; Quizzes & exams</a>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-2 mb-3">
+    <div>
+        <h2 class="h5 mb-0">@ViewData["Title"] @if (!isNew) { <partial name="_ContentStatus" model="Model.Status" /> }</h2>
+        <div class="small text-muted">@Model.LanguageName · @Model.CourseTitle @(Model.Attempts > 0 ? $"· {Model.Attempts} attempt(s)" : "")</div>
+    </div>
+    @if (!isNew)
+    {
+        <div class="d-flex gap-2">
+            @if (Model.Status != ContentStatus.Published)
+            {
+                <form asp-action="Publish" asp-route-id="@Model.Input.Id" method="post"><button class="btn btn-sm btn-success">Publish</button></form>
+            }
+            else
+            {
+                <form asp-action="Unpublish" asp-route-id="@Model.Input.Id" method="post"><button class="btn btn-sm btn-outline-warning">Unpublish</button></form>
+            }
+            <form asp-action="Delete" asp-route-id="@Model.Input.Id" method="post" data-confirm="Delete this exam?"><button class="btn btn-sm btn-outline-danger">Delete</button></form>
+        </div>
+    }
+</div>
+
+@if (Model.Warnings.Count > 0)
+{
+    <div class="alert alert-warning small py-2">
+        @foreach (var w in Model.Warnings) { <div>@w</div> }
+    </div>
+}
+
+<form asp-action="Save" method="post" id="exam-form">
+    <input type="hidden" asp-for="Input.Id" />
+    <input type="hidden" asp-for="Input.CourseId" />
+    <div asp-validation-summary="All" class="alert alert-danger py-2 small"></div>
+
+    <div class="card lp-card mb-3">
+        <div class="card-body row g-3">
+            <div class="col-md-6"><label asp-for="Input.Title" class="form-label"></label><input asp-for="Input.Title" class="form-control" /></div>
+            <div class="col-md-2"><label asp-for="Input.MonthNo" class="form-label"></label><input asp-for="Input.MonthNo" class="form-control" /></div>
+            <div class="col-md-2"><label asp-for="Input.TimeLimitMinutes" class="form-label">Minutes</label><input asp-for="Input.TimeLimitMinutes" class="form-control" /></div>
+            <div class="col-md-2"><label asp-for="Input.PassMark" class="form-label">Pass mark %</label><input asp-for="Input.PassMark" class="form-control" placeholder="@Model.DefaultPassMark" /></div>
+            <div class="col-12"><label asp-for="Input.Instructions" class="form-label"></label><textarea asp-for="Input.Instructions" class="form-control" rows="2"></textarea></div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h3 class="h6 mb-0">Sections</h3>
+        <button type="button" class="btn btn-sm btn-outline-primary" id="add-section">Add section</button>
+    </div>
+    <div id="sections">
+        @for (var i = 0; i < Model.Input.Sections.Count; i++)
+        {
+            var s = Model.Input.Sections[i];
+            <div class="card lp-card mb-3 lp-section">
+                <div class="card-body">
+                    <div class="row g-2 align-items-end">
+                        <div class="col-md-3"><label class="form-label small">Title</label><input name="Input.Sections[@i].Title" value="@s.Title" class="form-control form-control-sm" /></div>
+                        <div class="col-md-2">
+                            <label class="form-label small">Skill</label>
+                            <select name="Input.Sections[@i].Skill" class="form-select form-select-sm" data-skill>
+                                <option value="">Any</option>
+                                @foreach (var sk in skillNames) { <option value="@sk" selected="@(s.Skill == sk)">@sk</option> }
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small">Type</label>
+                            <select name="Input.Sections[@i].QuestionType" class="form-select form-select-sm">
+                                <option value="">Any</option>
+                                @foreach (var t in typeNames) { <option value="@t" selected="@(s.QuestionType == t)">@t</option> }
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="form-label small">Questions</label>
+                            <select name="Input.Sections[@i].SelectionMode" class="form-select form-select-sm" data-mode>
+                                <option value="Random" selected="@(s.SelectionMode == SelectionMode.Random)">Random from pool</option>
+                                <option value="Fixed" selected="@(s.SelectionMode == SelectionMode.Fixed)">Fixed (pick below)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2"><label class="form-label small">How many</label><input name="Input.Sections[@i].QuestionCount" value="@s.QuestionCount" type="number" min="1" max="100" class="form-control form-control-sm" /></div>
+                        <div class="col-md-1 text-end"><button type="button" class="btn btn-sm btn-link text-danger" data-remove-section>Remove</button></div>
+                    </div>
+                    <div class="mt-2 lp-fixed @(s.SelectionMode == SelectionMode.Fixed ? "" : "d-none")">
+                        <div class="small text-muted mb-1">Tick the questions for this section (published questions of this course; ★ = from month @Model.Input.MonthNo).</div>
+                        <div class="border rounded p-2" style="max-height:220px;overflow:auto">
+                            @foreach (var q in Model.Eligible)
+                            {
+                                <div class="form-check small lp-q" data-q-skill="@q.Skill">
+                                    <input class="form-check-input" type="checkbox" name="Input.Sections[@i].QuestionIds" value="@q.Id" checked="@s.QuestionIds.Contains(q.Id)" id="s@(i)q@(q.Id)" />
+                                    <label class="form-check-label" for="s@(i)q@(q.Id)">@(q.InMonth ? "★ " : "")#@q.Id · @q.Skill · @q.Type · @(q.Stem.Length > 90 ? q.Stem[..90] + "…" : q.Stem)</label>
+                                </div>
+                            }
+                            @if (Model.Eligible.Count == 0) { <div class="small text-muted">No published questions for this course yet.</div> }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <template id="section-template">
+        <div class="card lp-card mb-3 lp-section">
+            <div class="card-body">
+                <div class="row g-2 align-items-end">
+                    <div class="col-md-3"><label class="form-label small">Title</label><input name="Input.Sections[__i__].Title" value="New section" class="form-control form-control-sm" /></div>
+                    <div class="col-md-2">
+                        <label class="form-label small">Skill</label>
+                        <select name="Input.Sections[__i__].Skill" class="form-select form-select-sm" data-skill>
+                            <option value="">Any</option>
+                            @foreach (var sk in skillNames) { <option value="@sk">@sk</option> }
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small">Type</label>
+                        <select name="Input.Sections[__i__].QuestionType" class="form-select form-select-sm">
+                            <option value="">Any</option>
+                            @foreach (var t in typeNames) { <option value="@t">@t</option> }
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label small">Questions</label>
+                        <select name="Input.Sections[__i__].SelectionMode" class="form-select form-select-sm" data-mode>
+                            <option value="Random">Random from pool</option>
+                            <option value="Fixed">Fixed (pick below)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2"><label class="form-label small">How many</label><input name="Input.Sections[__i__].QuestionCount" value="5" type="number" min="1" max="100" class="form-control form-control-sm" /></div>
+                    <div class="col-md-1 text-end"><button type="button" class="btn btn-sm btn-link text-danger" data-remove-section>Remove</button></div>
+                </div>
+                <div class="mt-2 lp-fixed d-none">
+                    <div class="small text-muted mb-1">Save first to pick fixed questions for a new section.</div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <button type="submit" class="btn btn-primary">Save exam</button>
+</form>
+
+@section Scripts {
+    <script>
+        (function () {
+            var form = document.getElementById('exam-form');
+            var sections = document.getElementById('sections');
+            document.getElementById('add-section').addEventListener('click', function () {
+                var i = sections.querySelectorAll('.lp-section').length;
+                sections.insertAdjacentHTML('beforeend', document.getElementById('section-template').innerHTML.replace(/__i__/g, i));
+            });
+            sections.addEventListener('click', function (e) {
+                if (e.target.matches('[data-remove-section]')) e.target.closest('.lp-section').remove();
+            });
+            sections.addEventListener('change', function (e) {
+                if (e.target.matches('[data-mode]'))
+                    e.target.closest('.lp-section').querySelector('.lp-fixed').classList.toggle('d-none', e.target.value !== 'Fixed');
+            });
+            // Renumber so MVC binds a contiguous list.
+            form.addEventListener('submit', function () {
+                sections.querySelectorAll('.lp-section').forEach(function (section, i) {
+                    section.querySelectorAll('[name]').forEach(function (input) {
+                        input.name = input.name.replace(/^Input\.Sections\[\d+\]/, 'Input.Sections[' + i + ']');
+                    });
+                });
+            });
+        })();
+    </script>
+}

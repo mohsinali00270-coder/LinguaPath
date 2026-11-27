@@ -1,0 +1,16 @@
+{
+  "solution": {
+    "path": "LinguaPath.slnx",
+    "projects": [
+      "src\\LinguaPath.Admin\\LinguaPath.Admin.csproj",
+      "src\\LinguaPath.Api\\LinguaPath.Api.csproj",
+      "src\\LinguaPath.Application\\LinguaPath.Application.csproj",
+      "src\\LinguaPath.Domain\\LinguaPath.Domain.csproj",
+      "src\\LinguaPath.Infrastructure\\LinguaPath.Infrastructure.csproj",
+      "src\\LinguaPath.Mobile.Core\\LinguaPath.Mobile.Core.csproj",
+      "src\\LinguaPath.Shared\\LinguaPath.Shared.csproj",
+      "tests\\LinguaPath.IntegrationTests\\LinguaPath.IntegrationTests.csproj",
+      "tests\\LinguaPath.UnitTests\\LinguaPath.UnitTests.csproj"
+    ]
+  }
+}

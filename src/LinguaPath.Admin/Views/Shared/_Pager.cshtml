@@ -1,0 +1,21 @@
+@model PagerModel
+@if (Model.TotalPages > 1)
+{
+    var start = Math.Max(1, Model.Page - 2);
+    var end = Math.Min(Model.TotalPages, Model.Page + 2);
+    <nav class="d-flex justify-content-between align-items-center mt-3" aria-label="Pages">
+        <span class="small text-muted">@Model.TotalCount.ToString("N0") records</span>
+        <ul class="pagination pagination-sm mb-0">
+            <li class="page-item @(Model.Page <= 1 ? "disabled" : "")"><a class="page-link" href="@Model.UrlFor(Model.Page - 1)">Previous</a></li>
+            @for (var p = start; p <= end; p++)
+            {
+                <li class="page-item @(p == Model.Page ? "active" : "")"><a class="page-link" href="@Model.UrlFor(p)">@p</a></li>
+            }
+            <li class="page-item @(Model.Page >= Model.TotalPages ? "disabled" : "")"><a class="page-link" href="@Model.UrlFor(Model.Page + 1)">Next</a></li>
+        </ul>
+    </nav>
+}
+else if (Model.TotalCount > 0)
+{
+    <div class="small text-muted mt-3">@Model.TotalCount.ToString("N0") records</div>
+}

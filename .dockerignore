@@ -1,0 +1,12 @@
+**/bin
+**/obj
+**/logs
+**/App_Data
+**/wwwroot/uploads
+**/*.user
+**/appsettings.*.local.json
+**/secrets.json
+src/LinguaPath.Mobile
+tests
+.git
+.vs

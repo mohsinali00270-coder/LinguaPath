@@ -1,0 +1,16 @@
+@model LinguaPath.Shared.AiRequestStatus
+@{
+    var (css, text) = Model switch
+    {
+        AiRequestStatus.PendingApproval => ("text-bg-warning", "Waiting for approval"),
+        AiRequestStatus.Queued => ("text-bg-secondary", "Queued"),
+        AiRequestStatus.Running => ("text-bg-primary", "Running"),
+        AiRequestStatus.AwaitingRoadmapReview => ("text-bg-info", "Review the roadmap"),
+        AiRequestStatus.Completed => ("text-bg-success", "Done"),
+        AiRequestStatus.Failed => ("text-bg-danger", "Failed"),
+        AiRequestStatus.Rejected => ("text-bg-dark", "Rejected"),
+        AiRequestStatus.Paused => ("text-bg-warning", "Paused (budget)"),
+        _ => ("text-bg-light border", "Cancelled")
+    };
+}
+<span class="badge @css">@text</span>

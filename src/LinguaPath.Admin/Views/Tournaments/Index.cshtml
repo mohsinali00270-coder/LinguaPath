@@ -1,0 +1,36 @@
+@model IReadOnlyList<TournamentAdminItem>
+@{
+    ViewData["Title"] = "Tournaments";
+    var status = ViewBag.Status as TournamentStatus?;
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <form method="get" class="d-flex gap-2">
+        <select name="status" class="form-select form-select-sm" onchange="this.form.submit()">
+            <option value="">All</option>
+            @foreach (var s in Enum.GetValues<TournamentStatus>()) { <option value="@s" selected="@(status == s)">@s</option> }
+        </select>
+    </form>
+    <a asp-action="Create" class="btn btn-primary btn-sm">New tournament</a>
+</div>
+<div class="card lp-card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead><tr><th>Title</th><th>Language</th><th>Status</th><th>Starts (UTC)</th><th>Rounds</th><th>Entrants</th><th>Prizes</th></tr></thead>
+            <tbody>
+            @if (Model.Count == 0) { <tr><td colspan="7" class="text-center text-muted py-4">No tournaments yet.</td></tr> }
+            @foreach (var t in Model)
+            {
+                <tr>
+                    <td><a asp-action="Details" asp-route-id="@t.Id">@t.Title</a></td>
+                    <td>@t.LanguageName @t.Level</td>
+                    <td><span class="badge @(t.Status == TournamentStatus.Running ? "text-bg-success" : t.Status == TournamentStatus.Open ? "text-bg-primary" : "text-bg-light border")">@t.Status</span></td>
+                    <td class="small">@t.StartsAt.UtcDateTime.ToString("d MMM yyyy HH:mm")</td>
+                    <td>@(t.Status == TournamentStatus.Running ? $"{t.CurrentRound} of {t.Rounds}" : t.Rounds.ToString())</td>
+                    <td>@t.Entrants</td>
+                    <td class="small">@t.PrizeFirst / @t.PrizeSecond / @t.PrizeThird</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

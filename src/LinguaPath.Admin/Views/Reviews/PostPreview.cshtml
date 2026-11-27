@@ -1,0 +1,28 @@
+@model PostInput
+@{
+    ViewData["Title"] = "Post preview";
+}
+<a asp-action="Index" class="small">&larr; Review queue</a>
+<div class="row mt-3">
+    <div class="col-lg-5">
+        <div class="lp-phone">
+            <div class="lp-phone-screen p-3">
+                <div class="small text-muted mb-1">@Model.PostType · @(Model.Level?.ToString() ?? "All levels")</div>
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" alt="" class="w-100 rounded mb-2" style="max-height:180px;object-fit:cover" />
+                }
+                <h3 class="h6">@Model.Title</h3>
+                <p class="small" style="white-space:pre-line">@Model.Body</p>
+                @if (!string.IsNullOrEmpty(Model.Url))
+                {
+                    <a href="@Model.Url" target="_blank" rel="noopener noreferrer" class="small">@Model.Url</a>
+                }
+                @if (!string.IsNullOrEmpty(Model.Tags))
+                {
+                    <div class="mt-2">@foreach (var t in Model.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)) { <span class="badge text-bg-light border me-1">#@t</span> }</div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

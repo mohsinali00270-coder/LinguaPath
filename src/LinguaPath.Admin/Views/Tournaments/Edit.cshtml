@@ -1,0 +1,39 @@
+@model TournamentInput
+@{
+    ViewData["Title"] = Model.Id == 0 ? "New tournament" : "Edit tournament";
+}
+<a asp-action="Index" class="small">&larr; Tournaments</a>
+<div class="card lp-card mt-2" style="max-width:900px">
+    <div class="card-body">
+        <form asp-action="Save" method="post">
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="All" class="alert alert-danger py-2 small"></div>
+            <div class="row g-3">
+                <div class="col-md-8"><label asp-for="Title" class="form-label"></label><input asp-for="Title" class="form-control" placeholder="Spanish A2 Friday Cup" /></div>
+                <div class="col-md-4"><label asp-for="LanguageId" class="form-label"></label><select asp-for="LanguageId" asp-items="ViewBag.Languages" class="form-select"></select></div>
+                <div class="col-12"><label asp-for="Description" class="form-label"></label><textarea asp-for="Description" class="form-control" rows="2"></textarea></div>
+                <div class="col-md-3">
+                    <label asp-for="Level" class="form-label"></label>
+                    <select asp-for="Level" class="form-select" asp-items="Html.GetEnumSelectList<CefrLevel>()"></select>
+                </div>
+                <div class="col-md-3"><label asp-for="ModuleId" class="form-label"></label><input asp-for="ModuleId" class="form-control" placeholder="Module id" /></div>
+                <div class="col-md-3"><label asp-for="EntryOpensAtUtc" class="form-label"></label><input asp-for="EntryOpensAtUtc" type="datetime-local" class="form-control" /></div>
+                <div class="col-md-3"><label asp-for="StartsAtUtc" class="form-label"></label><input asp-for="StartsAtUtc" type="datetime-local" class="form-control" /></div>
+                <div class="col-md-3"><label asp-for="Rounds" class="form-label"></label><input asp-for="Rounds" type="number" min="1" max="5" class="form-control" />
+                    <div class="form-text">The top half of each round go through; the last round is the final.</div></div>
+                <div class="col-md-3">
+                    <label asp-for="QuestionCount" class="form-label"></label>
+                    <select asp-for="QuestionCount" class="form-select"><option>5</option><option>10</option><option>15</option></select>
+                </div>
+                <div class="col-md-3"><label asp-for="SecondsPerQuestion" class="form-label"></label><input asp-for="SecondsPerQuestion" type="number" min="10" max="20" class="form-control" /></div>
+                <div class="col-md-3"><label asp-for="MaxEntrants" class="form-label"></label><input asp-for="MaxEntrants" type="number" min="2" class="form-control" /></div>
+                <div class="col-md-4"><label asp-for="PrizeFirst" class="form-label"></label><input asp-for="PrizeFirst" type="number" min="0" class="form-control" /></div>
+                <div class="col-md-4"><label asp-for="PrizeSecond" class="form-label"></label><input asp-for="PrizeSecond" type="number" min="0" class="form-control" /></div>
+                <div class="col-md-4"><label asp-for="PrizeThird" class="form-label"></label><input asp-for="PrizeThird" type="number" min="0" class="form-control" /></div>
+            </div>
+            <p class="small text-muted mt-3 mb-2">Questions come from the published question bank (multiple choice, true/false, fill-blank, listen-and-choose) for the language,
+                at the level (widening to ± 1 level when short), or only from the module if you set one. Prizes aren't capped by the daily points limit.</p>
+            <button class="btn btn-primary">Save</button>
+        </form>
+    </div>
+</div>

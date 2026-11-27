@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                x:Class="LinguaPath.Mobile.Pages.CertificatesPage"
+                x:DataType="vm:CertificatesViewModel"
+                Title="{l:Tr MyCertificates}">
+    <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding RefreshCommand}">
+        <ScrollView>
+            <VerticalStackLayout Padding="16" Spacing="12">
+                <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+                    <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+                </Border>
+                <Label Text="{l:Tr FinishEveryCoreLecturePassEvery}"
+                       Style="{StaticResource Subtitle}" FontSize="13" IsVisible="{Binding IsEmpty}" />
+
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Certificates}" Spacing="10">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:CertificateRow">
+                            <Border Style="{StaticResource Card}">
+                                <VerticalStackLayout Spacing="6">
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                                        <Label Text="📜" FontSize="32" VerticalOptions="Center" />
+                                        <VerticalStackLayout Grid.Column="1">
+                                            <Label Text="{Binding Title}" FontAttributes="Bold" FontSize="17" />
+                                            <Label Text="{Binding Course}" Style="{StaticResource Subtitle}" FontSize="13" />
+                                            <Label Text="{Binding Detail}" FontSize="13" />
+                                            <Label Text="{Binding Number}" FontSize="11" Style="{StaticResource Subtitle}" />
+                                            <Label Text="{l:Tr Revoked}" TextColor="{AppThemeBinding Light={StaticResource Danger}, Dark={StaticResource DangerDark}}" FontAttributes="Bold" IsVisible="{Binding IsRevoked}" />
+                                        </VerticalStackLayout>
+                                    </Grid>
+                                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="6" IsVisible="{Binding IsValid}">
+                                        <Button Text="PDF" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CertificatesViewModel}}, Path=DownloadCommand}" CommandParameter="{Binding .}" />
+                                        <Button Grid.Column="1" Text="{l:Tr Share}" Style="{StaticResource OutlineButton}" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CertificatesViewModel}}, Path=ShareCommand}" CommandParameter="{Binding .}" />
+                                        <Button Grid.Column="2" Text="{l:Tr Verify}" Style="{StaticResource OutlineButton}" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CertificatesViewModel}}, Path=VerifyCommand}" CommandParameter="{Binding .}" />
+                                    </Grid>
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Label Text="{l:Tr OnTheWay}" Style="{StaticResource SectionHeader}" IsVisible="{Binding HasInProgress}" />
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding InProgress}" Spacing="10">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:ProgressRow">
+                            <Border Style="{StaticResource Card}">
+                                <VerticalStackLayout Spacing="6">
+                                    <Label Text="{Binding Course}" FontAttributes="Bold" />
+                                    <ProgressBar Progress="{Binding Fraction}" ProgressColor="{StaticResource Primary}" />
+                                    <Label Text="{Binding Summary}" Style="{StaticResource Subtitle}" FontSize="12" />
+                                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Items}">
+                                        <BindableLayout.ItemTemplate>
+                                            <DataTemplate x:DataType="x:String">
+                                                <Label Text="{Binding .}" FontSize="13" />
+                                            </DataTemplate>
+                                        </BindableLayout.ItemTemplate>
+                                    </VerticalStackLayout>
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+</pages:BasePage>

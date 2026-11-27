@@ -1,0 +1,78 @@
+@model IReadOnlyList<AiRequestListItem>
+@{
+    ViewData["Title"] = "AI generation";
+    var status = ViewBag.Status as AiRequestStatus?;
+    var type = ViewBag.Type as AiRequestType?;
+    var running = Model.Any(r => r.Status is AiRequestStatus.Queued or AiRequestStatus.Running);
+}
+@section Head {
+    @if (running)
+    {
+        <meta http-equiv="refresh" content="15" />
+    }
+}
+
+<div class="row g-3 mb-3">
+    <div class="col-lg-8">
+        <p class="small text-muted mb-2">Everything AI writes lands in <b>Draft</b> with the prompt and model attached, and goes through the review queue before learners see it (BR-13).</p>
+        <div class="d-flex flex-wrap gap-2">
+            <a class="btn btn-sm btn-primary" asp-action="Roadmap">Generate a roadmap</a>
+            <a class="btn btn-sm btn-outline-primary" asp-action="Questions">Questions from a lecture</a>
+            <a class="btn btn-sm btn-outline-primary" asp-action="Posts">A month of posts</a>
+            <a class="btn btn-sm btn-outline-primary" asp-controller="Practice" asp-action="Generate">Practice exercises</a>
+            <a class="btn btn-sm btn-outline-secondary" asp-controller="Languages" asp-action="Index">New language (from Languages)</a>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card lp-card"><div class="card-body py-2"><partial name="_AiBudget" model="(AiBudgetStatus)ViewBag.Budget" /></div></div>
+    </div>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-4">
+        <select name="status" class="form-select" onchange="this.form.submit()">
+            <option value="">All statuses</option>
+            @foreach (var s in Enum.GetValues<AiRequestStatus>()) { <option value="@s" selected="@(status == s)">@s</option> }
+        </select>
+    </div>
+    <div class="col-md-4">
+        <select name="type" class="form-select" onchange="this.form.submit()">
+            <option value="">All kinds</option>
+            @foreach (var t in Enum.GetValues<AiRequestType>()) { <option value="@t" selected="@(type == t)">@t</option> }
+        </select>
+    </div>
+</form>
+
+<div class="card lp-card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead><tr><th>Request</th><th>Status</th><th>Progress</th><th>Cost</th><th>By</th><th>Created</th></tr></thead>
+            <tbody>
+            @if (Model.Count == 0)
+            {
+                <tr><td colspan="6" class="text-center text-muted py-4">No AI requests yet.</td></tr>
+            }
+            @foreach (var r in Model)
+            {
+                <tr>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@r.Id"><b>@r.Title</b></a>
+                        @if (!string.IsNullOrEmpty(r.Error)) { <div class="small text-danger">@(r.Error.Length > 120 ? r.Error[..120] + "…" : r.Error)</div> }
+                    </td>
+                    <td><partial name="_AiStatus" model="r.Status" /></td>
+                    <td style="min-width:140px">
+                        @if (r.ProgressTotal > 0)
+                        {
+                            <div class="progress" style="height:6px"><div class="progress-bar" style="width:@r.ProgressPercent%"></div></div>
+                            <div class="small text-muted">@r.ProgressDone / @r.ProgressTotal</div>
+                        }
+                    </td>
+                    <td class="small">@(r.ActualCost > 0 ? "$" + r.ActualCost.ToString("0.0000") : r.EstimatedCost > 0 ? "~$" + r.EstimatedCost.ToString("0.00") : "—")</td>
+                    <td class="small">@(r.RequestedBy ?? "system")</td>
+                    <td class="small text-muted">@r.CreatedAt.ToLocalTime().ToString("g")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

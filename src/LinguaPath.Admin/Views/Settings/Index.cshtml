@@ -1,0 +1,48 @@
+@model SettingsViewModel
+@using LinguaPath.Domain.Entities
+@{
+    ViewData["Title"] = "Settings";
+    var index = 0;
+}
+<p class="text-muted small">Business-rule values from the requirements. Changes take effect within 5 minutes and are written to the audit log.</p>
+
+<form asp-action="Save" method="post">
+    @foreach (var group in Model.Groups)
+    {
+        <div class="card lp-card mb-3">
+            <div class="card-header bg-white fw-semibold">@group.Key</div>
+            <div class="card-body">
+                @foreach (var s in group)
+                {
+                    var id = "s-" + s.Key.Replace('.', '-');
+                    var i = index++;
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-md-5">
+                            <label for="@id" class="form-label mb-0 small fw-semibold">@s.Key</label>
+                            <div class="form-text mt-0">@s.Description</div>
+                        </div>
+                        <div class="col-md-5">
+                            <input type="hidden" name="values[@i].Key" value="@s.Key" />
+                            @if (s.DataType == SettingDataType.Bool)
+                            {
+                                <select id="@id" name="values[@i].Value" class="form-select form-select-sm">
+                                    <option value="true" selected="@(s.Value == "true")">Yes</option>
+                                    <option value="false" selected="@(s.Value != "true")">No</option>
+                                </select>
+                            }
+                            else
+                            {
+                                <input id="@id" name="values[@i].Value" value="@s.Value" class="form-control form-control-sm"
+                                       inputmode="@(s.DataType is SettingDataType.Int or SettingDataType.Decimal ? "decimal" : "text")" />
+                            }
+                        </div>
+                        <div class="col-md-2 small text-muted">@s.DataType</div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    <div class="position-sticky bottom-0 bg-light py-3">
+        <button type="submit" class="btn btn-primary">Save settings</button>
+    </div>
+</form>

@@ -1,0 +1,80 @@
+@model LanguageInput
+@{
+    ViewData["Title"] = Model.Id == 0 ? "Add language" : $"Edit {Model.Name}";
+}
+<div class="card lp-card" style="max-width:820px">
+    <div class="card-body">
+        <form asp-action="Save" method="post">
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small"></div>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" placeholder="Spanish" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="NativeName" class="form-label"></label>
+                    <input asp-for="NativeName" class="form-control" dir="auto" placeholder="Español" />
+                    <span asp-validation-for="NativeName" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="IsoCode" class="form-label"></label>
+                    <input asp-for="IsoCode" class="form-control" placeholder="es" />
+                    <span asp-validation-for="IsoCode" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-4">
+                    <label asp-for="Direction" class="form-label"></label>
+                    <select asp-for="Direction" asp-items="Html.GetEnumSelectList<TextDirection>()" class="form-select"></select>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="MinLevel" class="form-label"></label>
+                    <select asp-for="MinLevel" asp-items="Html.GetEnumSelectList<CefrLevel>()" class="form-select"></select>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="MaxLevel" class="form-label"></label>
+                    <select asp-for="MaxLevel" asp-items="Html.GetEnumSelectList<CefrLevel>()" class="form-select"></select>
+                    <span asp-validation-for="MaxLevel" class="text-danger small"></span>
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="TtsVoice" class="form-label"></label>
+                    <input asp-for="TtsVoice" class="form-control" placeholder="es-ES-ElviraNeural" />
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="SttLocale" class="form-label"></label>
+                    <input asp-for="SttLocale" class="form-control" placeholder="es-ES" />
+                </div>
+
+                <div class="col-md-8">
+                    <label asp-for="FlagUrl" class="form-label"></label>
+                    <input asp-for="FlagUrl" class="form-control" placeholder="https://…/es.png" />
+                    <span asp-validation-for="FlagUrl" class="text-danger small"></span>
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="SortOrder" class="form-label"></label>
+                    <input asp-for="SortOrder" class="form-control" />
+                </div>
+
+                <div class="col-md-6">
+                    <label asp-for="Status" class="form-label"></label>
+                    <select asp-for="Status" class="form-select">
+                        <option value="@((int)LanguageStatus.Draft)">Draft — hidden from learners</option>
+                        <option value="@((int)LanguageStatus.ComingSoon)">Coming soon — greyed out, learners can request it</option>
+                        <option value="@((int)LanguageStatus.Published)">Published — learners can start it</option>
+                        <option value="@((int)LanguageStatus.Disabled)">Disabled — hidden, existing learners keep access</option>
+                    </select>
+                    <span asp-validation-for="Status" class="text-danger small"></span>
+                </div>
+            </div>
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a asp-action="Index" class="btn btn-link">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

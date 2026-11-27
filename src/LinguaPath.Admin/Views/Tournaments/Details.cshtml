@@ -1,0 +1,97 @@
+@model TournamentAdminDetails
+@{
+    var t = Model.Tournament;
+    ViewData["Title"] = t.Title;
+}
+<a asp-action="Index" class="small">&larr; Tournaments</a>
+<div class="row g-3 mt-1">
+    <div class="col-lg-4">
+        <div class="card lp-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h2 class="h6">@Model.LanguageName @t.Level</h2>
+                    <span class="badge @(t.Status == TournamentStatus.Running ? "text-bg-success" : t.Status == TournamentStatus.Open ? "text-bg-primary" : "text-bg-light border")">@t.Status</span>
+                </div>
+                @if (t.Description is not null) { <p class="small">@t.Description</p> }
+                <dl class="row small mb-0">
+                    <dt class="col-6">Entry opens</dt><dd class="col-6">@t.EntryOpensAt.UtcDateTime.ToString("d MMM HH:mm") UTC</dd>
+                    <dt class="col-6">Starts</dt><dd class="col-6">@t.StartsAt.UtcDateTime.ToString("d MMM HH:mm") UTC</dd>
+                    <dt class="col-6">Rounds</dt><dd class="col-6">@(t.CurrentRound > 0 ? $"{t.CurrentRound} of {t.Rounds}" : t.Rounds.ToString())</dd>
+                    <dt class="col-6">Questions</dt><dd class="col-6">@t.QuestionCount × @t.SecondsPerQuestion s</dd>
+                    <dt class="col-6">Pool</dt><dd class="col-6">@(t.ModuleId is { } m ? $"Module {m}" : "Whole bank")</dd>
+                    <dt class="col-6">Prizes</dt><dd class="col-6">@t.PrizeFirst / @t.PrizeSecond / @t.PrizeThird</dd>
+                    <dt class="col-6">Entrants</dt><dd class="col-6">@Model.Entries.Count(e => !e.IsDisqualified)@(t.MaxEntrants is { } mx ? $" of {mx}" : "")</dd>
+                </dl>
+                <div class="d-flex flex-wrap gap-2 mt-3">
+                    @if (t.Status is TournamentStatus.Draft or TournamentStatus.Open) { <a asp-action="Edit" asp-route-id="@t.Id" class="btn btn-sm btn-outline-primary">Edit</a> }
+                    @if (t.Status == TournamentStatus.Draft)
+                    {
+                        <form asp-action="Publish" method="post"><input type="hidden" name="id" value="@t.Id" /><button class="btn btn-sm btn-primary">Publish</button></form>
+                    }
+                    @if (t.Status == TournamentStatus.Open)
+                    {
+                        <form asp-action="StartNow" method="post"><input type="hidden" name="id" value="@t.Id" /><button class="btn btn-sm btn-success" onclick="return confirm('Start round 1 now?')">Start now</button></form>
+                    }
+                </div>
+                @if (t.Status is not (TournamentStatus.Finished or TournamentStatus.Cancelled))
+                {
+                    <form asp-action="Cancel" method="post" class="d-flex gap-2 mt-3">
+                        <input type="hidden" name="id" value="@t.Id" />
+                        <input name="reason" class="form-control form-control-sm" placeholder="Reason to cancel" required />
+                        <button class="btn btn-sm btn-outline-danger">Cancel</button>
+                    </form>
+                }
+            </div>
+        </div>
+
+        <div class="card lp-card mt-3">
+            <div class="card-body">
+                <h2 class="h6">Rounds</h2>
+                @if (Model.Rounds.Count == 0) { <p class="small text-muted mb-0">Not started.</p> }
+                @foreach (var r in Model.Rounds)
+                {
+                    <div class="small border-bottom py-1">Round @r.Round · @r.Players players · @r.Status
+                        @if (r.EndsAt is { } e) { <span class="text-muted">· ended @e.UtcDateTime.ToString("HH:mm") UTC</span> }</div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="card lp-card">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead><tr><th>Place</th><th>Learner</th><th>Round reached</th><th>Last round</th><th>Prize</th><th></th></tr></thead>
+                    <tbody>
+                    @if (Model.Entries.Count == 0) { <tr><td colspan="6" class="text-center text-muted py-4">No entrants yet.</td></tr> }
+                    @foreach (var e in Model.Entries)
+                    {
+                        <tr class="@(e.IsDisqualified ? "table-danger" : "")">
+                            <td>@(e.FinalPlace?.ToString() ?? "—")</td>
+                            <td><a asp-controller="Learners" asp-action="Details" asp-route-id="@e.UserId">@e.DisplayName</a><div class="small text-muted">@e.Email</div></td>
+                            <td>@(e.RoundReached > 0 ? e.RoundReached.ToString() : "—")</td>
+                            <td class="small">@(e.RoundReached > 0 && e.LastRoundRank < int.MaxValue ? $"#{e.LastRoundRank} · {e.LastRoundScore:N0} pts" : "—")</td>
+                            <td>@(e.PrizePoints > 0 ? e.PrizePoints.ToString("N0") : "")</td>
+                            <td class="text-end">
+                                @if (e.IsDisqualified)
+                                {
+                                    <span class="small text-danger">Disqualified: @e.DisqualifiedReason (@e.DisqualifiedBy)</span>
+                                }
+                                else
+                                {
+                                    <form asp-action="Disqualify" method="post" class="d-flex gap-1 justify-content-end">
+                                        <input type="hidden" name="id" value="@t.Id" />
+                                        <input type="hidden" name="userId" value="@e.UserId" />
+                                        <input name="reason" class="form-control form-control-sm" style="max-width:180px" placeholder="Reason" required />
+                                        <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Disqualify this learner? Their tournament points are revoked.')">Disqualify</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

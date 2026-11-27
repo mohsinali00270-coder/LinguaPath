@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                x:Class="LinguaPath.Mobile.Pages.FlashcardsPage"
+                x:DataType="vm:FlashcardsViewModel"
+                Title="{l:Tr ReviewWords}">
+    <Grid RowDefinitions="Auto,*,Auto" Padding="16" RowSpacing="12">
+        <VerticalStackLayout>
+            <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+                <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+            </Border>
+            <Label Text="{Binding ProgressText}" Style="{StaticResource Subtitle}" HorizontalTextAlignment="Center" />
+        </VerticalStackLayout>
+
+        <!-- The card: tap to flip -->
+        <Border Grid.Row="1" Style="{StaticResource Card}" IsVisible="{Binding HasCard}" VerticalOptions="Center" MinimumHeightRequest="240">
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding FlipCommand}" />
+            </Border.GestureRecognizers>
+            <VerticalStackLayout Spacing="12" VerticalOptions="Center">
+                <Label Text="{Binding Front}" FontSize="30" FontAttributes="Bold" HorizontalTextAlignment="Center" />
+                <Button SemanticProperties.Description="{l:Tr ReadAloud}" Text="🔊" Style="{StaticResource OutlineButton}" Command="{Binding ListenCommand}" HorizontalOptions="Center" />
+                <Label Text="{l:Tr TapToSeeTheMeaning}" Style="{StaticResource Subtitle}" HorizontalTextAlignment="Center" IsVisible="{Binding IsFront}" />
+                <VerticalStackLayout IsVisible="{Binding IsFlipped}" Spacing="6">
+                    <Label Text="{Binding Back}" FontSize="22" HorizontalTextAlignment="Center" />
+                    <Label Text="{Binding Example}" FontAttributes="Italic" Style="{StaticResource Subtitle}" HorizontalTextAlignment="Center" IsVisible="{Binding HasExample}" />
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </Border>
+
+        <VerticalStackLayout Grid.Row="1" IsVisible="{Binding IsDone}" VerticalOptions="Center" Spacing="12">
+            <Label Text="🎉" FontSize="48" HorizontalTextAlignment="Center" />
+            <Label Text="{l:Tr NothingLeftToReviewRightNow}" HorizontalTextAlignment="Center" />
+            <Button Text="{l:Tr CheckAgain}" Style="{StaticResource OutlineButton}" Command="{Binding RestartCommand}" />
+        </VerticalStackLayout>
+
+        <!-- SM-2 answer buttons, after flipping -->
+        <Grid Grid.Row="2" ColumnDefinitions="*,*,*,*" ColumnSpacing="6" IsVisible="{Binding IsFlipped}">
+            <Button Text="{l:Tr Again}" BackgroundColor="{StaticResource Danger}" Command="{Binding GradeCommand}" CommandParameter="Again" />
+            <Button Grid.Column="1" Text="{l:Tr Hard}" Style="{StaticResource OutlineButton}" Command="{Binding GradeCommand}" CommandParameter="Hard" />
+            <Button Grid.Column="2" Text="{l:Tr Good}" Command="{Binding GradeCommand}" CommandParameter="Good" />
+            <Button Grid.Column="3" Text="{l:Tr Easy}" BackgroundColor="{StaticResource Success}" Command="{Binding GradeCommand}" CommandParameter="Easy" />
+        </Grid>
+    </Grid>
+</pages:BasePage>

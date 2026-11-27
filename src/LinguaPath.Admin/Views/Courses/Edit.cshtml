@@ -1,0 +1,62 @@
+@model CourseInput
+@{
+    ViewData["Title"] = Model.Id == 0 ? "Add course" : "Edit course";
+}
+<div class="card lp-card" style="max-width:820px">
+    <div class="card-body">
+        <form asp-action="Save" method="post">
+            <input type="hidden" asp-for="Id" />
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small"></div>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label asp-for="LanguageId" class="form-label"></label>
+                    <select asp-for="LanguageId" asp-items="ViewBag.Languages" class="form-select">
+                        <option value="0">Choose…</option>
+                    </select>
+                    <span asp-validation-for="LanguageId" class="text-danger small"></span>
+                </div>
+                <div class="col-md-8">
+                    <label asp-for="Title" class="form-label"></label>
+                    <input asp-for="Title" class="form-control" placeholder="Spanish Essentials (A1 → A2)" />
+                    <span asp-validation-for="Title" class="text-danger small"></span>
+                </div>
+                <div class="col-12">
+                    <label asp-for="Description" class="form-label"></label>
+                    <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="StartLevel" class="form-label"></label>
+                    <select asp-for="StartLevel" asp-items="Html.GetEnumSelectList<CefrLevel>()" class="form-select"></select>
+                </div>
+                <div class="col-md-3">
+                    <label asp-for="EndLevel" class="form-label"></label>
+                    <select asp-for="EndLevel" asp-items="Html.GetEnumSelectList<CefrLevel>()" class="form-select"></select>
+                    <span asp-validation-for="EndLevel" class="text-danger small"></span>
+                </div>
+                <div class="col-md-2">
+                    <label asp-for="SortOrder" class="form-label"></label>
+                    <input asp-for="SortOrder" class="form-control" />
+                </div>
+                <div class="col-md-4">
+                    <label asp-for="CoverUrl" class="form-label"></label>
+                    <input asp-for="CoverUrl" class="form-control" />
+                    <span asp-validation-for="CoverUrl" class="text-danger small"></span>
+                </div>
+            </div>
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">@(Model.Id == 0 ? "Create and build roadmap" : "Save")</button>
+                @if (Model.Id == 0)
+                {
+                    <a asp-action="Index" class="btn btn-link">Cancel</a>
+                }
+                else
+                {
+                    <a asp-action="Builder" asp-route-id="@Model.Id" class="btn btn-link">Back to roadmap</a>
+                }
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

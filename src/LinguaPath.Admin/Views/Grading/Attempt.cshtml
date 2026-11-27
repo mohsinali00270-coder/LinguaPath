@@ -1,0 +1,74 @@
+@model AttemptDetailModel
+@{
+    var a = Model.Attempt;
+    ViewData["Title"] = a.Title;
+    var canOverride = User.IsInRole(Roles.SuperAdmin) || User.IsInRole(Roles.Reviewer);
+}
+<a asp-controller="Learners" asp-action="Details" asp-route-id="@Model.UserId" class="small">&larr; @Model.LearnerName</a>
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-2 mb-3">
+    <div>
+        <h2 class="h5 mb-0">@a.Title</h2>
+        <div class="small text-muted">@Model.LearnerName · @Model.LearnerEmail · @a.CourseTitle · started @a.StartedAt.ToLocalTime().ToString("g")@(a.SubmittedAt is null ? "" : " · submitted " + a.SubmittedAt.Value.ToLocalTime().ToString("g"))</div>
+    </div>
+    <div class="text-end">
+        @if (a.Status is AttemptStatus.Graded or AttemptStatus.PendingReview)
+        {
+            <div class="h4 mb-0">@a.Percentage% <small class="text-muted">(@a.Score / @a.MaxScore)</small></div>
+        }
+        <span class="badge text-bg-light border">@a.Status</span>
+        @if (a.Status == AttemptStatus.Graded) { <span class="badge @(a.IsPassed ? "text-bg-success" : "text-bg-danger")">@(a.IsPassed ? "Passed" : "Not passed")</span> }
+        @if (a.IsPractice) { <span class="badge text-bg-light border">practice</span> }
+        @if (a.BackgroundEvents > 0) { <span class="badge text-bg-warning">left the app @a.BackgroundEvents time(s)</span> }
+    </div>
+</div>
+
+<div class="card lp-card">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead><tr><th>#</th><th>Question</th><th>Answer</th><th>Correct answer</th><th>Points</th>@if (canOverride) { <th>Change mark</th> }</tr></thead>
+            <tbody>
+            @foreach (var x in Model.Answers)
+            {
+                <tr class="@(x.NeedsReview ? "table-info" : x.IsCorrect == false ? "table-danger" : "")">
+                    <td>@x.Number</td>
+                    <td style="max-width:300px">
+                        <div class="small text-muted">@(x.Section is null ? "" : x.Section + " · ")@x.Type · @x.Skill</div>
+                        @x.Stem
+                        @if (!string.IsNullOrEmpty(x.Prompt)) { <div class="small text-muted">@x.Prompt</div> }
+                    </td>
+                    <td style="max-width:260px">
+                        @if (x.AudioUrl is not null) { <audio controls preload="none" src="@x.AudioUrl" style="max-width:220px"></audio> }
+                        else { <span style="white-space:pre-wrap">@x.YourAnswer</span> }
+                        @if (!string.IsNullOrEmpty(x.Feedback)) { <div class="small text-muted">Feedback: @x.Feedback</div> }
+                    </td>
+                    <td class="small" style="max-width:220px">@x.CorrectAnswer</td>
+                    <td class="text-nowrap">
+                        @if (x.NeedsReview) { <span class="badge text-bg-info">to grade</span> }
+                        else { <span>@x.Score / @x.MaxScore</span> }
+                        @foreach (var o in x.Overrides)
+                        {
+                            <div class="small text-muted" title="@o.Reason">@o.OldScore → @o.NewScore by @(o.ChangedBy ?? "—")</div>
+                        }
+                    </td>
+                    @if (canOverride)
+                    {
+                        <td>
+                            @if (a.Status != AttemptStatus.InProgress && a.Status != AttemptStatus.Expired)
+                            {
+                                <form asp-action="Override" method="post" class="d-flex gap-1">
+                                    <input type="hidden" name="answerId" value="@x.AnswerId" />
+                                    <input type="hidden" name="attemptId" value="@a.Id" />
+                                    <input name="score" type="number" min="0" max="@x.MaxScore" step="0.5" value="@x.Score" class="form-control form-control-sm" style="width:70px" required />
+                                    <input name="reason" class="form-control form-control-sm" placeholder="Reason (required)" required maxlength="500" />
+                                    <button class="btn btn-sm btn-outline-primary">Save</button>
+                                </form>
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+<p class="small text-muted mt-2">Mark changes need a reason and are kept in the audit log (BR-14).</p>

@@ -1,0 +1,57 @@
+﻿@model IReadOnlyList<PostListItem>
+@{
+    ViewData["Title"] = "Posts";
+    var status = ViewBag.Status as ContentStatus?;
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <p class="small text-muted mb-0">Tips, articles, videos and culture notes shown in the learner's feed and at the end of lectures.</p>
+    <div class="d-flex gap-2">
+        <a asp-controller="AiRequests" asp-action="Posts" asp-route-languageId="@ViewBag.LanguageId" class="btn btn-outline-info btn-sm">Draft a month with AI</a>
+        <a asp-action="Create" asp-route-languageId="@ViewBag.LanguageId" class="btn btn-primary btn-sm">New post</a>
+    </div>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-4"><select name="languageId" class="form-select" asp-items="ViewBag.Languages"><option value="">All languages</option></select></div>
+    <div class="col-md-3">
+        <select name="status" class="form-select">
+            <option value="">All statuses</option>
+            @foreach (var s in Enum.GetValues<ContentStatus>())
+            {
+                <option value="@s" selected="@(status == s)">@s</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-2"><button class="btn btn-outline-primary w-100" type="submit">Filter</button></div>
+</form>
+
+<div class="card lp-card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead><tr><th>Post</th><th>Language</th><th>Type</th><th>Level</th><th>Status</th><th>Publish at</th><th>Likes</th><th></th></tr></thead>
+            <tbody>
+            @if (Model.Count == 0)
+            {
+                <tr><td colspan="8" class="text-center text-muted py-4">No posts yet.</td></tr>
+            }
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@p.Id"><b>@p.Title</b></a>
+                        @if (p.IsPinned) { <span class="badge text-bg-warning ms-1">pinned</span> }
+                        @if (p.Source == ContentSource.Ai) { <span class="badge text-bg-info ms-1">AI</span> }
+                    </td>
+                    <td>@p.LanguageName</td>
+                    <td>@p.PostType</td>
+                    <td>@(p.Level?.ToString() ?? "All")</td>
+                    <td><partial name="_ContentStatus" model="p.Status" /></td>
+                    <td class="small text-muted">@(p.PublishAt?.ToUniversalTime().ToString("g") ?? "—")</td>
+                    <td>@p.Likes</td>
+                    <td class="text-end"><a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@p.Id">Edit</a></td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

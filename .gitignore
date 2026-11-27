@@ -1,0 +1,17 @@
+bin/
+obj/
+.vs/
+.vscode/
+*.user
+*.suo
+logs/
+App_Data/
+src/LinguaPath.Api/wwwroot/uploads/*
+!src/LinguaPath.Api/wwwroot/uploads/.gitkeep
+TestResults/
+*.db
+*.db-shm
+*.db-wal
+deploy/.env
+deploy/secrets/*.json
+deploy/backups/

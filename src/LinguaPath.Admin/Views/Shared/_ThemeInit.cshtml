@@ -1,0 +1,11 @@
+@* Applies the saved (or system) light/dark theme before the page paints, so there is no flash of the wrong theme. *@
+<script>
+    (function () {
+        var theme = null;
+        try { theme = localStorage.getItem('lp-theme'); } catch (e) { }
+        if (theme !== 'light' && theme !== 'dark') {
+            theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        document.documentElement.setAttribute('data-bs-theme', theme);
+    })();
+</script>

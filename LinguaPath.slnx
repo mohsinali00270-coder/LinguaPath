@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/LinguaPath.Admin/LinguaPath.Admin.csproj" />
+    <Project Path="src/LinguaPath.Api/LinguaPath.Api.csproj" />
+    <Project Path="src/LinguaPath.Application/LinguaPath.Application.csproj" />
+    <Project Path="src/LinguaPath.Domain/LinguaPath.Domain.csproj" />
+    <Project Path="src/LinguaPath.Infrastructure/LinguaPath.Infrastructure.csproj" />
+    <Project Path="src/LinguaPath.Mobile.Core/LinguaPath.Mobile.Core.csproj" />
+    <Project Path="src/LinguaPath.Mobile/LinguaPath.Mobile.csproj" />
+    <Project Path="src/LinguaPath.Shared/LinguaPath.Shared.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/LinguaPath.IntegrationTests/LinguaPath.IntegrationTests.csproj" />
+    <Project Path="tests/LinguaPath.UnitTests/LinguaPath.UnitTests.csproj" />
+  </Folder>
+</Solution>

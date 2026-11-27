@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                x:Class="LinguaPath.Mobile.Pages.PracticePage"
+                x:DataType="vm:PracticeHubViewModel"
+                Title="{Binding Title}">
+    <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding RefreshCommand}">
+        <ScrollView>
+            <VerticalStackLayout Padding="16,8,16,28" Spacing="14">
+                <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+                    <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+                </Border>
+
+                <!-- No course yet -->
+                <Border Style="{StaticResource Card}" IsVisible="{Binding HasNoLanguage}" Padding="22">
+                    <VerticalStackLayout Spacing="12">
+                        <Border Style="{StaticResource IconTile}" WidthRequest="56" HeightRequest="56" StrokeShape="RoundRectangle 18">
+                            <Path Style="{StaticResource Icon}" Data="{StaticResource IconGlobe}" WidthRequest="28" HeightRequest="28" />
+                        </Border>
+                        <Label Text="{l:Tr ChooseALanguageFirst}" Style="{StaticResource Headline}" />
+                        <Label Text="{l:Tr PracticeUsesTheLanguageYouAre}" Style="{StaticResource Subtitle}" />
+                        <Button Text="{l:Tr StartACourse}" Style="{StaticResource GradientButton}" Command="{Binding StartCourseCommand}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border Style="{StaticResource CardFlat}" Padding="14,2" IsVisible="{Binding HasLanguage}">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                        <Path Style="{StaticResource IconSmall}" Data="{StaticResource IconGlobe}" />
+                        <Picker Grid.Column="1" Title="{l:Tr Language}" ItemsSource="{Binding Languages}" SelectedItem="{Binding SelectedLanguage}" />
+                    </Grid>
+                </Border>
+
+                <!-- My words: vocabulary feature card -->
+                <Border Style="{StaticResource TealCard}" IsVisible="{Binding HasLanguage}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding OpenWordsCommand}" />
+                    </Border.GestureRecognizers>
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
+                        <Border Style="{StaticResource IconTileOnHero}" WidthRequest="48" HeightRequest="48" StrokeShape="RoundRectangle 16">
+                            <Path Style="{StaticResource IconOnHero}" Data="{StaticResource IconCards}" />
+                        </Border>
+                        <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                            <Label Text="{l:Tr MyWords}" FontAttributes="Bold" FontSize="18" TextColor="White" />
+                            <Label Text="{Binding WordsText}" FontSize="13" TextColor="#D5F5F0" />
+                        </VerticalStackLayout>
+                        <Button Grid.Column="2" Text="{l:Tr Review}" Style="{StaticResource OnHeroButton}" TextColor="{StaticResource SecondaryText}"
+                                Command="{Binding ReviewCommand}" VerticalOptions="Center" MinimumHeightRequest="42" HeightRequest="42" Padding="18,0" />
+                    </Grid>
+                </Border>
+
+                <Label Text="{l:Tr Ui_Skills}" Style="{StaticResource SectionHeader}" IsVisible="{Binding HasLanguage}" Margin="4,8,4,0" />
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Cards}" Spacing="12" IsVisible="{Binding HasLanguage}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="vm:PracticeCard">
+                            <Border Style="{StaticResource Card}" Padding="16">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PracticeHubViewModel}}, Path=OpenCommand}"
+                                                          CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
+                                    <Border Style="{StaticResource IconTile}" WidthRequest="52" HeightRequest="52" StrokeShape="RoundRectangle 16">
+                                        <Label Text="{Binding Icon}" FontSize="26" HorizontalOptions="Center" VerticalOptions="Center" />
+                                    </Border>
+                                    <VerticalStackLayout Grid.Column="1" Spacing="3" VerticalOptions="Center">
+                                        <Label Text="{Binding Title}" Style="{StaticResource CardTitle}" />
+                                        <Label Text="{Binding Description}" Style="{StaticResource Caption}" />
+                                        <Border Style="{StaticResource PillTeal}" Padding="8,2" Margin="0,4,0,0"
+                                                IsVisible="{Binding Stats, Converter={StaticResource HasText}}">
+                                            <Label Text="{Binding Stats}" Style="{StaticResource PillTextTeal}" FontSize="11" />
+                                        </Border>
+                                    </VerticalStackLayout>
+                                    <Path Grid.Column="2" Style="{StaticResource IconMuted}" Data="{StaticResource IconChevron}" ScaleX="{l:Mirror}" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+
+                <Button Text="{l:Tr TranslateSomething}" Style="{StaticResource TonalButton}" Command="{Binding TranslateCommand}" IsVisible="{Binding HasLanguage}" />
+                <Label Text="{Binding TranslationsText}" Style="{StaticResource Caption}" FontSize="12" HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+</pages:BasePage>

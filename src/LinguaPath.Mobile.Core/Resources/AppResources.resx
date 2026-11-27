@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="A11y_Notifications" xml:space="preserve"><value>Notifications</value></data>
+  <data name="AboutYou" xml:space="preserve"><value>About you</value></data>
+  <data name="Accept" xml:space="preserve"><value>Accept</value></data>
+  <data name="AcceptFriendRequest" xml:space="preserve"><value>✅ Accept friend request</value></data>
+  <data name="Account" xml:space="preserve"><value>Account</value></data>
+  <data name="Add" xml:space="preserve"><value>➕ Add</value></data>
+  <data name="Add2" xml:space="preserve"><value>Add</value></data>
+  <data name="AddFriend" xml:space="preserve"><value>➕ Add friend</value></data>
+  <data name="AddFriends" xml:space="preserve"><value>Add friends</value></data>
+  <data name="Again" xml:space="preserve"><value>Again</value></data>
+  <data name="All" xml:space="preserve"><value>All</value></data>
+  <data name="AllResults" xml:space="preserve"><value>All results</value></data>
+  <data name="AllTime" xml:space="preserve"><value>All time</value></data>
+  <data name="AlreadyHaveAnAccount" xml:space="preserve"><value>Already have an account?</value></data>
+  <data name="AnswersSaveAutomaticallyIfYouLeave" xml:space="preserve"><value>Answers save automatically. If you leave, the timer keeps running; open the exam again to continue.</value></data>
+  <data name="AnyoneCanFindAndJoinIt" xml:space="preserve"><value>Anyone can find and join it</value></data>
+  <data name="App" xml:space="preserve"><value>App</value></data>
+  <data name="AppLanguage" xml:space="preserve"><value>App language</value></data>
+  <data name="Archived" xml:space="preserve"><value>Archived</value></data>
+  <data name="Back" xml:space="preserve"><value>Back</value></data>
+  <data name="Back2" xml:space="preserve"><value>‹ Back</value></data>
+  <data name="Badges" xml:space="preserve"><value>Badges</value></data>
+  <data name="BeHonestYourRoadmapStartsFrom" xml:space="preserve"><value>Be honest — your roadmap starts from here.</value></data>
+  <data name="Bio" xml:space="preserve"><value>Bio</value></data>
+  <data name="Block" xml:space="preserve"><value>🚫 Block</value></data>
+  <data name="BlockedLearners" xml:space="preserve"><value>Blocked learners</value></data>
+  <data name="BlueDailyQuizOrangeMonthlyExam" xml:space="preserve"><value>Blue = daily quiz · orange = monthly exam</value></data>
+  <data name="BookmarkALectureToFindIt" xml:space="preserve"><value>Bookmark a lecture to find it here quickly.</value></data>
+  <data name="Bookmarks" xml:space="preserve"><value>Bookmarks</value></data>
+  <data name="Bookmarks2" xml:space="preserve"><value>☆ Bookmarks</value></data>
+  <data name="ByLanguage" xml:space="preserve"><value>By language</value></data>
+  <data name="BySkill" xml:space="preserve"><value>By skill</value></data>
+  <data name="CanTFindItCheckYour" xml:space="preserve"><value>Can't find it? Check your spam folder.</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="CancelFriendRequest" xml:space="preserve"><value>Cancel friend request</value></data>
+  <data name="Certificates" xml:space="preserve"><value>Certificates</value></data>
+  <data name="Challenge" xml:space="preserve"><value>⚔️ Challenge</value></data>
+  <data name="ChallengeAFriend" xml:space="preserve"><value>⚔️ Challenge a friend</value></data>
+  <data name="ChangePassword" xml:space="preserve"><value>Change password</value></data>
+  <data name="ChangePhoto" xml:space="preserve"><value>Change photo</value></data>
+  <data name="ChangeTopic" xml:space="preserve"><value>Change topic</value></data>
+  <data name="ChangingYourPlanRePacesThe" xml:space="preserve"><value>Changing your plan re-paces the lectures you haven't done yet. Finished lectures stay finished.</value></data>
+  <data name="Chats" xml:space="preserve"><value>💬 Chats</value></data>
+  <data name="Check" xml:space="preserve"><value>Check</value></data>
+  <data name="CheckAgain" xml:space="preserve"><value>Check again</value></data>
+  <data name="CheckAnswers" xml:space="preserve"><value>Check answers</value></data>
+  <data name="CheckMyWriting" xml:space="preserve"><value>Check my writing</value></data>
+  <data name="CheckYourEmail" xml:space="preserve"><value>Check your email</value></data>
+  <data name="Choose" xml:space="preserve"><value>Choose…</value></data>
+  <data name="ChooseAFriend" xml:space="preserve"><value>Choose a friend</value></data>
+  <data name="ChooseALanguage" xml:space="preserve"><value>Choose a language</value></data>
+  <data name="ChooseALanguageAndWeLl" xml:space="preserve"><value>Choose a language and we'll build a plan that fits your time.</value></data>
+  <data name="ChooseALanguageFirst" xml:space="preserve"><value>Choose a language first</value></data>
+  <data name="ChooseANewPassword" xml:space="preserve"><value>Choose a new password</value></data>
+  <data name="Clear" xml:space="preserve"><value>Clear</value></data>
+  <data name="Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Code" xml:space="preserve"><value>Code</value></data>
+  <data name="ComingSoon" xml:space="preserve"><value>Coming soon</value></data>
+  <data name="Compete" xml:space="preserve"><value>Compete</value></data>
+  <data name="Compete2" xml:space="preserve"><value>⚔️ Compete</value></data>
+  <data name="CompleteALectureOrADaily" xml:space="preserve"><value>Complete a lecture or a daily quiz to earn your first points.</value></data>
+  <data name="ConfirmNewPassword" xml:space="preserve"><value>Confirm new password</value></data>
+  <data name="ConfirmPassword" xml:space="preserve"><value>Confirm password</value></data>
+  <data name="ContinueWithApple" xml:space="preserve"><value>Continue with Apple</value></data>
+  <data name="ContinueWithGoogle" xml:space="preserve"><value>Continue with Google</value></data>
+  <data name="Course" xml:space="preserve"><value>Course</value></data>
+  <data name="CourseGrade" xml:space="preserve"><value>Course grade</value></data>
+  <data name="CoursePlan" xml:space="preserve"><value>Course plan</value></data>
+  <data name="CreateAccount" xml:space="preserve"><value>Create account</value></data>
+  <data name="CreateAnAccount" xml:space="preserve"><value>Create an account</value></data>
+  <data name="CreateGroup" xml:space="preserve"><value>Create group</value></data>
+  <data name="CreateYourAccount" xml:space="preserve"><value>Create your account</value></data>
+  <data name="CurrentPassword" xml:space="preserve"><value>Current password</value></data>
+  <data name="DailyQuiz" xml:space="preserve"><value>📝 Daily quiz</value></data>
+  <data name="DailyQuizIsReady" xml:space="preserve"><value>Daily quiz is ready</value></data>
+  <data name="DailyQuizzes" xml:space="preserve"><value>Daily quizzes</value></data>
+  <data name="DailyReminder" xml:space="preserve"><value>Daily reminder</value></data>
+  <data name="DailyStudyReminders" xml:space="preserve"><value>Daily study reminders</value></data>
+  <data name="DayStreak" xml:space="preserve"><value>Day streak</value></data>
+  <data name="Decline" xml:space="preserve"><value>Decline</value></data>
+  <data name="Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="DeleteAccount" xml:space="preserve"><value>Delete account</value></data>
+  <data name="DescriptionOptional" xml:space="preserve"><value>Description (optional)</value></data>
+  <data name="DisplayNameShownToOtherLearners" xml:space="preserve"><value>Display name (shown to other learners)</value></data>
+  <data name="Dob_Hint" xml:space="preserve"><value>Under 18? You can chat and compete with friends only.</value></data>
+  <data name="Dob_Label" xml:space="preserve"><value>Date of birth (optional)</value></data>
+  <data name="DonTSeeYourLanguageRequest" xml:space="preserve"><value>Don't see your language? Request it</value></data>
+  <data name="Done" xml:space="preserve"><value>✓ Done</value></data>
+  <data name="Done2" xml:space="preserve"><value>Done</value></data>
+  <data name="DownloadMyData" xml:space="preserve"><value>Download my data</value></data>
+  <data name="DueOnly" xml:space="preserve"><value>Due only</value></data>
+  <data name="EGDELEA2" xml:space="preserve"><value>e.g. DELE A2</value></data>
+  <data name="EGSpanishB1Practice" xml:space="preserve"><value>e.g. Spanish B1 practice</value></data>
+  <data name="Easy" xml:space="preserve"><value>Easy</value></data>
+  <data name="EditDescription" xml:space="preserve"><value>Edit description</value></data>
+  <data name="EditProfile" xml:space="preserve"><value>Edit profile</value></data>
+  <data name="Email" xml:space="preserve"><value>Email</value></data>
+  <data name="EnterYourAccountEmailAndWe" xml:space="preserve"><value>Enter your account email and we'll send you a code.</value></data>
+  <data name="Err_Forbidden" xml:space="preserve"><value>You can't do that.</value></data>
+  <data name="Err_Generic" xml:space="preserve"><value>Something went wrong. Please try again.</value></data>
+  <data name="Err_Network" xml:space="preserve"><value>Can't reach the server. Check your internet connection and try again.</value></data>
+  <data name="Err_NotFound" xml:space="preserve"><value>Not found.</value></data>
+  <data name="Err_Server" xml:space="preserve"><value>The server had a problem. Please try again shortly.</value></data>
+  <data name="Err_SessionExpired" xml:space="preserve"><value>Your session has expired. Please sign in again.</value></data>
+  <data name="Err_SignInAgain" xml:space="preserve"><value>Please sign in again.</value></data>
+  <data name="Err_TooMany" xml:space="preserve"><value>Too many attempts. Please wait a moment and try again.</value></data>
+  <data name="ExamReminders" xml:space="preserve"><value>Exam reminders</value></data>
+  <data name="Examples" xml:space="preserve"><value>Examples</value></data>
+  <data name="FindGroups" xml:space="preserve"><value>Find groups</value></data>
+  <data name="FindLearnersInPeopleOrJoin" xml:space="preserve"><value>Find learners in People, or join a public group to practise together.</value></data>
+  <data name="Finish" xml:space="preserve"><value>Finish</value></data>
+  <data name="FinishBy" xml:space="preserve"><value>Finish by</value></data>
+  <data name="FinishEveryCoreLecturePassEvery" xml:space="preserve"><value>Finish every core lecture, pass every monthly exam and reach the course grade to earn a certificate. It arrives here automatically.</value></data>
+  <data name="FinishIn" xml:space="preserve"><value>Finish in</value></data>
+  <data name="FocusOn" xml:space="preserve"><value>Focus on</value></data>
+  <data name="ForgotPassword" xml:space="preserve"><value>Forgot password</value></data>
+  <data name="ForgotPassword2" xml:space="preserve"><value>Forgot password?</value></data>
+  <data name="FriendRequests" xml:space="preserve"><value>Friend requests</value></data>
+  <data name="Friends" xml:space="preserve"><value>Friends</value></data>
+  <data name="From" xml:space="preserve"><value>From</value></data>
+  <data name="FullName" xml:space="preserve"><value>Full name</value></data>
+  <data name="GetStarted" xml:space="preserve"><value>Get started</value></data>
+  <data name="Goal" xml:space="preserve"><value>Goal</value></data>
+  <data name="Good" xml:space="preserve"><value>Good</value></data>
+  <data name="GroupInfo" xml:space="preserve"><value>Group info</value></data>
+  <data name="GroupSettings" xml:space="preserve"><value>Group settings</value></data>
+  <data name="Hard" xml:space="preserve"><value>Hard</value></data>
+  <data name="History" xml:space="preserve"><value>History</value></data>
+  <data name="Home" xml:space="preserve"><value>Home</value></data>
+  <data name="IAcceptThe" xml:space="preserve"><value>I accept the</value></data>
+  <data name="Icon" xml:space="preserve"><value>Icon</value></data>
+  <data name="IfAnAccountExistsFor" xml:space="preserve"><value>If an account exists for </value></data>
+  <data name="InThisLecture" xml:space="preserve"><value>In this lecture</value></data>
+  <data name="Inbox_Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="Inbox_Empty" xml:space="preserve"><value>No notifications yet. Reminders, certificates and new posts show up here.</value></data>
+  <data name="Inbox_MarkAllRead" xml:space="preserve"><value>Mark all read</value></data>
+  <data name="Inbox_Title" xml:space="preserve"><value>Notifications</value></data>
+  <data name="Inbox_UnreadFormat" xml:space="preserve"><value>{0} unread</value></data>
+  <data name="ItExpiresIn10Minutes" xml:space="preserve"><value>. It expires in 10 minutes.</value></data>
+  <data name="JoinTheBattle" xml:space="preserve"><value>Join the battle</value></data>
+  <data name="JoinTheTournament" xml:space="preserve"><value>Join the tournament</value></data>
+  <data name="Language" xml:space="preserve"><value>Language</value></data>
+  <data name="Languages" xml:space="preserve"><value>Languages</value></data>
+  <data name="Leaderboard" xml:space="preserve"><value>Leaderboard</value></data>
+  <data name="Leaderboard2" xml:space="preserve"><value>🏆 Leaderboard</value></data>
+  <data name="Learn" xml:space="preserve"><value>Learn</value></data>
+  <data name="LearnALanguageAtYourOwn" xml:space="preserve"><value>Learn a language at your own pace</value></data>
+  <data name="LearnAnotherLanguage" xml:space="preserve"><value>Learn another language</value></data>
+  <data name="LeaveGroup" xml:space="preserve"><value>Leave group</value></data>
+  <data name="LeaveMatch" xml:space="preserve"><value>Leave match</value></data>
+  <data name="LevelYouWantToReach" xml:space="preserve"><value>Level you want to reach</value></data>
+  <data name="LinksPhoneNumbersAndSocialAccounts" xml:space="preserve"><value>Links, phone numbers and social accounts aren't allowed in chat.</value></data>
+  <data name="Listen" xml:space="preserve"><value>🔊 Listen</value></data>
+  <data name="ListenAndTypeWhatYouHear" xml:space="preserve"><value>Listen and type what you hear.</value></data>
+  <data name="ListenFirst" xml:space="preserve"><value>🔊 Listen first</value></data>
+  <data name="LoadEarlierMessages" xml:space="preserve"><value>Load earlier messages</value></data>
+  <data name="MainGoal" xml:space="preserve"><value>Main goal</value></data>
+  <data name="Message" xml:space="preserve"><value>Message</value></data>
+  <data name="Message2" xml:space="preserve"><value>💬 Message</value></data>
+  <data name="MessageDoubleTapAMessageFor" xml:space="preserve"><value>Message… (double-tap a message for options)</value></data>
+  <data name="Month" xml:space="preserve"><value>Month</value></data>
+  <data name="MonthlyExams" xml:space="preserve"><value>Monthly exams</value></data>
+  <data name="MonthlyExams2" xml:space="preserve"><value>🎓 Monthly exams</value></data>
+  <data name="MoreOptions" xml:space="preserve"><value>More options</value></data>
+  <data name="MyCertificates" xml:space="preserve"><value>My certificates</value></data>
+  <data name="MyCertificates2" xml:space="preserve"><value>📜 My certificates</value></data>
+  <data name="MyLeague" xml:space="preserve"><value>🥇 My league</value></data>
+  <data name="MyLeague2" xml:space="preserve"><value>My league</value></data>
+  <data name="MyLearning" xml:space="preserve"><value>My learning</value></data>
+  <data name="MyMarks" xml:space="preserve"><value>📊 My marks</value></data>
+  <data name="MyMarks2" xml:space="preserve"><value>My marks</value></data>
+  <data name="MyNote" xml:space="preserve"><value>My note</value></data>
+  <data name="MyWords" xml:space="preserve"><value>⭐ My words</value></data>
+  <data name="MyWords2" xml:space="preserve"><value>My words</value></data>
+  <data name="Name" xml:space="preserve"><value>Name</value></data>
+  <data name="NativeLanguage" xml:space="preserve"><value>Native language</value></data>
+  <data name="NewChallenge" xml:space="preserve"><value>New challenge</value></data>
+  <data name="NewChat" xml:space="preserve"><value>✏️ New chat</value></data>
+  <data name="NewGroup" xml:space="preserve"><value>👥 New group</value></data>
+  <data name="NewGroup2" xml:space="preserve"><value>New group</value></data>
+  <data name="NewHere" xml:space="preserve"><value>New here?</value></data>
+  <data name="NewPassword" xml:space="preserve"><value>New password</value></data>
+  <data name="NewPostsInMyLanguage" xml:space="preserve"><value>New posts in my language</value></data>
+  <data name="NextExercise" xml:space="preserve"><value>Next exercise →</value></data>
+  <data name="NoChatsYet" xml:space="preserve"><value>No chats yet</value></data>
+  <data name="NoExamsForThisCourseYet" xml:space="preserve"><value>No exams for this course yet.</value></data>
+  <data name="NoFriendsYetSearchForLearners" xml:space="preserve"><value>No friends yet. Search for learners above and send a request.</value></data>
+  <data name="NoMatchesYetTryAQuick" xml:space="preserve"><value>No matches yet. Try a quick match!</value></data>
+  <data name="NoMessagesYetSayHello" xml:space="preserve"><value>No messages yet. Say hello! 👋</value></data>
+  <data name="NoPointsYetInThisPeriod" xml:space="preserve"><value>No points yet in this period. Be the first!</value></data>
+  <data name="NoPublicGroupsFoundCreateOne" xml:space="preserve"><value>No public groups found. Create one from Chats!</value></data>
+  <data name="NoRoadmapYet" xml:space="preserve"><value>No roadmap yet</value></data>
+  <data name="NoTournamentsScheduledRightNowCheck" xml:space="preserve"><value>No tournaments scheduled right now. Check back soon!</value></data>
+  <data name="NoWordsYetTapAWord" xml:space="preserve"><value>No words yet. Tap a word in a lecture or a reading passage, or save a translation.</value></data>
+  <data name="NotSureTakeA10Question" xml:space="preserve"><value>Not sure? Take a 10-question placement test</value></data>
+  <data name="NothingLeftToReviewRightNow" xml:space="preserve"><value>Nothing left to review right now.</value></data>
+  <data name="Notifications" xml:space="preserve"><value>Notifications</value></data>
+  <data name="Now" xml:space="preserve"><value>Now</value></data>
+  <data name="OffEachOfYouPlaysThe" xml:space="preserve"><value>Off: each of you plays the same questions in your own time</value></data>
+  <data name="Offline_Queued" xml:space="preserve"><value>You're offline. We'll save this when you're back online.</value></data>
+  <data name="Offline_Synced" xml:space="preserve"><value>Back online: your offline progress was saved.</value></data>
+  <data name="OnTheWay" xml:space="preserve"><value>On the way</value></data>
+  <data name="OneExamPerMonthOfYour" xml:space="preserve"><value>One exam per month of your roadmap. It opens when you've done most of that month's lectures, or on its planned date.</value></data>
+  <data name="Open" xml:space="preserve"><value>Open</value></data>
+  <data name="Opponent" xml:space="preserve"><value>Opponent</value></data>
+  <data name="Optional" xml:space="preserve"><value>Optional</value></data>
+  <data name="Options" xml:space="preserve"><value>Options…</value></data>
+  <data name="Or" xml:space="preserve"><value>or</value></data>
+  <data name="Overdue" xml:space="preserve"><value>Overdue</value></data>
+  <data name="Password" xml:space="preserve"><value>Password</value></data>
+  <data name="PauseCourse" xml:space="preserve"><value>Pause course</value></data>
+  <data name="People" xml:space="preserve"><value>People</value></data>
+  <data name="PeopleAndFriends" xml:space="preserve"><value>👥 People and friends</value></data>
+  <data name="PickALanguageTellUsYour" xml:space="preserve"><value>Pick a language, tell us your level, goal and how much time you have. We'll build your roadmap.</value></data>
+  <data name="Plan" xml:space="preserve"><value>Plan</value></data>
+  <data name="Planned" xml:space="preserve"><value> · planned </value></data>
+  <data name="Play" xml:space="preserve"><value>🔊 Play</value></data>
+  <data name="PlayLive" xml:space="preserve"><value>Play live</value></data>
+  <data name="PlayMyRecording" xml:space="preserve"><value>▶ Play my recording</value></data>
+  <data name="PlayMyRound" xml:space="preserve"><value>▶️ Play my round</value></data>
+  <data name="PlayMyRun" xml:space="preserve"><value>▶️ Play my run</value></data>
+  <data name="PlayThePracticeBot" xml:space="preserve"><value>🤖 Play the practice bot</value></data>
+  <data name="Points" xml:space="preserve"><value>Points</value></data>
+  <data name="PointsAcrossAllYourLanguages" xml:space="preserve"><value>points across all your languages</value></data>
+  <data name="PointsAndBadges" xml:space="preserve"><value>Points and badges</value></data>
+  <data name="PointsAndBadges2" xml:space="preserve"><value>⭐ Points and badges</value></data>
+  <data name="Practice" xml:space="preserve"><value>Practice</value></data>
+  <data name="PracticeUsesTheLanguageYouAre" xml:space="preserve"><value>Practice uses the language you are learning. Start a course and come back here.</value></data>
+  <data name="Privacy" xml:space="preserve"><value>Privacy</value></data>
+  <data name="PrivacyAndBlockedLearners" xml:space="preserve"><value>🔒 Privacy and blocked learners</value></data>
+  <data name="Profile" xml:space="preserve"><value>Profile</value></data>
+  <data name="ProfilePhoto" xml:space="preserve"><value>Profile photo</value></data>
+  <data name="PublicGroup" xml:space="preserve"><value>Public group</value></data>
+  <data name="PublicGroups" xml:space="preserve"><value>Public groups</value></data>
+  <data name="Questions" xml:space="preserve"><value>Questions</value></data>
+  <data name="QuickMatch" xml:space="preserve"><value>⚡ Quick match</value></data>
+  <data name="RateThisLecture" xml:space="preserve"><value>Rate this lecture</value></data>
+  <data name="Read" xml:space="preserve"><value>🔊 Read</value></data>
+  <data name="ReadAloud" xml:space="preserve"><value>Read aloud</value></data>
+  <data name="ReadAloud2" xml:space="preserve"><value>🔊 Read aloud</value></data>
+  <data name="ReadReceipts" xml:space="preserve"><value>Read receipts</value></data>
+  <data name="ReadRepliesAloudTapAReply" xml:space="preserve"><value>Read replies aloud (tap a reply to hear it again)</value></data>
+  <data name="ReadThisAloud" xml:space="preserve"><value>Read this aloud:</value></data>
+  <data name="RecentMatches" xml:space="preserve"><value>Recent matches</value></data>
+  <data name="Rematch" xml:space="preserve"><value>🔁 Rematch</value></data>
+  <data name="RemindMeAtASetTime" xml:space="preserve"><value>Remind me at a set time</value></data>
+  <data name="RemindMeToStudy" xml:space="preserve"><value>Remind me to study</value></data>
+  <data name="RemoveFriend" xml:space="preserve"><value>Remove friend</value></data>
+  <data name="Rename" xml:space="preserve"><value>Rename</value></data>
+  <data name="Report" xml:space="preserve"><value>⋯ Report</value></data>
+  <data name="Report2" xml:space="preserve"><value>⚑ Report</value></data>
+  <data name="ReportAMistake" xml:space="preserve"><value>Report a mistake</value></data>
+  <data name="ResetYourPassword" xml:space="preserve"><value>Reset your password</value></data>
+  <data name="Result" xml:space="preserve"><value>Result</value></data>
+  <data name="ResumeNow" xml:space="preserve"><value>Resume now</value></data>
+  <data name="Review" xml:space="preserve"><value>Review</value></data>
+  <data name="ReviewAnswers" xml:space="preserve"><value>Review answers</value></data>
+  <data name="ReviewDueWords" xml:space="preserve"><value>Review due words</value></data>
+  <data name="ReviewWords" xml:space="preserve"><value>Review words</value></data>
+  <data name="Revoked" xml:space="preserve"><value>Revoked</value></data>
+  <data name="Roadmap" xml:space="preserve"><value>Roadmap</value></data>
+  <data name="SampleResultTheSpeechOrAI" xml:space="preserve"><value>Sample result: the speech or AI service isn't set up on this server.</value></data>
+  <data name="Save" xml:space="preserve"><value>Save</value></data>
+  <data name="SaveAndRePlan" xml:space="preserve"><value>Save and re-plan</value></data>
+  <data name="SaveNote" xml:space="preserve"><value>Save note</value></data>
+  <data name="SaveToMyWords" xml:space="preserve"><value>⭐ Save to My words</value></data>
+  <data name="Saved" xml:space="preserve"><value>Saved</value></data>
+  <data name="SayHelloToStart" xml:space="preserve"><value>Say hello to start!</value></data>
+  <data name="ScoreTrend" xml:space="preserve"><value>Score trend</value></data>
+  <data name="Search" xml:space="preserve"><value>Search</value></data>
+  <data name="SearchGroups" xml:space="preserve"><value>Search groups</value></data>
+  <data name="SearchLearnersByName" xml:space="preserve"><value>Search learners by name</value></data>
+  <data name="SecondsPerQuestion" xml:space="preserve"><value>Seconds per question</value></data>
+  <data name="SeeFullRoadmap" xml:space="preserve"><value>See full roadmap</value></data>
+  <data name="SeeResult" xml:space="preserve"><value>See result</value></data>
+  <data name="Send" xml:space="preserve"><value>Send</value></data>
+  <data name="SendChallenge" xml:space="preserve"><value>Send challenge</value></data>
+  <data name="SendCode" xml:space="preserve"><value>Send code</value></data>
+  <data name="Sending" xml:space="preserve"><value>sending…</value></data>
+  <data name="Share" xml:space="preserve"><value>Share</value></data>
+  <data name="ShareToChat" xml:space="preserve"><value>💬 Share to chat</value></data>
+  <data name="ShortLecturesDailyQuizzesMonthlyExams" xml:space="preserve"><value>Short lectures, daily quizzes, monthly exams and a certificate when you finish.</value></data>
+  <data name="ShowMeOnLeaderboards" xml:space="preserve"><value>Show me on leaderboards</value></data>
+  <data name="ShowMyNameOnLeaderboards" xml:space="preserve"><value>Show my name on leaderboards</value></data>
+  <data name="ShowTranslation" xml:space="preserve"><value>Show translation</value></data>
+  <data name="ShowWhenIMOnline" xml:space="preserve"><value>Show when I'm online</value></data>
+  <data name="SignIn" xml:space="preserve"><value>Sign in</value></data>
+  <data name="SignInToContinueLearning" xml:space="preserve"><value>Sign in to continue learning.</value></data>
+  <data name="SignOut" xml:space="preserve"><value>Sign out</value></data>
+  <data name="SignOutOnAllDevices" xml:space="preserve"><value>Sign out on all devices</value></data>
+  <data name="Slowly" xml:space="preserve"><value>🐢 Slowly</value></data>
+  <data name="SomeWordsWereHiddenByThe" xml:space="preserve"><value>Some words were hidden by the filter</value></data>
+  <data name="Standings" xml:space="preserve"><value>Standings</value></data>
+  <data name="StartACourse" xml:space="preserve"><value>Start a course</value></data>
+  <data name="StartACourseToCompeteIn" xml:space="preserve"><value>Start a course to compete in its language.</value></data>
+  <data name="StartAGroupBattle" xml:space="preserve"><value>⚔️ Start a group battle</value></data>
+  <data name="StartNow" xml:space="preserve"><value>Start now</value></data>
+  <data name="StartYourFirstCourse" xml:space="preserve"><value>Start your first course</value></data>
+  <data name="Stop" xml:space="preserve"><value>Stop</value></data>
+  <data name="StreakAtRisk" xml:space="preserve"><value>Streak at risk</value></data>
+  <data name="StudyDays" xml:space="preserve"><value>Study days</value></data>
+  <data name="StudyReminders" xml:space="preserve"><value>Study reminders</value></data>
+  <data name="StudyTimePerDay" xml:space="preserve"><value>Study time per day</value></data>
+  <data name="SwapLanguages" xml:space="preserve"><value>Swap languages</value></data>
+  <data name="SwitchPublicPrivate" xml:space="preserve"><value>Switch public / private</value></data>
+  <data name="T8CharactersWithACapitalLetter" xml:space="preserve"><value>8+ characters with a capital letter, a small letter and a number.</value></data>
+  <data name="TapAWordToTranslateIt" xml:space="preserve"><value>Tap a word to translate it.</value></data>
+  <data name="TapAnyWordInTheText" xml:space="preserve"><value>Tap any word in the text to see its meaning.</value></data>
+  <data name="TapToOpen" xml:space="preserve"><value>Tap to open</value></data>
+  <data name="TapToSeeTheMeaning" xml:space="preserve"><value>Tap to see the meaning</value></data>
+  <data name="TermsAndPrivacyPolicy" xml:space="preserve"><value>terms and privacy policy</value></data>
+  <data name="TheyHave24HoursToAccept" xml:space="preserve"><value>They have 24 hours to accept. Win 30 points, draw 15, lose 5.</value></data>
+  <data name="ThisPartOfLinguaPathIsBeing" xml:space="preserve"><value>This part of LinguaPath is being built and arrives in an upcoming update.</value></data>
+  <data name="TimeZone" xml:space="preserve"><value>Time zone</value></data>
+  <data name="TipsForThisLecture" xml:space="preserve"><value>Tips for this lecture</value></data>
+  <data name="TipsPosts" xml:space="preserve"><value>💡 Tips &amp; posts</value></data>
+  <data name="TipsPosts2" xml:space="preserve"><value>Tips &amp; posts</value></data>
+  <data name="To" xml:space="preserve"><value>To</value></data>
+  <data name="Tournaments" xml:space="preserve"><value>🏆 Tournaments</value></data>
+  <data name="Tournaments2" xml:space="preserve"><value>Tournaments</value></data>
+  <data name="Translate" xml:space="preserve"><value>Translate</value></data>
+  <data name="TranslateSomething" xml:space="preserve"><value>🌐 Translate something</value></data>
+  <data name="TypePasteOrSpeak" xml:space="preserve"><value>Type, paste or speak…</value></data>
+  <data name="TypeTheMissingWord" xml:space="preserve"><value>Type the missing word</value></data>
+  <data name="TypeTheSentence" xml:space="preserve"><value>Type the sentence…</value></data>
+  <data name="Unblock" xml:space="preserve"><value>Unblock</value></data>
+  <data name="UpdateNow" xml:space="preserve"><value>Update now</value></data>
+  <data name="UpdateRequired" xml:space="preserve"><value>Update required</value></data>
+  <data name="UseThisLevel" xml:space="preserve"><value>Use this level</value></data>
+  <data name="UseThisPhoneS" xml:space="preserve"><value>Use this phone's</value></data>
+  <data name="Val_DobInvalid" xml:space="preserve"><value>Enter a real date of birth.</value></data>
+  <data name="Val_DobTooYoung" xml:space="preserve"><value>You need to be at least {0} to use LinguaPath.</value></data>
+  <data name="Val_EmailInvalid" xml:space="preserve"><value>Enter a valid email address.</value></data>
+  <data name="Val_EmailRequired" xml:space="preserve"><value>Email is required.</value></data>
+  <data name="Val_OtpDigits" xml:space="preserve"><value>The code has 6 digits.</value></data>
+  <data name="Val_OtpRequired" xml:space="preserve"><value>Enter the code from your email.</value></data>
+  <data name="Val_PasswordDigit" xml:space="preserve"><value>Password needs at least one number.</value></data>
+  <data name="Val_PasswordLength" xml:space="preserve"><value>Password must be at least 8 characters.</value></data>
+  <data name="Val_PasswordLower" xml:space="preserve"><value>Password needs at least one small letter.</value></data>
+  <data name="Val_PasswordRequired" xml:space="preserve"><value>Password is required.</value></data>
+  <data name="Val_PasswordUpper" xml:space="preserve"><value>Password needs at least one capital letter.</value></data>
+  <data name="Val_Required" xml:space="preserve"><value>{0} is required.</value></data>
+  <data name="Verify" xml:space="preserve"><value>Verify</value></data>
+  <data name="VerifyEmail" xml:space="preserve"><value>Verify email</value></data>
+  <data name="Vocabulary" xml:space="preserve"><value>Vocabulary</value></data>
+  <data name="WatchAndReadMore" xml:space="preserve"><value>Watch and read more</value></data>
+  <data name="WeLlEmailYouA6" xml:space="preserve"><value>We'll email you a 6-digit code to confirm it's you.</value></data>
+  <data name="WeSentA6DigitCode" xml:space="preserve"><value>We sent a 6-digit code to </value></data>
+  <data name="WeSentItA6Digit" xml:space="preserve"><value>, we sent it a 6-digit code.</value></data>
+  <data name="Week" xml:space="preserve"><value>Week</value></data>
+  <data name="WelcomeBack" xml:space="preserve"><value>Welcome back</value></data>
+  <data name="WhatDoYouWantToTalk" xml:space="preserve"><value>What do you want to talk about?</value></data>
+  <data name="WhenOffYouAlsoWonT" xml:space="preserve"><value>When off, you also won't see when others read your messages.</value></data>
+  <data name="WhichExamEGDELEA2" xml:space="preserve"><value>Which exam? e.g. DELE A2</value></data>
+  <data name="WhichExamOptional" xml:space="preserve"><value>Which exam? (optional)</value></data>
+  <data name="WhoCanChallengeMe" xml:space="preserve"><value>Who can challenge me</value></data>
+  <data name="WhoCanMessageMe" xml:space="preserve"><value>Who can message me</value></data>
+  <data name="Withdraw" xml:space="preserve"><value>Withdraw</value></data>
+  <data name="WriteAMessage" xml:space="preserve"><value>Write a message…</value></data>
+  <data name="WriteAnythingYouWantToRemember" xml:space="preserve"><value>Write anything you want to remember…</value></data>
+  <data name="WriteHere" xml:space="preserve"><value>Write here…</value></data>
+  <data name="YouCanChangeAnyOfThis" xml:space="preserve"><value>You can change any of this later from the course settings.</value></data>
+  <data name="YouCanInviteFriendsLaterToo" xml:space="preserve"><value>You can invite friends later too.</value></data>
+  <data name="YouExampleCom" xml:space="preserve"><value>you@example.com</value></data>
+  <data name="YouHavenTBlockedAnyone" xml:space="preserve"><value>You haven't blocked anyone.</value></data>
+  <data name="YouSignedUpWithGoogleOr" xml:space="preserve"><value>You signed up with Google or Apple. Set a password to also sign in with your email.</value></data>
+  <data name="YourAnswer" xml:space="preserve"><value>Your answer</value></data>
+  <data name="YourDailyQuizzesAndExamsWill" xml:space="preserve"><value>Your daily quizzes and exams will show up here.</value></data>
+  <data name="YourLast100TranslationsAppearHere" xml:space="preserve"><value>Your last 100 translations appear here.</value></data>
+  <data name="YourNativeLanguageOptional" xml:space="preserve"><value>Your native language (optional)</value></data>
+  <data name="YourPartnerWritesShortRepliesAt" xml:space="preserve"><value>Your partner writes short replies at your level and corrects your mistakes.</value></data>
+  <data name="YourRoadmapWillStartAtThis" xml:space="preserve"><value>Your roadmap will start at this level. You can still change it.</value></data>
+  <data name="Ui_State_Done" xml:space="preserve"><value>Done</value></data>
+  <data name="Ui_State_InProgress" xml:space="preserve"><value>In progress</value></data>
+  <data name="Ui_State_Next" xml:space="preserve"><value>Next</value></data>
+  <data name="Ui_State_Locked" xml:space="preserve"><value>Locked</value></data>
+  <data name="Ui_Appearance" xml:space="preserve"><value>Appearance</value></data>
+  <data name="Ui_Theme" xml:space="preserve"><value>Theme</value></data>
+  <data name="Ui_ThemeSystem" xml:space="preserve"><value>Match system</value></data>
+  <data name="Ui_ThemeLight" xml:space="preserve"><value>Light</value></data>
+  <data name="Ui_ThemeDark" xml:space="preserve"><value>Dark</value></data>
+  <data name="Ui_QuickActions" xml:space="preserve"><value>Quick actions</value></data>
+  <data name="Ui_YourProgress" xml:space="preserve"><value>Your progress</value></data>
+  <data name="Ui_Complete" xml:space="preserve"><value>complete</value></data>
+  <data name="Ui_Community" xml:space="preserve"><value>Community</value></data>
+  <data name="Ui_KeepGoing" xml:space="preserve"><value>Small steps every day add up.</value></data>
+  <data name="Ui_Skills" xml:space="preserve"><value>Skills</value></data>
+  <data name="Ui_Explore" xml:space="preserve"><value>Explore</value></data>
+</root>

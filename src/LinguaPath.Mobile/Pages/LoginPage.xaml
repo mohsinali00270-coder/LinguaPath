@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                x:Class="LinguaPath.Mobile.Pages.LoginPage"
+                x:DataType="vm:LoginViewModel"
+                Title="{l:Tr SignIn}">
+    <ScrollView>
+        <VerticalStackLayout Padding="24,12,24,32" Spacing="16">
+            <Border WidthRequest="60" HeightRequest="60" StrokeShape="RoundRectangle 20" StrokeThickness="0" HorizontalOptions="Start"
+                    Background="{StaticResource PurpleTealGradient}" Shadow="{StaticResource GlowShadow}">
+                <Label Text="L" FontSize="30" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center" VerticalOptions="Center" />
+            </Border>
+            <VerticalStackLayout Spacing="4">
+                <Label Text="{l:Tr WelcomeBack}" Style="{StaticResource Title}" />
+                <Label Text="{l:Tr SignInToContinueLearning}" Style="{StaticResource Subtitle}" />
+            </VerticalStackLayout>
+
+            <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+                <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+            </Border>
+
+            <VerticalStackLayout>
+                <Label Text="{l:Tr Email}" Style="{StaticResource FieldLabel}" />
+                <Border Style="{StaticResource InputBox}">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                        <Path Style="{StaticResource IconMuted}" Data="{StaticResource IconMail}" />
+                        <Entry Grid.Column="1" Text="{Binding Email}" Keyboard="Email" Placeholder="{l:Tr YouExampleCom}" ReturnType="Next" />
+                    </Grid>
+                </Border>
+                <Label Text="{Binding Errors[Email]}" Style="{StaticResource FieldError}" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout>
+                <Label Text="{l:Tr Password}" Style="{StaticResource FieldLabel}" />
+                <Border Style="{StaticResource InputBox}">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                        <Path Style="{StaticResource IconMuted}" Data="{StaticResource IconLock}" />
+                        <Entry Grid.Column="1" Text="{Binding Password}" IsPassword="True" ReturnType="Go" ReturnCommand="{Binding LoginCommand}" />
+                    </Grid>
+                </Border>
+                <Label Text="{Binding Errors[Password]}" Style="{StaticResource FieldError}" />
+            </VerticalStackLayout>
+
+            <Button Text="{l:Tr ForgotPassword2}" Style="{StaticResource LinkButton}" HorizontalOptions="End" Margin="0,-8,0,0"
+                    Command="{Binding ForgotPasswordCommand}" />
+
+            <Button Text="{l:Tr SignIn}" Style="{StaticResource GradientButton}" Command="{Binding LoginCommand}" />
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+
+            <Grid ColumnDefinitions="*,Auto,*" ColumnSpacing="12" Margin="0,6">
+                <BoxView Style="{StaticResource Divider}" VerticalOptions="Center" />
+                <Label Grid.Column="1" Text="{l:Tr Or}" Style="{StaticResource Caption}" />
+                <BoxView Grid.Column="2" Style="{StaticResource Divider}" VerticalOptions="Center" />
+            </Grid>
+
+            <Button Text="{l:Tr ContinueWithGoogle}" Style="{StaticResource OutlineButton}" Command="{Binding GoogleCommand}" />
+            <Button Text="{l:Tr ContinueWithApple}" Style="{StaticResource OutlineButton}" Command="{Binding AppleCommand}"
+                    IsVisible="{Binding IsAppleAvailable}" />
+
+            <HorizontalStackLayout HorizontalOptions="Center" Spacing="2">
+                <Label Text="{l:Tr NewHere}" Style="{StaticResource Subtitle}" VerticalOptions="Center" />
+                <Button Text="{l:Tr CreateAnAccount}" Style="{StaticResource LinkButton}" Command="{Binding CreateAccountCommand}" />
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</pages:BasePage>

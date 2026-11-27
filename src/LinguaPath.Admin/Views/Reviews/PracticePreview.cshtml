@@ -1,0 +1,42 @@
+@model PracticeItemInput
+@{
+    ViewData["Title"] = "Exercise preview";
+    var questions = Model.Questions.Where(q => !string.IsNullOrWhiteSpace(q.Question)).ToList();
+}
+<a asp-action="Index" class="small">&larr; Review queue</a>
+<div class="row mt-3 g-4">
+    <div class="col-lg-5">
+        <div class="lp-phone">
+            <div class="lp-phone-screen p-3">
+                <div class="small text-muted mb-1">@Model.Type · @Model.Level @(string.IsNullOrEmpty(Model.Topic) ? "" : "· " + Model.Topic)</div>
+                <h3 class="h6">@Model.Title</h3>
+                @if (Model.Type == PracticeType.Listen)
+                {
+                    <div class="alert alert-light border small">🔊 The app reads this aloud; the learner types it:</div>
+                }
+                else if (Model.Type == PracticeType.Speak)
+                {
+                    <div class="alert alert-light border small">🎤 The learner reads this aloud:</div>
+                }
+                <p style="white-space:pre-line">@Model.Text</p>
+                @for (var i = 0; i < questions.Count; i++)
+                {
+                    var q = questions[i];
+                    var options = (q.Options ?? "").Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                    <div class="mb-2">
+                        <div class="small fw-semibold">@(i + 1). @q.Question</div>
+                        @for (var o = 0; o < options.Length; o++)
+                        {
+                            <div class="small @(o + 1 == q.Correct ? "text-success fw-semibold" : "")">@(o + 1 == q.Correct ? "✓" : "○") @options[o]</div>
+                        }
+                        @if (!string.IsNullOrEmpty(q.Explanation)) { <div class="small text-muted">@q.Explanation</div> }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <h3 class="h6">Translation</h3>
+        <p class="small" style="white-space:pre-line">@(Model.Translation ?? "—")</p>
+    </div>
+</div>

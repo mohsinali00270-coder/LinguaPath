@@ -1,0 +1,62 @@
+@model IReadOnlyList<ContentReportItem>
+@{
+    ViewData["Title"] = "Error reports";
+    var status = ViewBag.Status as ReportStatus?;
+}
+<p class="small text-muted">Mistakes learners reported in lectures and posts. Fix the content, then mark the report resolved.</p>
+
+<ul class="nav nav-pills mb-3">
+    @foreach (var s in Enum.GetValues<ReportStatus>())
+    {
+        <li class="nav-item"><a class="nav-link @(status == s ? "active" : "")" asp-action="Index" asp-route-status="@s">@s</a></li>
+    }
+</ul>
+
+<div class="card lp-card">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead><tr><th>Content</th><th>Report</th><th>From</th><th>When</th><th></th></tr></thead>
+            <tbody>
+            @if (Model.Count == 0)
+            {
+                <tr><td colspan="5" class="text-center text-muted py-4">No reports here.</td></tr>
+            }
+            @foreach (var r in Model)
+            {
+                <tr>
+                    <td>
+                        <span class="badge text-bg-light border">@r.EntityType</span>
+                        @if (r.EntityType == ReportEntityType.Lecture)
+                        {
+                            <a asp-controller="Lectures" asp-action="Edit" asp-route-id="@r.EntityId">@r.Title</a>
+                        }
+                        else if (r.EntityType == ReportEntityType.Post)
+                        {
+                            <a asp-controller="Posts" asp-action="Edit" asp-route-id="@r.EntityId">@r.Title</a>
+                        }
+                        else
+                        {
+                            @r.Title
+                        }
+                    </td>
+                    <td class="small" style="max-width:380px">@r.Message
+                        @if (!string.IsNullOrEmpty(r.ResolutionNote)) { <div class="text-muted">Note: @r.ResolutionNote</div> }
+                    </td>
+                    <td class="small">@r.Reporter</td>
+                    <td class="small text-muted">@r.CreatedAt.ToLocalTime().ToString("g")</td>
+                    <td class="text-end">
+                        @if (r.Status == ReportStatus.Open)
+                        {
+                            <form asp-action="Close" asp-route-id="@r.Id" method="post" class="d-flex gap-1 justify-content-end">
+                                <input name="note" class="form-control form-control-sm" placeholder="Note" style="max-width:160px" />
+                                <button name="status" value="@ReportStatus.Resolved" class="btn btn-sm btn-success">Resolved</button>
+                                <button name="status" value="@ReportStatus.Dismissed" class="btn btn-sm btn-outline-secondary">Dismiss</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

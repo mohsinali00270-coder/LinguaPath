@@ -1,0 +1,80 @@
+@model LectureEditorModel
+@{
+    ViewData["Title"] = "Preview";
+    var isReviewer = ViewContext.RouteData.Values["controller"]?.ToString() == "Reviews";
+    var frameUrl = isReviewer
+        ? Url.Action("LectureFrame", "Reviews", new { id = Model.Input.Id })
+        : Url.Action("Frame", "Lectures", new { id = Model.Input.Id });
+    var dir = Model.Direction == TextDirection.Rtl ? "rtl" : "ltr";
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h2 class="h5 mb-0">@Model.Input.Title <partial name="_ContentStatus" model="Model.Status" /></h2>
+        <div class="small text-muted">@Model.LanguageName · @Model.CourseTitle · @Model.ModuleTitle · @Model.Input.EstimatedMinutes min · @Model.Input.Level</div>
+    </div>
+    @if (isReviewer)
+    {
+        <a asp-controller="Reviews" asp-action="Index" class="btn btn-sm btn-outline-secondary">Back to queue</a>
+    }
+    else
+    {
+        <a asp-action="Edit" asp-route-id="@Model.Input.Id" class="btn btn-sm btn-outline-secondary">Back to editor</a>
+    }
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="lp-phone">
+            <div class="lp-phone-screen">
+                @if (!string.IsNullOrEmpty(Model.Input.CoverUrl))
+                {
+                    <img src="@Model.Input.CoverUrl" alt="" class="w-100" style="max-height:140px;object-fit:cover" />
+                }
+                <div class="p-3 pb-0">
+                    <div class="small text-muted">@Model.ModuleTitle</div>
+                    <div class="fw-bold">@Model.Input.Title</div>
+                </div>
+                <iframe src="@frameUrl" title="Lesson text" sandbox="" class="w-100 border-0" style="height:520px"></iframe>
+            </div>
+        </div>
+        <p class="small text-muted text-center mt-2">Same template the app uses. Learners can tap any word for its meaning.</p>
+    </div>
+    <div class="col-lg-7">
+        @if (!string.IsNullOrWhiteSpace(Model.Input.Objectives))
+        {
+            <div class="card lp-card mb-3"><div class="card-body"><h3 class="h6">Objectives</h3><p class="mb-0 small">@Model.Input.Objectives</p></div></div>
+        }
+        <div class="card lp-card mb-3">
+            <div class="card-body">
+                <h3 class="h6">Examples (@Model.Input.Examples.Count)</h3>
+                @foreach (var e in Model.Input.Examples)
+                {
+                    <div class="mb-2"><div dir="@dir"><b>@e.TargetText</b></div><div class="small text-muted">@e.Translation @(string.IsNullOrEmpty(e.Note) ? "" : $"— {e.Note}")</div></div>
+                }
+                @if (Model.Input.Examples.Count == 0) { <p class="small text-muted mb-0">None.</p> }
+            </div>
+        </div>
+        <div class="card lp-card mb-3">
+            <div class="card-body">
+                <h3 class="h6">Vocabulary (@Model.Input.Vocabulary.Count)</h3>
+                <table class="table table-sm mb-0">
+                    @foreach (var v in Model.Input.Vocabulary)
+                    {
+                        <tr><td dir="@dir"><b>@v.Word</b></td><td>@v.Meaning</td><td class="text-muted small">@v.Pronunciation</td><td class="text-muted small">@v.PartOfSpeech</td></tr>
+                    }
+                </table>
+                @if (Model.Input.Vocabulary.Count == 0) { <p class="small text-muted mb-0">None.</p> }
+            </div>
+        </div>
+        <div class="card lp-card">
+            <div class="card-body">
+                <h3 class="h6">Links (@Model.Input.Links.Count)</h3>
+                @foreach (var k in Model.Input.Links)
+                {
+                    <div class="small"><span class="badge text-bg-light border">@k.LinkType</span> <a href="@k.Url" target="_blank" rel="noopener noreferrer">@k.Title</a></div>
+                }
+                @if (Model.Input.Links.Count == 0) { <p class="small text-muted mb-0">None.</p> }
+            </div>
+        </div>
+    </div>
+</div>

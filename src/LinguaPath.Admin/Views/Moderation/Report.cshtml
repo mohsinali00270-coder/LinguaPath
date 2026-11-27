@@ -1,0 +1,47 @@
+@model ModerationReport
+@{
+    ViewData["Title"] = "Moderation report";
+    var max = Math.Max(1, Model.StrikesPerDay.Count == 0 ? 1 : Model.StrikesPerDay.Max(d => d.Count));
+}
+<form method="get" class="d-flex gap-2 mb-3 align-items-center">
+    <span class="small text-muted">Last</span>
+    <select name="days" class="form-select form-select-sm" style="width:auto" onchange="this.form.submit()">
+        @foreach (var d in new[] { 7, 30, 90, 365 }) { <option value="@d" selected="@(d == Model.Days)">@d days</option> }
+    </select>
+</form>
+
+<div class="row g-3">
+    <div class="col-md-3"><div class="card lp-card"><div class="card-body"><div class="small text-muted">Open items</div><div class="h4 mb-0">@Model.OpenItems</div></div></div></div>
+    <div class="col-md-3"><div class="card lp-card"><div class="card-body"><div class="small text-muted">Blocked accounts</div><div class="h4 mb-0">@Model.BlockedAccounts</div><div class="small text-muted">@Model.BlockedInPeriod in this period</div></div></div></div>
+    <div class="col-md-3"><div class="card lp-card"><div class="card-body"><div class="small text-muted">Strikes</div><div class="h4 mb-0">@Model.StrikesPerDay.Sum(d => d.Count)</div></div></div></div>
+    <div class="col-md-3"><div class="card lp-card"><div class="card-body"><div class="small text-muted">False-positive rate</div><div class="h4 mb-0">@Model.FalsePositivePercent%</div><div class="small text-muted">@Model.Dismissed dismissed of @Model.Reviewed reviewed</div></div></div></div>
+</div>
+
+<div class="card lp-card mt-3">
+    <div class="card-body">
+        <h2 class="h6">Strikes per day</h2>
+        <div class="d-flex align-items-end gap-1" style="height:140px">
+            @foreach (var d in Model.StrikesPerDay)
+            {
+                <div title="@d.Day.ToString("d MMM"): @d.Count" style="flex:1;background:var(--bs-warning);min-height:2px;height:@(Math.Round(100.0 * d.Count / max))%"></div>
+            }
+        </div>
+        <div class="d-flex justify-content-between small text-muted"><span>@Model.StrikesPerDay.First().Day.ToString("d MMM")</span><span>@Model.StrikesPerDay.Last().Day.ToString("d MMM")</span></div>
+    </div>
+</div>
+
+<div class="row g-3 mt-0">
+    <div class="col-md-6">
+        <div class="card lp-card"><div class="card-body">
+            <h2 class="h6">Top flagged words</h2>
+            @if (Model.TopWords.Count == 0) { <p class="small text-muted mb-0">None in this period.</p> }
+            @foreach (var w in Model.TopWords) { <div class="d-flex justify-content-between small border-bottom py-1"><span>@w.Term</span><b>@w.Count</b></div> }
+        </div></div>
+    </div>
+    <div class="col-md-6">
+        <div class="card lp-card"><div class="card-body">
+            <h2 class="h6">Events by source</h2>
+            @foreach (var d in Model.ByDetector) { <div class="d-flex justify-content-between small border-bottom py-1"><span>@d.Detector</span><b>@d.Count</b></div> }
+        </div></div>
+    </div>
+</div>

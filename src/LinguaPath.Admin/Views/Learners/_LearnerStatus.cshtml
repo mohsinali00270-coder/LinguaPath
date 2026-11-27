@@ -1,0 +1,17 @@
+@model (bool EmailConfirmed, bool IsActive, bool IsBlocked)
+@if (Model.IsBlocked)
+{
+    <span class="badge text-bg-danger">Blocked</span>
+}
+else if (!Model.IsActive)
+{
+    <span class="badge text-bg-warning">Suspended</span>
+}
+else if (!Model.EmailConfirmed)
+{
+    <span class="badge text-bg-light border">Unverified</span>
+}
+else
+{
+    <span class="badge text-bg-success">Active</span>
+}

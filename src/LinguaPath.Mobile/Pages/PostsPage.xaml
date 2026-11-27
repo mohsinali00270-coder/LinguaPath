@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                x:Class="LinguaPath.Mobile.Pages.PostsPage"
+                x:DataType="vm:PostsViewModel"
+                Title="{l:Tr TipsPosts2}">
+    <Grid RowDefinitions="Auto,Auto,*" Padding="16,8,16,0" RowSpacing="8">
+        <HorizontalStackLayout Spacing="8">
+            <Button Text="{l:Tr All}" Command="{Binding ShowAllCommand}" Style="{StaticResource OutlineButton}" IsEnabled="{Binding ShowSaved}" />
+            <Button Text="{l:Tr Saved}" Command="{Binding ShowSavedOnlyCommand}" Style="{StaticResource OutlineButton}" IsEnabled="{Binding AllActive}" />
+        </HorizontalStackLayout>
+
+        <Border Grid.Row="1" Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+            <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+        </Border>
+
+        <RefreshView Grid.Row="2" IsRefreshing="{Binding IsRefreshing}" Command="{Binding RefreshCommand}">
+            <CollectionView ItemsSource="{Binding Posts}" RemainingItemsThreshold="3" RemainingItemsThresholdReachedCommand="{Binding LoadMoreCommand}">
+                <CollectionView.EmptyView>
+                    <Label Text="{Binding EmptyText}" IsVisible="{Binding IsEmpty}" HorizontalTextAlignment="Center" Margin="0,40" Style="{StaticResource Subtitle}" />
+                </CollectionView.EmptyView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:PostItem">
+                        <Border Style="{StaticResource Card}" Margin="0,0,0,10">
+                            <VerticalStackLayout Spacing="6">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <Label Text="{Binding Meta}" FontSize="12" Style="{StaticResource Subtitle}" />
+                                    <Label Grid.Column="1" Text="📌" IsVisible="{Binding IsPinned}" />
+                                </Grid>
+                                <Image AutomationProperties.IsInAccessibleTree="False" Source="{Binding ImageUrl}" IsVisible="{Binding HasImage}" HeightRequest="160" Aspect="AspectFill" />
+                                <Label Text="{Binding Title}" FontAttributes="Bold" FontSize="16" />
+                                <Label Text="{Binding Body}" MaxLines="6" LineBreakMode="TailTruncation" />
+                                <Label Text="{Binding TagsText}" FontSize="12" TextColor="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}" />
+                                <Grid ColumnDefinitions="Auto,Auto,*,Auto" ColumnSpacing="4">
+                                    <Button Text="{Binding LikeText}" Style="{StaticResource LinkButton}"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PostsViewModel}}, Path=LikeCommand}" CommandParameter="{Binding .}" />
+                                    <Button Grid.Column="1" Text="{Binding SaveText}" Style="{StaticResource LinkButton}"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PostsViewModel}}, Path=SaveCommand}" CommandParameter="{Binding .}" />
+                                    <Button Grid.Column="2" Text="{l:Tr Open}" Style="{StaticResource LinkButton}" HorizontalOptions="Start" IsVisible="{Binding HasUrl}"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PostsViewModel}}, Path=OpenCommand}" CommandParameter="{Binding .}" />
+                                    <Button Grid.Column="3" Text="{l:Tr Report}" Style="{StaticResource LinkButton}"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PostsViewModel}}, Path=ReportCommand}" CommandParameter="{Binding .}" />
+                                </Grid>
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</pages:BasePage>

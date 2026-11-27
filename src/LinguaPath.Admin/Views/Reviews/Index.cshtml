@@ -1,0 +1,74 @@
+﻿@model IReadOnlyList<ReviewQueueItem>
+@{
+    ViewData["Title"] = "Review queue";
+    var provenance = ViewBag.Provenance as Dictionary<int, AiProvenance> ?? new();
+    var type = ViewBag.Type as ReviewEntityType?;
+}
+<p class="small text-muted">Approve content so a content admin can publish it, or send it back with a comment. You can't approve your own submissions.</p>
+
+<ul class="nav nav-pills mb-3">
+    <li class="nav-item"><a class="nav-link @(type is null ? "active" : "")" asp-action="Index">All</a></li>
+    @foreach (var t in Enum.GetValues<ReviewEntityType>())
+    {
+        <li class="nav-item"><a class="nav-link @(type == t ? "active" : "")" asp-action="Index" asp-route-type="@t">@t</a></li>
+    }
+</ul>
+
+@if (Model.Count == 0)
+{
+    <div class="card lp-card"><div class="card-body text-center text-muted py-5">Nothing waiting for review.</div></div>
+}
+@foreach (var r in Model)
+{
+    <div class="card lp-card mb-3">
+        <div class="card-body">
+            <div class="d-flex flex-wrap justify-content-between gap-2">
+                <div>
+                    <span class="badge text-bg-light border">@r.EntityType</span>
+                    @if (r.Source == ContentSource.Ai) { <span class="badge text-bg-info">AI draft</span> }
+                    <b class="ms-1">@r.Title</b>
+                    <div class="small text-muted">@r.Context · sent by @(r.SubmittedBy ?? "—") on @r.SubmittedAt.ToLocalTime().ToString("g")</div>
+                    @if (provenance.TryGetValue(r.Id, out var ai))
+                    {
+                        <details class="small mt-1">
+                            <summary>AI: @ai.Model @if (ai.NeedsNativeCheck) { <span class="badge text-bg-warning">native speaker check required</span> }</summary>
+                            <pre class="small bg-light p-2 rounded mt-1 mb-0" style="white-space:pre-wrap;max-height:260px;overflow:auto">@ai.Prompt</pre>
+                        </details>
+                    }
+                </div>
+                <div>
+                    @if (r.EntityType == ReviewEntityType.Lecture)
+                    {
+                        <a class="btn btn-sm btn-outline-secondary" asp-action="Lecture" asp-route-id="@r.EntityId" target="_blank">Open preview</a>
+                    }
+                    else if (r.EntityType == ReviewEntityType.Post)
+                    {
+                        <a class="btn btn-sm btn-outline-secondary" asp-action="Post" asp-route-id="@r.EntityId" target="_blank">Open preview</a>
+                    }
+                    else if (r.EntityType == ReviewEntityType.Question)
+                    {
+                        <a class="btn btn-sm btn-outline-secondary" asp-action="Question" asp-route-id="@r.EntityId" target="_blank">Open preview</a>
+                    }
+                    else if (r.EntityType == ReviewEntityType.PracticeItem)
+                    {
+                        <a class="btn btn-sm btn-outline-secondary" asp-action="Practice" asp-route-id="@r.EntityId" target="_blank">Open preview</a>
+                    }
+                </div>
+            </div>
+            <div class="row g-2 mt-2">
+                <div class="col-md-6">
+                    <form asp-action="Approve" asp-route-id="@r.Id" method="post" class="d-flex gap-2">
+                        <input name="comment" class="form-control form-control-sm" placeholder="Comment (optional)" maxlength="1000" />
+                        <button class="btn btn-sm btn-success text-nowrap">Approve</button>
+                    </form>
+                </div>
+                <div class="col-md-6">
+                    <form asp-action="Reject" asp-route-id="@r.Id" method="post" class="d-flex gap-2">
+                        <input name="comment" class="form-control form-control-sm" placeholder="What needs to change? (required)" required maxlength="1000" />
+                        <button class="btn btn-sm btn-outline-danger text-nowrap">Send back</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}

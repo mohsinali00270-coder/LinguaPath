@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                x:Class="LinguaPath.Mobile.Pages.WelcomePage"
+                x:DataType="vm:WelcomeViewModel"
+                Background="{StaticResource HeroGradient}">
+    <Grid RowDefinitions="*,Auto">
+        <!-- Brand and promise -->
+        <VerticalStackLayout VerticalOptions="Center" Spacing="18" Padding="28,48,28,24">
+            <Border WidthRequest="76" HeightRequest="76" StrokeShape="RoundRectangle 24" StrokeThickness="0" HorizontalOptions="Start"
+                    Background="{StaticResource PurpleTealGradient}" Shadow="{StaticResource GlowShadow}">
+                <Label Text="L" FontSize="40" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center" VerticalOptions="Center" />
+            </Border>
+            <Label Text="LinguaPath" FontSize="15" FontAttributes="Bold" TextColor="{StaticResource SecondaryTextDark}" />
+            <Label Text="{l:Tr LearnALanguageAtYourOwn}" FontSize="32" FontAttributes="Bold" TextColor="White"
+                   SemanticProperties.HeadingLevel="Level1" />
+            <Label Text="{l:Tr ShortLecturesDailyQuizzesMonthlyExams}" FontSize="16" TextColor="{StaticResource OnHeroMuted}" />
+
+            <!-- Feature highlights -->
+            <HorizontalStackLayout Spacing="10" Margin="0,8,0,0">
+                <Border Style="{StaticResource IconTileOnHero}">
+                    <Path Style="{StaticResource IconOnHero}" Data="{StaticResource IconBook}" />
+                </Border>
+                <Border Style="{StaticResource IconTileOnHero}">
+                    <Path Style="{StaticResource IconOnHero}" Data="{StaticResource IconMic}" />
+                </Border>
+                <Border Style="{StaticResource IconTileOnHero}">
+                    <Path Style="{StaticResource IconOnHero}" Data="{StaticResource IconTranslate}" />
+                </Border>
+                <Border Style="{StaticResource IconTileOnHero}">
+                    <Path Style="{StaticResource IconOnHero}" Data="{StaticResource IconTrophy}" />
+                </Border>
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+
+        <!-- Actions sheet -->
+        <Border Grid.Row="1" StrokeThickness="0" StrokeShape="RoundRectangle 32,32,0,0" Padding="24,28,24,32"
+                BackgroundColor="{AppThemeBinding Light={StaticResource Surface}, Dark={StaticResource SurfaceDark}}">
+            <VerticalStackLayout Spacing="12">
+                <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+                    <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+                </Border>
+                <Button Text="{l:Tr CreateAnAccount}" Style="{StaticResource GradientButton}" Command="{Binding CreateAccountCommand}" />
+                <Button Text="{l:Tr ContinueWithGoogle}" Style="{StaticResource OutlineButton}" Command="{Binding GoogleCommand}" />
+                <Button Text="{l:Tr ContinueWithApple}" Style="{StaticResource OutlineButton}" Command="{Binding AppleCommand}"
+                        IsVisible="{Binding IsAppleAvailable}" />
+                <HorizontalStackLayout HorizontalOptions="Center" Spacing="2">
+                    <Label Text="{l:Tr AlreadyHaveAnAccount}" Style="{StaticResource Subtitle}" VerticalOptions="Center" />
+                    <Button Text="{l:Tr SignIn}" Style="{StaticResource LinkButton}" Command="{Binding SignInCommand}" />
+                </HorizontalStackLayout>
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+            </VerticalStackLayout>
+        </Border>
+    </Grid>
+</pages:BasePage>

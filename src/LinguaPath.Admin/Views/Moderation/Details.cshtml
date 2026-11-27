@@ -1,0 +1,132 @@
+@model ModerationEventDetails
+@{
+    ViewData["Title"] = $"Moderation #{Model.Item.Id}";
+    var e = Model.Item;
+    var isSuper = User.IsInRole(Roles.SuperAdmin);
+}
+<a asp-action="Index" class="small">&larr; Queue</a>
+
+<div class="row g-3 mt-1">
+    <div class="col-lg-7">
+        <div class="card lp-card">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <h2 class="h6">@e.DetectedBy · @(e.Category ?? "—")</h2>
+                    <span class="badge @(e.Severity == ModerationSeverity.Severe ? "text-bg-danger" : e.Severity == ModerationSeverity.Abusive ? "text-bg-warning" : "text-bg-light border")">@e.Severity @(e.Score is { } s ? $"· {s:0}%" : "")</span>
+                </div>
+                <dl class="row small mb-0">
+                    <dt class="col-sm-3">Learner</dt>
+                    <dd class="col-sm-9"><a asp-controller="Learners" asp-action="Details" asp-route-id="@e.UserId">@e.UserName</a> · @e.Email
+                        @if (e.UserBlocked) { <span class="badge text-bg-danger">blocked</span> }
+                        @if (Model.SuspendedUntil is { } su) { <span class="badge text-bg-warning">suspended until @su.ToLocalTime().ToString("g")</span> }</dd>
+                    <dt class="col-sm-3">Where</dt><dd class="col-sm-9">@(Model.ConversationTitle ?? "Profile / group settings")</dd>
+                    <dt class="col-sm-3">Text</dt><dd class="col-sm-9"><div class="border rounded p-2 bg-light" style="white-space:pre-wrap">@e.Text</div></dd>
+                    @if (e.MatchedTerms is not null) { <dt class="col-sm-3">Matched / note</dt><dd class="col-sm-9">@e.MatchedTerms</dd> }
+                    <dt class="col-sm-3">Status</dt><dd class="col-sm-9">@e.ActionTaken @if (Model.ReviewedBy is not null) { <span class="text-muted">by @Model.ReviewedBy, @Model.ReviewedAt?.ToLocalTime().ToString("g")</span> }</dd>
+                    @if (Model.ReviewNote is not null) { <dt class="col-sm-3">Note</dt><dd class="col-sm-9">@Model.ReviewNote</dd> }
+                    <dt class="col-sm-3">Created</dt><dd class="col-sm-9">@e.CreatedAt.ToLocalTime().ToString("f")</dd>
+                </dl>
+            </div>
+        </div>
+
+        @if (Model.Context.Count > 0)
+        {
+            <div class="card lp-card mt-3">
+                <div class="card-body">
+                    <h2 class="h6">Conversation context <span class="small text-muted">(5 before and after; original text)</span></h2>
+                    @foreach (var m in Model.Context)
+                    {
+                        <div class="small border-bottom py-1 @(m.IsFlagged ? "bg-warning-subtle" : "")">
+                            <b class="@(m.IsReportedUser ? "text-danger" : "")">@m.SenderName</b>
+                            <span class="text-muted">@m.SentAt.ToLocalTime().ToString("d MMM HH:mm")</span>
+                            @if (!m.IsActive) { <span class="badge text-bg-light border">deleted</span> }
+                            <div style="white-space:pre-wrap">@m.Text</div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        @if (Model.Reports.Count > 0)
+        {
+            <div class="card lp-card mt-3">
+                <div class="card-body">
+                    <h2 class="h6">Reports</h2>
+                    @foreach (var r in Model.Reports)
+                    {
+                        <div class="small border-bottom py-1"><b>@r.ReporterName</b> · @r.Reason · @r.Status · @r.CreatedAt.ToLocalTime().ToString("d MMM HH:mm")
+                            @if (r.Details is not null) { <div class="text-muted">@r.Details</div> }</div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card lp-card">
+            <div class="card-body">
+                <h2 class="h6">Decision</h2>
+                <form asp-action="Act" method="post" class="vstack gap-2">
+                    <input type="hidden" name="id" value="@e.Id" />
+                    <textarea name="note" class="form-control form-control-sm" rows="2" placeholder="Note / reason (required to block)"></textarea>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button name="decision" value="@ModeratorAction.Dismiss" class="btn btn-sm btn-outline-secondary">Dismiss</button>
+                        <button name="decision" value="@ModeratorAction.AddStrike" class="btn btn-sm btn-outline-warning">Add strike</button>
+                        @if (Model.MessageId is not null && Model.MessageActive)
+                        {
+                            <button name="decision" value="@ModeratorAction.RemoveMessage" class="btn btn-sm btn-outline-danger">Remove message</button>
+                        }
+                    </div>
+                    <div class="input-group input-group-sm">
+                        <input type="number" name="days" class="form-control" min="1" max="365" value="1" />
+                        <span class="input-group-text">days</span>
+                        <button name="decision" value="@ModeratorAction.Suspend" class="btn btn-outline-warning">Suspend chat</button>
+                    </div>
+                    @if (!e.UserBlocked)
+                    {
+                        <button name="decision" value="@ModeratorAction.Block" class="btn btn-sm btn-danger" onclick="return confirm('Permanently block this account? Their email, Google/Apple sign-in and devices are blocked too.')">Block permanently</button>
+                    }
+                </form>
+                @if (e.UserBlocked && isSuper)
+                {
+                    <form asp-action="Unblock" method="post" class="d-flex gap-2 mt-3">
+                        <input type="hidden" name="userId" value="@e.UserId" />
+                        <input name="reason" class="form-control form-control-sm" placeholder="Reason for unblocking" required />
+                        <button class="btn btn-sm btn-outline-danger">Unblock</button>
+                    </form>
+                }
+                else if (e.UserBlocked)
+                {
+                    <p class="small text-muted mt-3 mb-0">Only a Super Admin can unblock an account.</p>
+                }
+            </div>
+        </div>
+
+        <div class="card lp-card mt-3">
+            <div class="card-body">
+                <h2 class="h6">Strike history</h2>
+                @if (Model.Strikes.Count == 0) { <p class="small text-muted mb-0">No strikes.</p> }
+                @foreach (var st in Model.Strikes)
+                {
+                    <div class="small border-bottom py-1 @(st.IsActive ? "" : "text-muted")">
+                        <div class="d-flex justify-content-between">
+                            <span><b>@st.Severity</b> · @st.CreatedAt.ToLocalTime().ToString("d MMM yyyy") @(st.IsActive ? $"· expires {st.ExpiresAt.ToLocalTime():d MMM}" : "")</span>
+                            @if (st.IsActive)
+                            {
+                                <form asp-action="Act" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@e.Id" />
+                                    <input type="hidden" name="strikeId" value="@st.Id" />
+                                    <input type="hidden" name="note" value="Removed by moderator" />
+                                    <button name="decision" value="@ModeratorAction.RemoveStrike" class="btn btn-link btn-sm p-0">remove</button>
+                                </form>
+                            }
+                        </div>
+                        <div>@st.Reason</div>
+                        @if (st.RemovedBy is not null) { <div>Removed by @st.RemovedBy: @st.RemovedReason</div> }
+                        @if (st.AcknowledgedAt is null && st.IsActive) { <div class="text-warning">Warning not yet accepted by the learner</div> }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

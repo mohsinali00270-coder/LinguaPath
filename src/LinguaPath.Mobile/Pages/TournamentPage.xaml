@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                xmlns:comp="clr-namespace:LinguaPath.Shared.Contracts.Competitions;assembly=LinguaPath.Shared"
+                x:Class="LinguaPath.Mobile.Pages.TournamentPage"
+                x:DataType="vm:TournamentViewModel"
+                Title="{Binding Tournament.Title}">
+    <RefreshView Command="{Binding RefreshCommand}" IsRefreshing="{Binding IsBusy}">
+        <ScrollView>
+            <VerticalStackLayout Padding="16,12" Spacing="10">
+        <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+            <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+        </Border>
+                <Label Text="{Binding Tournament.Title}" Style="{StaticResource Title}" />
+                <Label Text="{Binding Tournament.Description}" />
+                <Label Text="{Binding Row.Detail}" Style="{StaticResource Subtitle}" />
+                <Label Text="{Binding Row.When}" TextColor="{AppThemeBinding Light={StaticResource PrimaryText}, Dark={StaticResource PrimaryTextDark}}" />
+                <Label Text="{Binding Row.Prizes}" />
+                <Label Text="{Binding StatusText}" FontAttributes="Bold" />
+                <Button Text="{l:Tr JoinTheTournament}" Command="{Binding JoinCommand}" IsVisible="{Binding CanJoin}" />
+                <Button Text="{l:Tr PlayMyRound}" Command="{Binding PlayCommand}" IsVisible="{Binding CanPlay}" />
+                <Button Text="{l:Tr Withdraw}" Style="{StaticResource LinkButton}" Command="{Binding WithdrawCommand}" IsVisible="{Binding CanWithdraw}" />
+                <Label Text="{l:Tr Standings}" Style="{StaticResource SectionHeader}" IsVisible="{Binding HasStandings}" />
+                <VerticalStackLayout BindableLayout.ItemsSource="{Binding Standings}">
+                    <BindableLayout.ItemTemplate>
+                        <DataTemplate x:DataType="comp:TournamentStandingDto">
+                            <Grid ColumnDefinitions="36,*,Auto,Auto" ColumnSpacing="8" Padding="0,4">
+                                <Label Text="{Binding Place}" />
+                                <Label Grid.Column="1" Text="{Binding DisplayName}" />
+                                <Label Grid.Column="2" Text="{Binding RoundReached, StringFormat='round {0}'}" Style="{StaticResource Subtitle}" FontSize="12" />
+                                <Label Grid.Column="3" Text="{Binding PrizePoints, StringFormat='+{0}'}" FontAttributes="Bold" />
+                            </Grid>
+                        </DataTemplate>
+                    </BindableLayout.ItemTemplate>
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
+</pages:BasePage>

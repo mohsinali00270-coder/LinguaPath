@@ -1,0 +1,118 @@
+@model AiUsageReport
+@{
+    ViewData["Title"] = "AI usage & prompts";
+    var templates = (IReadOnlyList<PromptTemplateRow>)ViewBag.Templates;
+    int days = ViewBag.Days;
+    var maxDay = Model.ByDay.Count == 0 ? 0m : Model.ByDay.Max(d => d.Cost);
+}
+<div class="row g-3 mb-3">
+    <div class="col-lg-5">
+        <div class="card lp-card h-100">
+            <div class="card-body">
+                <partial name="_AiBudget" model="Model.Budget" />
+                <div class="small mt-3">
+                    Provider: <b>@Model.Provider</b> · model <code>@Model.Model</code><br />
+                    <span class="text-muted">Change <i>Ai.Provider</i>, <i>Ai.Model</i>, the budget and token prices in <a asp-controller="Settings" asp-action="Index">Settings</a>.
+                    API keys live in configuration (user-secrets or Key Vault): <code>Ai:Providers:DeepSeek:ApiKey</code>.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card lp-card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h2 class="h6 mb-0">Cost per day</h2>
+                    <div class="btn-group btn-group-sm">
+                        @foreach (var d in new[] { 7, 30, 90 })
+                        {
+                            <a class="btn btn-outline-secondary @(d == days ? "active" : "")" asp-action="Index" asp-route-days="@d">@d days</a>
+                        }
+                    </div>
+                </div>
+                @if (Model.ByDay.Count == 0)
+                {
+                    <p class="small text-muted mb-0">No AI calls in this period.</p>
+                }
+                else
+                {
+                    <div class="d-flex align-items-end gap-1" style="height:110px">
+                        @foreach (var d in Model.ByDay)
+                        {
+                            var h = maxDay == 0 ? 4 : Math.Max(4, (int)(100 * d.Cost / maxDay));
+                            <div title="@d.Day.ToString("d MMM"): $@d.Cost.ToString("0.0000") (@d.Calls calls)" class="bg-primary rounded-top" style="width:12px;height:@(h)px"></div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card lp-card">
+            <div class="card-header bg-white"><b>By feature (last @days days)</b></div>
+            <table class="table table-sm mb-0">
+                <thead><tr><th>Feature</th><th class="text-end">Calls</th><th class="text-end">Failed</th><th class="text-end">Tokens in / out</th><th class="text-end">Cost</th></tr></thead>
+                <tbody>
+                @if (Model.ByFeature.Count == 0) { <tr><td colspan="5" class="text-muted text-center py-3">No calls.</td></tr> }
+                @foreach (var f in Model.ByFeature)
+                {
+                    <tr>
+                        <td>@f.Feature</td><td class="text-end">@f.Calls</td><td class="text-end">@f.Failed</td>
+                        <td class="text-end small">@f.InputTokens.ToString("N0") / @f.OutputTokens.ToString("N0")</td>
+                        <td class="text-end">$@f.Cost.ToString("0.0000")</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card lp-card">
+            <div class="card-header bg-white"><b>Prompt templates</b> <span class="small text-muted">(SRS 5.3: editable and versioned)</span></div>
+            <table class="table table-sm align-middle mb-0">
+                <thead><tr><th>Key</th><th>Active</th><th>Versions</th><th></th></tr></thead>
+                <tbody>
+                @foreach (var t in templates)
+                {
+                    <tr>
+                        <td><code>@t.Key</code><div class="small text-muted">@t.Notes</div></td>
+                        <td>@(t.IsBuiltIn ? "built-in" : "v" + t.ActiveVersion)</td>
+                        <td>@t.Versions</td>
+                        <td class="text-end"><a class="btn btn-sm btn-outline-secondary" asp-action="Prompt" asp-route-key="@t.Key">Edit</a></td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="card lp-card mt-3">
+    <div class="card-header bg-white"><b>Recent calls</b></div>
+    <div class="table-responsive">
+        <table class="table table-sm align-middle mb-0">
+            <thead><tr><th>When</th><th>Feature</th><th>Model</th><th class="text-end">Tokens</th><th class="text-end">Cost</th><th class="text-end">Time</th><th>Status</th><th>Job</th></tr></thead>
+            <tbody>
+            @foreach (var l in Model.Recent)
+            {
+                <tr>
+                    <td class="small text-muted">@l.At.ToLocalTime().ToString("g")</td>
+                    <td class="small">@l.Feature</td>
+                    <td class="small">@l.Provider · @l.Model</td>
+                    <td class="text-end small">@l.InputTokens / @l.OutputTokens</td>
+                    <td class="text-end small">$@l.Cost.ToString("0.0000")</td>
+                    <td class="text-end small">@(l.DurationMs / 1000.0)s</td>
+                    <td class="small">
+                        <span class="badge @(l.Status == AiCallStatus.Success ? "text-bg-success" : "text-bg-danger")">@l.Status</span>
+                        @if (!string.IsNullOrEmpty(l.Error)) { <div class="text-danger small">@(l.Error.Length > 80 ? l.Error[..80] + "…" : l.Error)</div> }
+                    </td>
+                    <td class="small">@if (l.RequestId is { } id) { <a asp-controller="AiRequests" asp-action="Details" asp-route-id="@id">#@id</a> }</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

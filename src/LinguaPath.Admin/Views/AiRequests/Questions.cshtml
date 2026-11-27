@@ -1,0 +1,59 @@
+@model QuestionsAiInput
+@{
+    ViewData["Title"] = "Questions from a lecture";
+    var lectures = ViewBag.Lectures as SelectList;
+    var allowed = new[] { QuestionType.MultipleChoice, QuestionType.TrueFalse, QuestionType.FillBlank, QuestionType.MatchPairs,
+        QuestionType.ReorderWords, QuestionType.Translate, QuestionType.ListenChoose };
+}
+@using Microsoft.AspNetCore.Mvc.Rendering
+<a asp-controller="Questions" asp-action="Index" class="small">&larr; Question bank</a>
+<div class="card lp-card mt-2" style="max-width:760px">
+    <div class="card-body">
+        <p class="small text-muted">AI writes questions using <b>only this lecture's text</b>; each keeps the sentence it came from (FR-A62). They arrive as Drafts in the question bank: edit, send for review, or delete each one.</p>
+        @if (lectures is null)
+        {
+            <form method="get" class="row g-2 mb-3">
+                <div class="col-md-8"><select name="languageId" class="form-select" asp-items="ViewBag.Languages" required><option value="">Language…</option></select></div>
+                <div class="col-md-4"><button class="btn btn-outline-primary w-100">Choose a lecture</button></div>
+            </form>
+        }
+        @if (lectures is not null || Model.LectureId > 0)
+        {
+            <form asp-action="Questions" method="post">
+                <input type="hidden" name="languageId" value="@ViewBag.LanguageId" />
+                <div asp-validation-summary="All" class="alert alert-danger py-2 small"></div>
+                @if (lectures is not null)
+                {
+                    <div class="mb-3"><label asp-for="LectureId" class="form-label">Lecture</label><select asp-for="LectureId" asp-items="lectures" class="form-select"><option value="0">Choose…</option></select></div>
+                }
+                else
+                {
+                    <input type="hidden" asp-for="LectureId" />
+                    <p class="small">Lecture #@Model.LectureId</p>
+                }
+                <div class="row g-3">
+                    <div class="col-md-4"><label asp-for="Count" class="form-label"></label><input asp-for="Count" class="form-control" /></div>
+                    <div class="col-md-4">
+                        <label asp-for="Difficulty" class="form-label"></label>
+                        <select asp-for="Difficulty" class="form-select"><option value="easy">Mostly easy</option><option value="mixed">Mixed</option><option value="hard">Mostly hard</option></select>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Types</label>
+                        <div class="d-flex flex-wrap gap-3">
+                            @foreach (var t in allowed)
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="Types" value="@t" id="t-@t" checked="@Model.Types.Contains(t)" />
+                                    <label class="form-check-label small" for="t-@t">@t</label>
+                                </div>
+                            }
+                        </div>
+                        <div class="form-text">Writing and speaking tasks are written by hand.</div>
+                    </div>
+                    <div class="col-12"><label asp-for="Notes" class="form-label"></label><textarea asp-for="Notes" class="form-control" rows="2"></textarea></div>
+                </div>
+                <button class="btn btn-primary mt-3">Generate questions</button>
+            </form>
+        }
+    </div>
+</div>

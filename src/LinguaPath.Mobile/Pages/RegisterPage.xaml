@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                x:Class="LinguaPath.Mobile.Pages.RegisterPage"
+                x:DataType="vm:RegisterViewModel"
+                Title="{l:Tr CreateAccount}">
+    <ScrollView>
+        <VerticalStackLayout Padding="24,12,24,32" Spacing="16">
+            <Border Style="{StaticResource IconTile}" WidthRequest="56" HeightRequest="56" StrokeShape="RoundRectangle 18">
+                <Path Style="{StaticResource Icon}" Data="{StaticResource IconUser}" WidthRequest="26" HeightRequest="26" />
+            </Border>
+            <Label Text="{l:Tr CreateYourAccount}" Style="{StaticResource Title}" />
+            <Label Text="{l:Tr WeLlEmailYouA6}" Style="{StaticResource Subtitle}" />
+
+            <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+                <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+            </Border>
+
+            <VerticalStackLayout>
+                <Label Text="{l:Tr FullName}" Style="{StaticResource FieldLabel}" />
+                <Border Style="{StaticResource InputBox}">
+                    <Entry Text="{Binding FullName}" Keyboard="Text" ReturnType="Next" />
+                </Border>
+                <Label Text="{Binding Errors[FullName]}" Style="{StaticResource FieldError}" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout>
+                <Label Text="{l:Tr Email}" Style="{StaticResource FieldLabel}" />
+                <Border Style="{StaticResource InputBox}">
+                    <Entry Text="{Binding Email}" Keyboard="Email" Placeholder="{l:Tr YouExampleCom}" ReturnType="Next" />
+                </Border>
+                <Label Text="{Binding Errors[Email]}" Style="{StaticResource FieldError}" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout>
+                <Label Text="{l:Tr Password}" Style="{StaticResource FieldLabel}" />
+                <Border Style="{StaticResource InputBox}">
+                    <Entry Text="{Binding Password}" IsPassword="True" ReturnType="Next" />
+                </Border>
+                <Label Text="{l:Tr T8CharactersWithACapitalLetter}" FontSize="12"
+                       Style="{StaticResource Subtitle}" Margin="2,4,0,0" />
+                <Label Text="{Binding Errors[Password]}" Style="{StaticResource FieldError}" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout>
+                <Label Text="{l:Tr ConfirmPassword}" Style="{StaticResource FieldLabel}" />
+                <Border Style="{StaticResource InputBox}">
+                    <Entry Text="{Binding ConfirmPassword}" IsPassword="True" ReturnType="Done" />
+                </Border>
+                <Label Text="{Binding Errors[ConfirmPassword]}" Style="{StaticResource FieldError}" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout>
+                <Label Text="{l:Tr YourNativeLanguageOptional}" Style="{StaticResource FieldLabel}" />
+                <Border Style="{StaticResource InputBox}">
+                    <Picker ItemsSource="{Binding Languages}" SelectedItem="{Binding NativeLanguage}" Title="{l:Tr ChooseALanguage}" />
+                </Border>
+                <Label Text="{Binding Errors[NativeLanguageId]}" Style="{StaticResource FieldError}" />
+            </VerticalStackLayout>
+
+            <!-- BR-32: optional date of birth. -->
+            <VerticalStackLayout>
+                <HorizontalStackLayout Spacing="4">
+                    <CheckBox IsChecked="{Binding HasDateOfBirth}" VerticalOptions="Center" />
+                    <Label Text="{l:Tr Dob_Label}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <Border Style="{StaticResource InputBox}" IsVisible="{Binding HasDateOfBirth}">
+                    <DatePicker Date="{Binding DateOfBirth}" MinimumDate="{Binding MinBirthDate}" MaximumDate="{Binding MaxBirthDate}"
+                                SemanticProperties.Description="{l:Tr Dob_Label}" />
+                </Border>
+                <Label Text="{l:Tr Dob_Hint}" Style="{StaticResource Subtitle}" FontSize="12" IsVisible="{Binding HasDateOfBirth}" />
+                <Label Text="{Binding Errors[DateOfBirth]}" Style="{StaticResource FieldError}" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout>
+                <HorizontalStackLayout Spacing="4">
+                    <CheckBox IsChecked="{Binding AcceptTerms}" VerticalOptions="Center" />
+                    <Label Text="{l:Tr IAcceptThe}" VerticalOptions="Center" />
+                    <Button Text="{l:Tr TermsAndPrivacyPolicy}" Style="{StaticResource LinkButton}" Command="{Binding OpenTermsCommand}" />
+                </HorizontalStackLayout>
+                <Label Text="{Binding Errors[AcceptTerms]}" Style="{StaticResource FieldError}" />
+            </VerticalStackLayout>
+
+            <Button Text="{l:Tr CreateAccount}" Command="{Binding RegisterCommand}" />
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</pages:BasePage>

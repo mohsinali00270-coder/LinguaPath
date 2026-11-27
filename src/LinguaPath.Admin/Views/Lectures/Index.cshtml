@@ -1,0 +1,64 @@
+@model LectureIndexViewModel
+@{
+    ViewData["Title"] = "Lectures";
+    var pager = new PagerModel
+    {
+        Page = Model.Results.Page,
+        TotalPages = Model.Results.TotalPages,
+        TotalCount = Model.Results.TotalCount,
+        UrlFor = p => Url.Action("Index", new { courseId = Model.CourseId, status = Model.Status, search = Model.Search, page = p })!
+    };
+}
+<p class="small text-muted">Write lesson text here. Lectures are added and ordered in each course's roadmap; learners only see <b>Published</b> lectures.</p>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-4">
+        <select name="courseId" class="form-select" asp-items="ViewBag.Courses"><option value="">All courses</option></select>
+    </div>
+    <div class="col-md-3">
+        <select name="status" class="form-select">
+            <option value="">All statuses</option>
+            @foreach (var s in Enum.GetValues<ContentStatus>())
+            {
+                <option value="@s" selected="@(Model.Status == s)">@s</option>
+            }
+        </select>
+    </div>
+    <div class="col-md-3"><input name="search" value="@Model.Search" class="form-control" placeholder="Title or topic" /></div>
+    <div class="col-md-2"><button class="btn btn-outline-primary w-100" type="submit">Filter</button></div>
+</form>
+
+<div class="card lp-card">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead><tr><th>Lecture</th><th>Course · module</th><th>Level</th><th>Status</th><th>Text</th><th>Version</th><th>Updated</th><th></th></tr></thead>
+            <tbody>
+            @if (Model.Results.Items.Count == 0)
+            {
+                <tr><td colspan="8" class="text-center text-muted py-4">No lectures match. Add lectures from a course roadmap.</td></tr>
+            }
+            @foreach (var l in Model.Results.Items)
+            {
+                <tr>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@l.Id"><b>@l.Title</b></a>
+                        @if (l.Source == ContentSource.Ai) { <span class="badge text-bg-info ms-1">AI</span> }
+                        @if (!string.IsNullOrEmpty(l.Topic)) { <div class="small text-muted">@l.Topic</div> }
+                    </td>
+                    <td class="small">@l.LanguageName · @l.CourseTitle<br /><span class="text-muted">@l.ModuleTitle</span></td>
+                    <td>@l.Level</td>
+                    <td><partial name="_ContentStatus" model="l.Status" /></td>
+                    <td>@(l.HasBody ? "Written" : "—")</td>
+                    <td>v@l.Version</td>
+                    <td class="small text-muted">@l.UpdatedAt?.ToLocalTime().ToString("d")</td>
+                    <td class="text-end text-nowrap">
+                        <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@l.Id">Edit</a>
+                        <a class="btn btn-sm btn-link" asp-controller="Courses" asp-action="Builder" asp-route-id="@l.CourseId">Roadmap</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+<partial name="_Pager" model="pager" />

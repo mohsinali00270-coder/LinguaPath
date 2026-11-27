@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                x:Class="LinguaPath.Mobile.Pages.QuizPage"
+                x:DataType="vm:QuizViewModel"
+                Title="{Binding Title}">
+    <pages:BasePage.Resources>
+        <pages:InvertedBoolConverter x:Key="NotBool" />
+    </pages:BasePage.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="16,8,16,12" RowSpacing="8">
+        <!-- Progress and timer -->
+        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+            <ProgressBar Progress="{Binding Progress}" ProgressColor="{StaticResource PrimaryBright}" VerticalOptions="Center" />
+            <HorizontalStackLayout Grid.Column="1" Spacing="10">
+                <Label Text="{Binding ProgressText}" Style="{StaticResource Caption}" FontAttributes="Bold" VerticalOptions="Center" />
+                <Label Text="{Binding TimerText}" IsVisible="{Binding HasTimer}" FontAttributes="Bold" VerticalOptions="Center">
+                    <Label.Triggers>
+                        <DataTrigger TargetType="Label" Binding="{Binding TimerWarning}" Value="True">
+                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Danger}, Dark={StaticResource DangerDark}}" />
+                        </DataTrigger>
+                    </Label.Triggers>
+                </Label>
+            </HorizontalStackLayout>
+        </Grid>
+
+        <!-- Exam navigator: jump to any question; filled = answered -->
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Questions}" IsVisible="{Binding IsExam}" HeightRequest="40" ItemsLayout="HorizontalList">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="vm:QuestionState">
+                    <Border WidthRequest="34" HeightRequest="34" Margin="0,0,6,0" StrokeShape="RoundRectangle 17" StrokeThickness="1.5"
+                            Stroke="{AppThemeBinding Light={StaticResource Border}, Dark={StaticResource BorderDark}}"
+                            BackgroundColor="{AppThemeBinding Light={StaticResource Surface}, Dark={StaticResource SurfaceDark}}">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border" Binding="{Binding HasAnswer}" Value="True">
+                                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryLightDark}}" />
+                                <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:QuizViewModel}}, Path=GoToCommand}"
+                                                  CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+                        <Label Text="{Binding NumberText}" HorizontalOptions="Center" VerticalOptions="Center" FontSize="13" />
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <ScrollView Grid.Row="2">
+            <VerticalStackLayout Spacing="12">
+                <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+                <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+                    <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+                </Border>
+
+                <ContentView BindingContext="{Binding Current}">
+                <VerticalStackLayout x:DataType="vm:QuestionState" Spacing="12">
+                    <Border Style="{StaticResource Pill}" Margin="0,4,0,0">
+                        <Label Text="{Binding Header}" Style="{StaticResource PillText}" />
+                    </Border>
+                    <Label Text="{Binding Stem}" FontSize="21" FontAttributes="Bold"
+                           TextColor="{AppThemeBinding Light={StaticResource Navy}, Dark={StaticResource TextPrimaryDark}}" />
+                    <Label Text="{Binding Instruction}" Style="{StaticResource Caption}" />
+
+                    <!-- Sentence to translate or say -->
+                    <Border Style="{StaticResource TintCard}" IsVisible="{Binding ShowsPrompt}">
+                        <Label Text="{Binding Prompt}" FontSize="18" FontAttributes="Bold" />
+                    </Border>
+                    <Button Text="{l:Tr Listen}" Style="{StaticResource TonalButton}" IsVisible="{Binding CanHear}"
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:QuizViewModel}}, Path=ListenCommand}" />
+
+                    <!-- Choices: multiple choice, true/false, listen and choose -->
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding Choices}" IsVisible="{Binding IsChoice}" Spacing="8">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="vm:ChoiceItem">
+                                <Border Style="{StaticResource ChoiceCard}">
+                                    <Border.Triggers>
+                                        <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                                            <Setter Property="Stroke" Value="{StaticResource Primary}" />
+                                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryLightDark}}" />
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Border" Binding="{Binding Marked}" Value="True">
+                                            <Setter Property="Stroke" Value="{StaticResource Success}" />
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="Border" Binding="{Binding Marked}" Value="False">
+                                            <Setter Property="Stroke" Value="{StaticResource Danger}" />
+                                        </DataTrigger>
+                                    </Border.Triggers>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:QuizViewModel}}, Path=SelectChoiceCommand}"
+                                                              CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="{Binding Text}" FontSize="16" FontAttributes="Bold" />
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+
+                    <!-- Typed answer: fill in the blank, translate -->
+                    <Border Style="{StaticResource InputBox}" IsVisible="{Binding IsTextAnswer}">
+                        <Entry Text="{Binding AnswerText}" Placeholder="{l:Tr YourAnswer}" IsEnabled="{Binding IsLocked, Converter={StaticResource NotBool}}"
+                               IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" />
+                    </Border>
+
+                    <!-- Writing -->
+                    <Border Style="{StaticResource InputBox}" IsVisible="{Binding IsWriting}">
+                        <Editor Text="{Binding AnswerText}" Placeholder="{l:Tr WriteHere}" AutoSize="TextChanges" MinimumHeightRequest="160" MaxLength="4000" />
+                    </Border>
+
+                    <!-- Match pairs -->
+                    <VerticalStackLayout BindableLayout.ItemsSource="{Binding MatchRows}" IsVisible="{Binding IsMatch}" Spacing="8">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="vm:MatchRow">
+                                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                    <Label Text="{Binding Left}" VerticalOptions="Center" FontSize="16" />
+                                    <Border Grid.Column="1" Style="{StaticResource InputBox}">
+                                        <Picker Title="{l:Tr Choose}" ItemsSource="{Binding Targets}" SelectedItem="{Binding SelectedTarget}" />
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </VerticalStackLayout>
+
+                    <!-- Reorder words: tap tiles to build the sentence, tap a built word to remove it -->
+                    <VerticalStackLayout IsVisible="{Binding IsReorder}" Spacing="10">
+                        <Border Style="{StaticResource Card}" MinimumHeightRequest="60">
+                            <FlexLayout BindableLayout.ItemsSource="{Binding Built}" Wrap="Wrap">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate x:DataType="vm:TileItem">
+                                        <Border Style="{StaticResource Chip}" Margin="0,0,6,6" BackgroundColor="{AppThemeBinding Light={StaticResource PrimaryLight}, Dark={StaticResource PrimaryLightDark}}">
+                                            <Border.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:QuizViewModel}}, Path=RemoveTileCommand}"
+                                                                      CommandParameter="{Binding .}" />
+                                            </Border.GestureRecognizers>
+                                            <Label Text="{Binding Word}" FontSize="16" />
+                                        </Border>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </FlexLayout>
+                        </Border>
+                        <FlexLayout BindableLayout.ItemsSource="{Binding Tiles}" Wrap="Wrap">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="vm:TileItem">
+                                    <Border Style="{StaticResource Chip}" Margin="0,0,6,6">
+                                        <Border.Triggers>
+                                            <DataTrigger TargetType="Border" Binding="{Binding IsUsed}" Value="True">
+                                                <Setter Property="Opacity" Value="0.25" />
+                                            </DataTrigger>
+                                        </Border.Triggers>
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:QuizViewModel}}, Path=AddTileCommand}"
+                                                                  CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                        <Label Text="{Binding Word}" FontSize="16" />
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </FlexLayout>
+                    </VerticalStackLayout>
+
+                    <!-- Speak the sentence -->
+                    <VerticalStackLayout IsVisible="{Binding IsSpeak}" Spacing="8">
+                        <Button Text="{Binding RecordButtonText}" Style="{StaticResource TealButton}"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:QuizViewModel}}, Path=ToggleRecordingCommand}" />
+                        <Label Text="{Binding RecordingText}" HorizontalOptions="Center" Style="{StaticResource Subtitle}" />
+                        <Button Text="{l:Tr PlayMyRecording}" Style="{StaticResource LinkButton}" IsVisible="{Binding HasRecording}" HorizontalOptions="Center"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type vm:QuizViewModel}}, Path=PlayRecordingCommand}" />
+                    </VerticalStackLayout>
+
+                    <!-- Instant feedback (daily quiz, placement) -->
+                    <Border Style="{StaticResource Card}" IsVisible="{Binding IsChecked}">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border" Binding="{Binding IsCorrect}" Value="True">
+                                <Setter Property="Stroke" Value="{StaticResource Success}" />
+                                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource SuccessLight}, Dark={StaticResource SuccessLightDark}}" />
+                            </DataTrigger>
+                            <DataTrigger TargetType="Border" Binding="{Binding IsCorrect}" Value="False">
+                                <Setter Property="Stroke" Value="{StaticResource Danger}" />
+                                <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource DangerLight}, Dark={StaticResource DangerLightDark}}" />
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <VerticalStackLayout Spacing="4">
+                            <Label Text="{Binding FeedbackTitle}" FontAttributes="Bold" FontSize="17" />
+                            <Label Text="{Binding CorrectAnswerText}" IsVisible="{Binding CorrectAnswerText, Converter={StaticResource HasText}}" />
+                            <Label Text="{Binding ExplanationText}" IsVisible="{Binding ExplanationText, Converter={StaticResource HasText}}"
+                                   Style="{StaticResource Subtitle}" />
+                        </VerticalStackLayout>
+                    </Border>
+                </VerticalStackLayout>
+                </ContentView>
+
+                <Label Text="{l:Tr AnswersSaveAutomaticallyIfYouLeave}"
+                       IsVisible="{Binding IsExam}" Style="{StaticResource Subtitle}" FontSize="12" />
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Footer -->
+        <Grid Grid.Row="3" ColumnDefinitions="Auto,*,Auto" ColumnSpacing="10" Padding="0,8,0,0">
+            <Button Text="{l:Tr Back2}" Style="{StaticResource OutlineButton}" Command="{Binding PreviousCommand}" IsVisible="{Binding CanGoBack}" />
+            <Button Grid.Column="1" Text="{Binding PrimaryText}" Style="{StaticResource GradientButton}" Command="{Binding PrimaryCommand}" IsEnabled="{Binding CanPrimary}" />
+            <Button Grid.Column="2" Text="{l:Tr Finish}" Style="{StaticResource LinkButton}" Command="{Binding FinishCommand}" IsVisible="{Binding IsExam}" />
+        </Grid>
+    </Grid>
+</pages:BasePage>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<pages:BasePage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:l="clr-namespace:LinguaPath.Mobile.Localization"
+                xmlns:pages="clr-namespace:LinguaPath.Mobile.Pages"
+                xmlns:vm="clr-namespace:LinguaPath.Mobile.Core.ViewModels;assembly=LinguaPath.Mobile.Core"
+                xmlns:social="clr-namespace:LinguaPath.Shared.Contracts.Social;assembly=LinguaPath.Shared"
+                x:Class="LinguaPath.Mobile.Pages.PrivacyPage"
+                x:DataType="vm:PrivacyViewModel"
+                Title="{l:Tr Privacy}">
+    <ScrollView>
+        <VerticalStackLayout Padding="16,12" Spacing="12">
+            <Border Style="{StaticResource ErrorBanner}" IsVisible="{Binding HasError}">
+                <Label Text="{Binding ErrorMessage}" Style="{StaticResource ErrorText}" />
+            </Border>
+            <Label Text="{l:Tr WhoCanMessageMe}" Style="{StaticResource FieldLabel}" />
+            <Picker ItemsSource="{Binding AudienceOptions}" SelectedIndex="{Binding WhoCanMessage}" />
+            <Label Text="{l:Tr WhoCanChallengeMe}" Style="{StaticResource FieldLabel}" />
+            <Picker ItemsSource="{Binding AudienceOptions}" SelectedIndex="{Binding WhoCanChallenge}" />
+            <Grid ColumnDefinitions="*,Auto"><Label Text="{l:Tr ShowMeOnLeaderboards}" VerticalOptions="Center" /><Switch Grid.Column="1" IsToggled="{Binding ShowOnLeaderboard}" /></Grid>
+            <Grid ColumnDefinitions="*,Auto"><Label Text="{l:Tr ShowWhenIMOnline}" VerticalOptions="Center" /><Switch Grid.Column="1" IsToggled="{Binding ShowOnline}" /></Grid>
+            <Grid ColumnDefinitions="*,Auto">
+                <VerticalStackLayout>
+                    <Label Text="{l:Tr ReadReceipts}" />
+                    <Label Text="{l:Tr WhenOffYouAlsoWonT}" Style="{StaticResource Subtitle}" FontSize="12" />
+                </VerticalStackLayout>
+                <Switch Grid.Column="1" IsToggled="{Binding ReadReceipts}" />
+            </Grid>
+            <Button Text="{l:Tr Save}" Command="{Binding SaveCommand}" IsEnabled="{Binding IsNotBusy}" />
+
+            <Label Text="{l:Tr BlockedLearners}" Style="{StaticResource SectionHeader}" />
+            <Label Text="{l:Tr YouHavenTBlockedAnyone}" Style="{StaticResource Subtitle}" IsVisible="{Binding NoBlocked}" />
+            <VerticalStackLayout BindableLayout.ItemsSource="{Binding Blocked}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate x:DataType="social:BlockedUserDto">
+                        <Grid ColumnDefinitions="*,Auto" Padding="0,4">
+                            <Label Text="{Binding DisplayName}" VerticalOptions="Center" />
+                            <Button Grid.Column="1" Text="{l:Tr Unblock}" Style="{StaticResource OutlineButton}" Padding="12,0"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type vm:PrivacyViewModel}}, Path=UnblockCommand}" CommandParameter="{Binding .}" />
+                        </Grid>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </VerticalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</pages:BasePage>

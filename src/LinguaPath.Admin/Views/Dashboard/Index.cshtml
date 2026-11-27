@@ -1,0 +1,109 @@
+﻿@model DashboardStats
+@{
+    ViewData["Title"] = "Dashboard";
+    var max = Math.Max(1, Model.SignupsLast14Days.Max(d => d.Count));
+    var attention = Model.UnverifiedLearners + Model.SuspendedLearners + Model.BlockedLearners;
+    var hour = DateTime.Now.Hour;
+    var greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+    const string svgOpen = "<svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\">";
+}
+
+<section class="lp-hero mb-4">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 position-relative" style="z-index:1">
+        <div>
+            <h2>@greeting, @User.DisplayName()</h2>
+            <p>@Model.ActiveToday.ToString("N0") learners active today · @Model.NewThisWeek new this week</p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a class="btn btn-light btn-sm" asp-controller="Reviews" asp-action="Index">Review queue · @Model.PendingReviews</a>
+            <a class="btn btn-outline-light btn-sm" asp-controller="Learners" asp-action="Index">Learners</a>
+        </div>
+    </div>
+</section>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-lg-3">
+        <div class="lp-stat">
+            <span class="lp-stat-icon lp-tint-purple">@Html.Raw(svgOpen)<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8" /></svg></span>
+            <div class="label">Learners</div>
+            <div class="value">@Model.TotalLearners.ToString("N0")</div>
+            <div class="hint">@Model.NewThisWeek new this week · @(ViewBag.CertificatesThisMonth ?? 0) certificates this month</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="lp-stat">
+            <span class="lp-stat-icon lp-tint-teal">@Html.Raw(svgOpen)<path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg></span>
+            <div class="label">Active today</div>
+            <div class="value">@Model.ActiveToday.ToString("N0")</div>
+            <div class="hint">@Model.ActiveLast30Days.ToString("N0") in the last 30 days</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="lp-stat">
+            <span class="lp-stat-icon lp-tint-amber">@Html.Raw(svgOpen)<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5zM4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5" /></svg></span>
+            <div class="label">Active enrolments</div>
+            <div class="value">@Model.ActiveEnrolments.ToString("N0")</div>
+            <div class="hint">@Model.PublishedLanguages languages · @Model.PublishedCourses courses published · @Model.ComingSoonLanguages coming soon</div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="lp-stat">
+            <span class="lp-stat-icon lp-tint-danger">@Html.Raw(svgOpen)<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10zM12 8v4M12 16h.01" /></svg></span>
+            <div class="label">Accounts needing attention</div>
+            <div class="value">@attention</div>
+            <div class="hint">@Model.UnverifiedLearners unverified · @Model.SuspendedLearners suspended · @Model.BlockedLearners blocked</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-8">
+        <div class="card lp-card h-100">
+            <div class="card-body">
+                <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-2">
+                    <div>
+                        <h2 class="h6 mb-1">Learners joined each day, last 14 days</h2>
+                        <p class="small text-muted mb-0">@Model.SignupsLast14Days.Sum(d => d.Count) sign-ups in total · latest day in teal</p>
+                    </div>
+                    <span class="badge text-bg-primary">Peak @Model.SignupsLast14Days.Max(d => d.Count) / day</span>
+                </div>
+                <div class="lp-bars" role="img" aria-label="Daily sign-ups for the last 14 days">
+                    @foreach (var d in Model.SignupsLast14Days)
+                    {
+                        <div class="bar" style="height:@((int)(100.0 * d.Count / max))%" title="@d.Day.ToString("ddd d MMM"): @d.Count"></div>
+                    }
+                </div>
+                <div class="lp-bar-labels mt-2">
+                    @foreach (var d in Model.SignupsLast14Days)
+                    {
+                        <span>@d.Day.Day</span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card lp-card h-100">
+            <div class="card-body">
+                <h2 class="h6 mb-3">Work queues</h2>
+                <ul class="lp-queue">
+                    <li><a asp-controller="LanguageRequests" asp-action="Index" asp-route-status="Pending"><span>Language requests waiting</span><span class="lp-count">@Model.PendingLanguageRequests</span></a></li>
+                    <li><a asp-controller="Reviews" asp-action="Index"><span>Items waiting for review</span><span class="lp-count">@Model.PendingReviews</span></a></li>
+                    <li><a asp-controller="Reports" asp-action="Index"><span>Open error reports</span><span class="lp-count">@Model.OpenReports</span></a></li>
+                    <li><a asp-controller="Grading" asp-action="Index"><span>Answers waiting for grading</span><span class="lp-count">@Model.PendingGrading</span></a></li>
+                    <li><a asp-controller="AiRequests" asp-action="Index" asp-route-status="@AiRequestStatus.PendingApproval"><span>AI requests waiting for approval</span><span class="lp-count" aria-hidden="true">→</span></a></li>
+                </ul>
+                @if (ViewBag.AiBudget is AiBudgetStatus budget)
+                {
+                    <div class="mb-3"><partial name="_AiBudget" model="budget" /></div>
+                }
+                <p class="small text-muted mb-0">Moderation queues appear here when that phase arrives.</p>
+                @if (User.IsInRole(Roles.SuperAdmin))
+                {
+                    <hr />
+                    <div class="small text-muted">Admin users: @Model.AdminUsers</div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
