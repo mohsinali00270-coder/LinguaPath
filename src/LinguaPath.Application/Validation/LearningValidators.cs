@@ -18,7 +18,7 @@ public sealed class LearningPlanRequestValidator : AbstractValidator<LearningPla
         RuleFor(x => x.CourseId).GreaterThan(0).WithMessage("Choose a course.");
         RuleFor(x => x.CurrentLevel).IsInEnum();
         RuleFor(x => x.TargetLevel).IsInEnum()
-            .GreaterThanOrEqualTo(x => x.CurrentLevel).WithMessage("Your goal level can't be below your current level.");
+            .Must((x, target) => target >= x.CurrentLevel).WithMessage("Your goal level can't be below your current level.");
         RuleFor(x => x.Goal).IsInEnum();
         RuleFor(x => x.ExamName).MaximumLength(100);
         RuleFor(x => x.DailyMinutes).InclusiveBetween(PlanRules.MinDailyMinutes, PlanRules.MaxDailyMinutes)

@@ -18,18 +18,18 @@ public sealed class PointsController(IPointsService points) : ApiControllerBase
 {
     /// <summary>Total, tier, weekly/monthly points, today's capped points, per-language breakdown, streak and badges.</summary>
     [HttpGet("points")]
-    [ProducesResponseType<ApiResponse<PointsSummaryDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<PointsSummaryDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Summary(CancellationToken ct) => OkData(await points.SummaryAsync(CurrentUserId, ct));
 
     /// <summary>FR-S09: date, action, language, points; 50 per page, newest first.</summary>
     [HttpGet("points/history")]
-    [ProducesResponseType<ApiResponse<IReadOnlyList<PointTransactionDto>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<IReadOnlyList<PointTransactionDto>>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> History([FromQuery] int page = 1, CancellationToken ct = default) =>
         OkData(await points.HistoryAsync(CurrentUserId, page, ct));
 
     /// <summary>FR-S07: all languages or one, or just friends (scope=friends); weekly (from Monday 00:00 UTC), monthly or all-time. Top 50 plus your own rank.</summary>
     [HttpGet("leaderboard")]
-    [ProducesResponseType<ApiResponse<LeaderboardDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<LeaderboardDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Leaderboard([FromQuery] LeaderboardPeriod period = LeaderboardPeriod.Weekly, [FromQuery] int? languageId = null,
         [FromQuery] string? scope = null, CancellationToken ct = default) =>
         OkData(await points.LeaderboardAsync(CurrentUserId, period, languageId, ct,
@@ -47,11 +47,11 @@ public sealed class PointsController(IPointsService points) : ApiControllerBase
 public sealed class CertificatesController(ICertificateService certificates) : ApiControllerBase
 {
     [HttpGet("certificates")]
-    [ProducesResponseType<ApiResponse<IReadOnlyList<CertificateDto>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<IReadOnlyList<CertificateDto>>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> List(CancellationToken ct) => OkData(await certificates.ListAsync(CurrentUserId, ct));
 
     [HttpGet("certificates/{id:int}")]
-    [ProducesResponseType<ApiResponse<CertificateDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<CertificateDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Get(int id, CancellationToken ct) => FromResult(await certificates.GetAsync(CurrentUserId, id, ct));
 
     [HttpGet("certificates/{id:int}/pdf")]
@@ -65,7 +65,7 @@ public sealed class CertificatesController(ICertificateService certificates) : A
 
     /// <summary>BR-06 checklist for one of my courses: core lectures, monthly exams, course grade.</summary>
     [HttpGet("learner-courses/{learnerCourseId:int}/certificate-progress")]
-    [ProducesResponseType<ApiResponse<CertificateProgressDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<CertificateProgressDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Progress(int learnerCourseId, CancellationToken ct) =>
         FromResult(await certificates.ProgressAsync(CurrentUserId, learnerCourseId, ct));
 }
@@ -79,9 +79,9 @@ public sealed class CertificatesController(ICertificateService certificates) : A
 public sealed class VerifyController(ICertificateService certificates) : ControllerBase
 {
     [HttpGet("/api/v1/verify/{number}")]
-    [ProducesResponseType<ApiResponse<VerificationDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<VerificationDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Json(string number, [FromQuery(Name = "c")] string? code, CancellationToken ct) =>
-        Ok(ApiResponse<VerificationDto>.Ok(await certificates.VerifyAsync(number, code, ct)));
+        Ok(MyApiResponse<VerificationDto>.Ok(await certificates.VerifyAsync(number, code, ct)));
 
     [HttpGet("/verify/{number}")]
     [ApiExplorerSettings(IgnoreApi = true)]

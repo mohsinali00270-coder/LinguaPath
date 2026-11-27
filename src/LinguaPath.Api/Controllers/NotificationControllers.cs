@@ -16,12 +16,12 @@ public sealed class NotificationsController(INotificationService notifications) 
 {
     /// <summary>Newest first. Pass the last id you have as <c>before</c> for the next page.</summary>
     [HttpGet]
-    [ProducesResponseType<ApiResponse<NotificationPageDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<NotificationPageDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> List([FromQuery] long? before, [FromQuery] int take = 30, CancellationToken ct = default) =>
         OkData(await notifications.ListAsync(CurrentUserId, before, take, ct));
 
     [HttpGet("unread-count")]
-    [ProducesResponseType<ApiResponse<UnreadCountDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<UnreadCountDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> UnreadCount(CancellationToken ct) =>
         OkData(new UnreadCountDto(await notifications.UnreadCountAsync(CurrentUserId, ct)));
 
@@ -30,7 +30,7 @@ public sealed class NotificationsController(INotificationService notifications) 
         FromResult(await notifications.MarkReadAsync(CurrentUserId, id, ct));
 
     [HttpPut("read-all")]
-    [ProducesResponseType<ApiResponse<UnreadCountDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<UnreadCountDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> MarkAllRead(CancellationToken ct)
     {
         await notifications.MarkAllReadAsync(CurrentUserId, ct);

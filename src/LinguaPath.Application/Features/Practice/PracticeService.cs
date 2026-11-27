@@ -44,7 +44,7 @@ internal sealed class PracticeService(
 
     public const int MaxWritingLength = 3000;
     public const int MaxMessageLength = 500;
-    public const int MaxAudioBytes = 10 * 1024 * 1024;
+    public const int MaxAudioBytes = PracticeRules.MaxAudioBytes;
     /// <summary>Short-audio speech recognition takes up to 60 seconds.</summary>
     public static readonly TimeSpan MaxAudioLength = TimeSpan.FromSeconds(60);
 

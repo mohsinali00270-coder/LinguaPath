@@ -16,12 +16,12 @@ namespace LinguaPath.Api.Controllers;
 public sealed class MeController(IProfileService profiles, IMemoryCache cache) : ApiControllerBase
 {
     [HttpGet]
-    [ProducesResponseType<ApiResponse<UserProfileDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<UserProfileDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Get(CancellationToken ct) =>
         FromResult(await profiles.GetAsync(CurrentUserId, ct));
 
     [HttpPut]
-    [ProducesResponseType<ApiResponse<UserProfileDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<UserProfileDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Update(UpdateProfileRequest request, CancellationToken ct) =>
         FromResult(await profiles.UpdateAsync(CurrentUserId, request, ct), "Profile saved.");
 
@@ -29,7 +29,7 @@ public sealed class MeController(IProfileService profiles, IMemoryCache cache) :
     [HttpPost("photo")]
     [RequestSizeLimit(11 * 1024 * 1024)]
     [Consumes("multipart/form-data")]
-    [ProducesResponseType<ApiResponse<PhotoUploadResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<PhotoUploadResponse>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> UploadPhoto(IFormFile file, CancellationToken ct)
     {
         await using var stream = file.OpenReadStream();

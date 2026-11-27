@@ -86,7 +86,7 @@ public static class DbInitializer
         if (await db.CertificateTemplates.IgnoreQueryFilters().AnyAsync(ct)) return;
         db.CertificateTemplates.Add(new CertificateTemplate
         {
-            Name = "Default", Heading = "Certificate of Achievement", BodyText = Application.Features.Progress.CertificateService.DefaultBody,
+            Name = "Default", Heading = "Certificate of Achievement", BodyText = Application.Features.Progress.CertificateDefaults.Body,
             SignatoryName = "LinguaPath Academic Team", SignatoryTitle = "Head of Learning", AccentColor = "#4F46E5", IsActive = true,
             CreatedAt = DateTimeOffset.UtcNow
         });

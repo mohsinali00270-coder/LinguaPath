@@ -172,6 +172,9 @@ public static class ReadingQuestions
 
 public static class PracticeRules
 {
+    /// <summary>Largest audio upload accepted for speaking practice and voice translation (10 MB).</summary>
+    public const int MaxAudioBytes = 10 * 1024 * 1024;
+
     /// <summary>Start of the learner's day in UTC, for daily limits (BR-15).</summary>
     public static DateTimeOffset DayStartUtc(DateTimeOffset utcNow, string? timeZoneId)
     {

@@ -139,7 +139,7 @@ public class AuthSessionTests
         public int RefreshCalls;
         public bool RejectRefresh;
 
-        public async Task<ApiResponse<AuthResponse>> RefreshAsync(RefreshTokenRequest request, CancellationToken ct = default)
+        public async Task<MyApiResponse<AuthResponse>> RefreshAsync(RefreshTokenRequest request, CancellationToken ct = default)
         {
             Interlocked.Increment(ref RefreshCalls);
             await Task.Delay(50, ct);
@@ -151,20 +151,20 @@ public class AuthSessionTests
                     new RefitSettings());
             }
             var user = new UserSummaryDto(Guid.NewGuid(), "t@t.com", "Test", null, null, "en", ["Learner"], false);
-            return ApiResponse<AuthResponse>.Ok(new AuthResponse("access-2", DateTimeOffset.UtcNow.AddMinutes(15), "refresh-2",
+            return MyApiResponse<AuthResponse>.Ok(new AuthResponse("access-2", DateTimeOffset.UtcNow.AddMinutes(15), "refresh-2",
                 DateTimeOffset.UtcNow.AddDays(30), user));
         }
 
-        public Task<ApiResponse<RegisterResponse>> RegisterAsync(RegisterRequest r, CancellationToken ct = default) => throw new NotSupportedException();
-        public Task<ApiResponse<AuthResponse>> VerifyEmailAsync(VerifyEmailRequest r, CancellationToken ct = default) => throw new NotSupportedException();
-        public Task<ApiResponse<ResendOtpResponse>> ResendOtpAsync(ResendOtpRequest r, CancellationToken ct = default) => throw new NotSupportedException();
-        public Task<ApiResponse<AuthResponse>> LoginAsync(LoginRequest r, CancellationToken ct = default) => throw new NotSupportedException();
-        public Task<ApiResponse<AuthResponse>> GoogleAsync(ExternalLoginRequest r, CancellationToken ct = default) => throw new NotSupportedException();
-        public Task<ApiResponse<AuthResponse>> AppleAsync(ExternalLoginRequest r, CancellationToken ct = default) => throw new NotSupportedException();
+        public Task<MyApiResponse<RegisterResponse>> RegisterAsync(RegisterRequest r, CancellationToken ct = default) => throw new NotSupportedException();
+        public Task<MyApiResponse<AuthResponse>> VerifyEmailAsync(VerifyEmailRequest r, CancellationToken ct = default) => throw new NotSupportedException();
+        public Task<MyApiResponse<ResendOtpResponse>> ResendOtpAsync(ResendOtpRequest r, CancellationToken ct = default) => throw new NotSupportedException();
+        public Task<MyApiResponse<AuthResponse>> LoginAsync(LoginRequest r, CancellationToken ct = default) => throw new NotSupportedException();
+        public Task<MyApiResponse<AuthResponse>> GoogleAsync(ExternalLoginRequest r, CancellationToken ct = default) => throw new NotSupportedException();
+        public Task<MyApiResponse<AuthResponse>> AppleAsync(ExternalLoginRequest r, CancellationToken ct = default) => throw new NotSupportedException();
         public Task<ApiResponse> ForgotPasswordAsync(ForgotPasswordRequest r, CancellationToken ct = default) => throw new NotSupportedException();
         public Task<ApiResponse> ResetPasswordAsync(ResetPasswordRequest r, CancellationToken ct = default) => throw new NotSupportedException();
-        public Task<ApiResponse<List<LanguageDto>>> GetLanguagesAsync(bool all = false, CancellationToken ct = default) => throw new NotSupportedException();
-        public Task<ApiResponse<VersionCheckResponse>> VersionCheckAsync(DevicePlatform platform, string version, CancellationToken ct = default) => throw new NotSupportedException();
+        public Task<MyApiResponse<List<LanguageDto>>> GetLanguagesAsync(bool all = false, CancellationToken ct = default) => throw new NotSupportedException();
+        public Task<MyApiResponse<VersionCheckResponse>> VersionCheckAsync(DevicePlatform platform, string version, CancellationToken ct = default) => throw new NotSupportedException();
     }
 }
 

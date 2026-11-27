@@ -18,25 +18,25 @@ public sealed class PracticeController(IPracticeService practice) : ApiControlle
 {
     /// <summary>Done / average score per exercise type, words due, translations left today and conversation topics.</summary>
     [HttpGet("summary")]
-    [ProducesResponseType<ApiResponse<PracticeSummaryDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<PracticeSummaryDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Summary([FromQuery] int? languageId, CancellationToken ct) =>
         FromResult(await practice.GetSummaryAsync(CurrentUserId, languageId, ct));
 
     /// <summary>Next exercise of a type (read, write, speak, listen) at the learner's level. skip = the one just shown.</summary>
     [HttpGet("{type}/next")]
-    [ProducesResponseType<ApiResponse<PracticeItemDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<PracticeItemDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Next(PracticeType type, [FromQuery] int? languageId, [FromQuery] int? skip, CancellationToken ct) =>
         FromResult(await practice.NextAsync(CurrentUserId, type, languageId, skip, ct));
 
     /// <summary>Answers to a passage's comprehension questions (option index per question, in order).</summary>
     [HttpPost("read/{itemId:int}/answers")]
-    [ProducesResponseType<ApiResponse<ReadResultDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<ReadResultDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Read(int itemId, ReadAnswersRequest request, CancellationToken ct) =>
         FromResult(await practice.AnswerReadingAsync(CurrentUserId, itemId, request, ct));
 
     /// <summary>AI check of the learner's writing: score, feedback and corrections (FR-L91).</summary>
     [HttpPost("write/check")]
-    [ProducesResponseType<ApiResponse<WriteCheckDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<WriteCheckDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Write(WriteCheckRequest request, CancellationToken ct) =>
         FromResult(await practice.CheckWritingAsync(CurrentUserId, request, ct));
 
@@ -47,7 +47,7 @@ public sealed class PracticeController(IPracticeService practice) : ApiControlle
     [HttpPost("speak/assess")]
     [RequestSizeLimit(11 * 1024 * 1024)]
     [Consumes("multipart/form-data")]
-    [ProducesResponseType<ApiResponse<SpeakResultDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<SpeakResultDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Speak([FromForm] int languageId, [FromForm] int? itemId, [FromForm] string? referenceText, IFormFile audio,
         CancellationToken ct)
     {
@@ -58,18 +58,18 @@ public sealed class PracticeController(IPracticeService practice) : ApiControlle
 
     /// <summary>Dictation check: the sentence and a word-by-word diff of mistakes (FR-L93).</summary>
     [HttpPost("listen/{itemId:int}/check")]
-    [ProducesResponseType<ApiResponse<ListenResultDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<ListenResultDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Listen(int itemId, ListenCheckRequest request, CancellationToken ct) =>
         FromResult(await practice.CheckListeningAsync(CurrentUserId, itemId, request, ct));
 
     /// <summary>Free-talk with the AI partner. The app sends the earlier turns; replies include a correction when needed.</summary>
     [HttpPost("conversation")]
-    [ProducesResponseType<ApiResponse<ConversationReplyDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<ConversationReplyDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Conversation(ConversationRequest request, CancellationToken ct) =>
         FromResult(await practice.ConverseAsync(CurrentUserId, request, ct));
 
     [HttpGet("history")]
-    [ProducesResponseType<ApiResponse<IReadOnlyList<PracticeHistoryDto>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<IReadOnlyList<PracticeHistoryDto>>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> History([FromQuery] PracticeType? type, CancellationToken ct) =>
         FromResult(await practice.HistoryAsync(CurrentUserId, type, ct));
 }
@@ -81,7 +81,7 @@ public sealed class TranslateController(ITranslationService translation) : ApiCo
 {
     /// <summary>Leave "from" empty to detect the language.</summary>
     [HttpPost]
-    [ProducesResponseType<ApiResponse<TranslationDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<TranslationDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Translate(TranslateRequest request, CancellationToken ct) =>
         FromResult(await translation.TranslateAsync(CurrentUserId, request, ct));
 
@@ -89,7 +89,7 @@ public sealed class TranslateController(ITranslationService translation) : ApiCo
     [HttpPost("speech")]
     [RequestSizeLimit(11 * 1024 * 1024)]
     [Consumes("multipart/form-data")]
-    [ProducesResponseType<ApiResponse<SpeechTranslationDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<SpeechTranslationDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Speech([FromForm] string from, [FromForm] string to, IFormFile audio, CancellationToken ct)
     {
         var bytes = await AudioUpload.ReadAsync(audio, ct);
@@ -99,14 +99,14 @@ public sealed class TranslateController(ITranslationService translation) : ApiCo
 
     /// <summary>The last 100 translations, newest first (FR-L103).</summary>
     [HttpGet("history")]
-    [ProducesResponseType<ApiResponse<IReadOnlyList<TranslationDto>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<IReadOnlyList<TranslationDto>>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> History(CancellationToken ct) => FromResult(await translation.HistoryAsync(CurrentUserId, ct));
 
     [HttpDelete("history")]
     public async Task<IActionResult> ClearHistory(CancellationToken ct) => FromResult(await translation.ClearHistoryAsync(CurrentUserId, ct));
 
     [HttpGet("languages")]
-    [ProducesResponseType<ApiResponse<IReadOnlyList<TranslationLanguageDto>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<IReadOnlyList<TranslationLanguageDto>>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Languages(CancellationToken ct) => OkData(await translation.LanguagesAsync(ct));
 }
 
@@ -116,24 +116,24 @@ public sealed class TranslateController(ITranslationService translation) : ApiCo
 public sealed class WordsController(IWordsService words) : ApiControllerBase
 {
     [HttpGet]
-    [ProducesResponseType<ApiResponse<IReadOnlyList<UserWordDto>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<IReadOnlyList<UserWordDto>>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> List([FromQuery] int? languageId, [FromQuery] bool due, [FromQuery] string? search, CancellationToken ct) =>
         FromResult(await words.ListAsync(CurrentUserId, languageId, due, search, ct));
 
     [HttpGet("summary")]
-    [ProducesResponseType<ApiResponse<WordsSummaryDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<WordsSummaryDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Summary([FromQuery] int? languageId, CancellationToken ct) =>
         FromResult(await words.SummaryAsync(CurrentUserId, languageId, ct));
 
     /// <summary>Save a word (from a lecture, a translation or by hand). Saving the same word again updates its meaning.</summary>
     [HttpPost]
-    [ProducesResponseType<ApiResponse<UserWordDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<UserWordDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Save(SaveWordRequest request, CancellationToken ct) =>
         FromResult(await words.SaveAsync(CurrentUserId, request, ct));
 
     /// <summary>Flashcard answer: Again, Hard, Good or Easy (SM-2).</summary>
     [HttpPost("{id:int}/review")]
-    [ProducesResponseType<ApiResponse<UserWordDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<UserWordDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Review(int id, ReviewWordRequest request, CancellationToken ct) =>
         FromResult(await words.ReviewAsync(CurrentUserId, id, request, ct));
 
@@ -148,7 +148,7 @@ internal static class AudioUpload
 
     public static async Task<byte[]?> ReadAsync(IFormFile? file, CancellationToken ct)
     {
-        if (file is null || file.Length == 0 || file.Length > PracticeService.MaxAudioBytes) return null;
+        if (file is null || file.Length == 0 || file.Length > PracticeRules.MaxAudioBytes) return null;
         using var memory = new MemoryStream((int)file.Length);
         await using var stream = file.OpenReadStream();
         await stream.CopyToAsync(memory, ct);

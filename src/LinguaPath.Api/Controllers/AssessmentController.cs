@@ -22,48 +22,48 @@ public sealed class AssessmentController(IAssessmentService assessment) : ApiCon
 
     /// <summary>Today's daily quiz: state, question count or today's result.</summary>
     [HttpGet("learner-courses/{id:int}/daily-quiz")]
-    [ProducesResponseType<ApiResponse<DailyQuizDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<DailyQuizDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> DailyQuiz(int id, CancellationToken ct) =>
         FromResult(await assessment.GetDailyQuizAsync(CurrentUserId, id, ct));
 
     /// <summary>Start (or resume) today's quiz. practice=true starts an extra round that doesn't count toward marks.</summary>
     [HttpPost("learner-courses/{id:int}/daily-quiz/start")]
-    [ProducesResponseType<ApiResponse<AttemptDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<AttemptDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> StartDailyQuiz(int id, [FromQuery] bool practice, CancellationToken ct) =>
         FromResult(await assessment.StartDailyQuizAsync(CurrentUserId, id, practice, ct));
 
     /// <summary>Monthly exams of the course with lock / retake state.</summary>
     [HttpGet("learner-courses/{id:int}/exams")]
-    [ProducesResponseType<ApiResponse<IReadOnlyList<ExamSummaryDto>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<IReadOnlyList<ExamSummaryDto>>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Exams(int id, CancellationToken ct) =>
         FromResult(await assessment.ListExamsAsync(CurrentUserId, id, ct));
 
     /// <summary>Start (or resume) a monthly exam. The timer runs on the server.</summary>
     [HttpPost("learner-courses/{id:int}/exams/{quizId:int}/start")]
-    [ProducesResponseType<ApiResponse<AttemptDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<AttemptDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> StartExam(int id, int quizId, CancellationToken ct) =>
         FromResult(await assessment.StartExamAsync(CurrentUserId, id, quizId, ct));
 
     [HttpGet("learner-courses/{id:int}/marks")]
-    [ProducesResponseType<ApiResponse<MarksDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<MarksDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Marks(int id, CancellationToken ct) =>
         FromResult(await assessment.GetMarksAsync(CurrentUserId, id, ct));
 
     /// <summary>Optional placement test before enrolling (FR-L11).</summary>
     [HttpPost("courses/{courseId:int}/placement-test")]
-    [ProducesResponseType<ApiResponse<AttemptDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<AttemptDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> StartPlacement(int courseId, CancellationToken ct) =>
         FromResult(await assessment.StartPlacementAsync(CurrentUserId, courseId, ct));
 
     /// <summary>The attempt with questions and saved answers; used to resume after a crash (FR-L62).</summary>
     [HttpGet("attempts/{id:int}")]
-    [ProducesResponseType<ApiResponse<AttemptDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<AttemptDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Attempt(int id, CancellationToken ct) =>
         FromResult(await assessment.GetAttemptAsync(CurrentUserId, id, ct));
 
     /// <summary>Save (exams) or check (daily quiz, placement) one answer.</summary>
     [HttpPost("attempts/{id:int}/answers")]
-    [ProducesResponseType<ApiResponse<AnswerFeedbackDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<AnswerFeedbackDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Answer(int id, SaveAnswerRequest request, CancellationToken ct) =>
         FromResult(await assessment.SaveAnswerAsync(CurrentUserId, id, request, ct));
 
@@ -71,7 +71,7 @@ public sealed class AssessmentController(IAssessmentService assessment) : ApiCon
     [HttpPost("attempts/{id:int}/answers/{questionId:int}/audio")]
     [RequestSizeLimit(11 * 1024 * 1024)]
     [Consumes("multipart/form-data")]
-    [ProducesResponseType<ApiResponse<AnswerFeedbackDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<AnswerFeedbackDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Audio(int id, int questionId, IFormFile file, CancellationToken ct)
     {
         var type = file.ContentType.Split(';')[0].Trim();
@@ -83,7 +83,7 @@ public sealed class AssessmentController(IAssessmentService assessment) : ApiCon
     }
 
     [HttpPost("attempts/{id:int}/submit")]
-    [ProducesResponseType<ApiResponse<AttemptResultDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<AttemptResultDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Submit(int id, CancellationToken ct) =>
         FromResult(await assessment.SubmitAsync(CurrentUserId, id, ct));
 
@@ -93,13 +93,13 @@ public sealed class AssessmentController(IAssessmentService assessment) : ApiCon
         FromResult(await assessment.LogEventAsync(CurrentUserId, id, request, ct));
 
     [HttpGet("attempts/{id:int}/result")]
-    [ProducesResponseType<ApiResponse<AttemptResultDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<AttemptResultDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> GetResult(int id, CancellationToken ct) =>
         FromResult(await assessment.GetResultAsync(CurrentUserId, id, ct));
 
     /// <summary>Each question with your answer, the correct answer and the explanation (FR-L72).</summary>
     [HttpGet("attempts/{id:int}/review")]
-    [ProducesResponseType<ApiResponse<AttemptReviewDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<AttemptReviewDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Review(int id, CancellationToken ct) =>
         FromResult(await assessment.GetReviewAsync(CurrentUserId, id, ct));
 }

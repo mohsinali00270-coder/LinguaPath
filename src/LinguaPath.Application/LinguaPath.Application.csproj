@@ -17,5 +17,6 @@
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="LinguaPath.UnitTests" />
+    <InternalsVisibleTo Include="LinguaPath.IntegrationTests" />
   </ItemGroup>
 </Project>

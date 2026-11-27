@@ -17,7 +17,7 @@ public sealed class LanguagesController(ILanguageCatalogService catalog, ICourse
     /// <summary>Published courses of a published language (onboarding).</summary>
     [HttpGet("{id:int}/courses")]
     [AllowAnonymous]
-    [ProducesResponseType<ApiResponse<IReadOnlyList<CourseDto>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<IReadOnlyList<CourseDto>>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Courses(int id, CancellationToken ct) => FromResult(await courses.GetCoursesAsync(id, ct));
 
     /// <summary>"Request this language" for one that is not available yet (FR-L10).</summary>
@@ -33,7 +33,7 @@ public sealed class LanguagesController(ILanguageCatalogService catalog, ICourse
     [HttpGet]
     [AllowAnonymous]
     [ResponseCache(Duration = 300, VaryByQueryKeys = ["all"])]
-    [ProducesResponseType<ApiResponse<IReadOnlyList<LanguageDto>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<IReadOnlyList<LanguageDto>>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Get([FromQuery] bool all, CancellationToken ct) => OkData(await catalog.GetPublicAsync(all, ct));
 }
 
@@ -53,7 +53,7 @@ public sealed class AppController(IAppVersionService versions) : ApiControllerBa
     /// <summary>Is this app version still supported? (FR-A112)</summary>
     [HttpGet("version-check")]
     [AllowAnonymous]
-    [ProducesResponseType<ApiResponse<VersionCheckResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<VersionCheckResponse>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> VersionCheck([FromQuery] DevicePlatform platform, [FromQuery] string? version, CancellationToken ct) =>
         OkData(await versions.CheckAsync(platform, version, ct));
 }

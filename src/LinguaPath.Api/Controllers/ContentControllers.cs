@@ -16,7 +16,7 @@ public sealed class LecturesController(ILectureReaderService lectures) : ApiCont
 {
     /// <summary>Open a lecture from the learner's roadmap. Locked lectures return 403 "lecture_locked".</summary>
     [HttpGet("{id:int}")]
-    [ProducesResponseType<ApiResponse<LectureDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<LectureDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Get(int id, [FromQuery] int? learnerCourseId, CancellationToken ct) =>
         FromResult(await lectures.GetAsync(CurrentUserId, id, learnerCourseId, ct));
 
@@ -27,12 +27,12 @@ public sealed class LecturesController(ILectureReaderService lectures) : ApiCont
 
     /// <summary>Mark complete (FR-L34). Needs the minimum reading time; unlocks the next lecture (FR-L31).</summary>
     [HttpPost("{id:int}/complete")]
-    [ProducesResponseType<ApiResponse<CompleteLectureResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<CompleteLectureResponse>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Complete(int id, CompleteLectureRequest request, CancellationToken ct) =>
         FromResult(await lectures.CompleteAsync(CurrentUserId, id, request, ct), "Lecture completed.");
 
     [HttpGet("bookmarks")]
-    [ProducesResponseType<ApiResponse<IReadOnlyList<BookmarkDto>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<IReadOnlyList<BookmarkDto>>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Bookmarks(CancellationToken ct) => OkData(await lectures.BookmarksAsync(CurrentUserId, ct));
 
     [HttpPost("{id:int}/bookmark")]
@@ -65,17 +65,17 @@ public sealed class PostsController(IPostFeedService posts, ILectureReaderServic
 {
     /// <summary>Feed of the learner's languages (or one language), pinned first. Filter by type, level or saved.</summary>
     [HttpGet]
-    [ProducesResponseType<ApiResponse<PagedResult<PostDto>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<PagedResult<PostDto>>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Feed([FromQuery] int? languageId, [FromQuery] PostType? type, [FromQuery] CefrLevel? level,
         [FromQuery] bool saved = false, [FromQuery] int page = 1, [FromQuery] int pageSize = 20, CancellationToken ct = default) =>
         OkData(await posts.GetFeedAsync(CurrentUserId, new PostQuery(languageId, type, level, saved, page, pageSize), ct));
 
     [HttpPost("{id:int}/like")]
-    [ProducesResponseType<ApiResponse<PostInteractionResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<PostInteractionResponse>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Like(int id, CancellationToken ct) => FromResult(await posts.ToggleLikeAsync(CurrentUserId, id, ct));
 
     [HttpPost("{id:int}/save")]
-    [ProducesResponseType<ApiResponse<PostInteractionResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<PostInteractionResponse>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Save(int id, CancellationToken ct) => FromResult(await posts.ToggleSaveAsync(CurrentUserId, id, ct));
 
     [HttpPost("{id:int}/report")]

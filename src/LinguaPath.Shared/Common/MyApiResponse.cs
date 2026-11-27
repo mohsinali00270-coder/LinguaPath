@@ -4,18 +4,18 @@ namespace LinguaPath.Shared.Common;
 /// Success envelope used by every API endpoint (SRS 8.3): { success, data, message, errors }.
 /// Failures are returned as RFC 7807 Problem Details that also carry "success": false and "errors".
 /// </summary>
-public class ApiResponse<T>
+public class MyApiResponse<T>
 {
     public bool Success { get; set; } = true;
     public T? Data { get; set; }
     public string? Message { get; set; }
     public IDictionary<string, string[]>? Errors { get; set; }
 
-    public static ApiResponse<T> Ok(T data, string? message = null) => new() { Data = data, Message = message };
+    public static MyApiResponse<T> Ok(T data, string? message = null) => new() { Data = data, Message = message };
 }
 
 /// <summary>Envelope for endpoints that return no data.</summary>
-public class ApiResponse : ApiResponse<object?>
+public class ApiResponse : MyApiResponse<object?>
 {
     public static ApiResponse Ok(string? message = null) => new() { Message = message };
 }

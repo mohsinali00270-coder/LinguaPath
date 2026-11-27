@@ -98,7 +98,7 @@ public static class HttpExtensions
 {
     public static async Task<T> ReadDataAsync<T>(this HttpResponseMessage response)
     {
-        var body = await response.Content.ReadFromJsonAsync<ApiResponse<T>>(ApiFactory.Json);
+        var body = await response.Content.ReadFromJsonAsync<MyApiResponse<T>>(ApiFactory.Json);
         return body!.Data!;
     }
 

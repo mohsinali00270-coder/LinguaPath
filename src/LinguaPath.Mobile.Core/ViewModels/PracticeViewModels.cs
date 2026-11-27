@@ -631,7 +631,7 @@ public sealed record TranslationRow(TranslationDto Dto)
     public string Result => Dto.TranslatedText;
 }
 
-public sealed record LanguageChoice(string Code, string Name, string? SpeechLocale)
+public sealed record TranslateLanguageChoice(string Code, string Name, string? SpeechLocale)
 {
     public const string Detect = "";
     public bool IsDetect => Code == Detect;
@@ -649,12 +649,12 @@ public sealed partial class TranslateViewModel(
 {
     private List<Shared.Contracts.Catalog.LanguageDto>? _catalog;
 
-    public ObservableCollection<LanguageChoice> FromLanguages { get; } = [];
-    public ObservableCollection<LanguageChoice> ToLanguages { get; } = [];
+    public ObservableCollection<TranslateLanguageChoice> FromLanguages { get; } = [];
+    public ObservableCollection<TranslateLanguageChoice> ToLanguages { get; } = [];
     public ObservableCollection<TranslationRow> History { get; } = [];
 
-    [ObservableProperty] private LanguageChoice? from;
-    [ObservableProperty] private LanguageChoice? to;
+    [ObservableProperty] private TranslateLanguageChoice? from;
+    [ObservableProperty] private TranslateLanguageChoice? to;
     [ObservableProperty] private string? sourceText;
 
     [ObservableProperty]
@@ -683,11 +683,11 @@ public sealed partial class TranslateViewModel(
         {
             await NativeLanguageResolver.EnsureAsync(state, account, api);
             var languages = (await api.GetTranslationLanguagesAsync()).Data ?? [];
-            FromLanguages.Add(new LanguageChoice(LanguageChoice.Detect, "Detect language", null));
+            FromLanguages.Add(new TranslateLanguageChoice(TranslateLanguageChoice.Detect, "Detect language", null));
             foreach (var l in languages)
             {
-                FromLanguages.Add(new LanguageChoice(l.Code, l.Name, l.SpeechLocale));
-                ToLanguages.Add(new LanguageChoice(l.Code, l.Name, l.SpeechLocale));
+                FromLanguages.Add(new TranslateLanguageChoice(l.Code, l.Name, l.SpeechLocale));
+                ToLanguages.Add(new TranslateLanguageChoice(l.Code, l.Name, l.SpeechLocale));
             }
             From = FromLanguages[0];
             // Default: the language being learned → the learner's native language.

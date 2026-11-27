@@ -130,6 +130,14 @@ public interface ICertificateAdminService
     Task<byte[]> PreviewTemplateAsync(CertificateTemplateInput input, CancellationToken ct = default);
 }
 
+/// <summary>Public certificate defaults, so the database seeder can use them without the internal service.</summary>
+public static class CertificateDefaults
+{
+    public const string Body =
+        "This certifies that {Name} has successfully completed the {Course} course in {Language} and reached level {Level} " +
+        "with a final grade of {Grade}% ({Band}). Study period: {Duration}, completed on {CompletedOn}.";
+}
+
 internal sealed class CertificateService(
     IApplicationDbContext db,
     ISettingsService settings,
@@ -144,9 +152,7 @@ internal sealed class CertificateService(
     TimeProvider clock,
     ILogger<CertificateService> logger) : ICertificateService, ICertificateAdminService
 {
-    public const string DefaultBody =
-        "This certifies that {Name} has successfully completed the {Course} course in {Language} and reached level {Level} " +
-        "with a final grade of {Grade}% ({Band}). Study period: {Duration}, completed on {CompletedOn}.";
+    public const string DefaultBody = CertificateDefaults.Body;
 
     private const int MaxImageBytes = 2 * 1024 * 1024;
 

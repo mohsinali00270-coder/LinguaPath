@@ -17,41 +17,41 @@ public sealed class AuthController(IAuthService auth, IMemoryCache cache) : ApiC
     /// <summary>Create a learner account and email a 6-digit verification code.</summary>
     [HttpPost("register")]
     [AllowAnonymous]
-    [ProducesResponseType<ApiResponse<RegisterResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<RegisterResponse>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Register(RegisterRequest request, CancellationToken ct) =>
         FromResult(await auth.RegisterAsync(request, ct), "We sent a 6-digit code to your email.");
 
     /// <summary>Confirm the email with the code; signs the learner in.</summary>
     [HttpPost("verify-email")]
     [AllowAnonymous]
-    [ProducesResponseType<ApiResponse<AuthResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<AuthResponse>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> VerifyEmail(VerifyEmailRequest request, CancellationToken ct) =>
         FromResult(await auth.VerifyEmailAsync(request, ct), "Email verified.");
 
     /// <summary>Send a new code for email verification or password reset (60-second cooldown).</summary>
     [HttpPost("resend-otp")]
     [AllowAnonymous]
-    [ProducesResponseType<ApiResponse<ResendOtpResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<ResendOtpResponse>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> ResendOtp(ResendOtpRequest request, CancellationToken ct) =>
         FromResult(await auth.ResendOtpAsync(request, ct), "If the account exists, a new code is on its way.");
 
     [HttpPost("login")]
     [AllowAnonymous]
-    [ProducesResponseType<ApiResponse<AuthResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<AuthResponse>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Login(LoginRequest request, CancellationToken ct) =>
         FromResult(await auth.LoginAsync(request, ct));
 
     /// <summary>Sign in with a Google ID token obtained on the device.</summary>
     [HttpPost("google")]
     [AllowAnonymous]
-    [ProducesResponseType<ApiResponse<AuthResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<AuthResponse>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Google(ExternalLoginRequest request, CancellationToken ct) =>
         FromResult(await auth.ExternalLoginAsync("google", request, ct));
 
     /// <summary>Sign in with Apple. Pass FullName on the first sign-in, Apple only shares it once.</summary>
     [HttpPost("apple")]
     [AllowAnonymous]
-    [ProducesResponseType<ApiResponse<AuthResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<AuthResponse>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Apple(ExternalLoginRequest request, CancellationToken ct) =>
         FromResult(await auth.ExternalLoginAsync("apple", request, ct));
 
@@ -59,7 +59,7 @@ public sealed class AuthController(IAuthService auth, IMemoryCache cache) : ApiC
     [HttpPost("refresh")]
     [AllowAnonymous]
     [DisableRateLimiting]
-    [ProducesResponseType<ApiResponse<AuthResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<AuthResponse>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Refresh(RefreshTokenRequest request, CancellationToken ct) =>
         FromResult(await auth.RefreshAsync(request, ct));
 

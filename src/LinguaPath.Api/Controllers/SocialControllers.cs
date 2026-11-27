@@ -18,21 +18,21 @@ public sealed class SocialController(ISocialService social, IModerationService m
 {
     /// <summary>FR-S20: by display name (2+ letters) and/or the language someone is learning. Never by email or phone.</summary>
     [HttpGet("users/search")]
-    [ProducesResponseType<ApiResponse<IReadOnlyList<UserCardDto>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<IReadOnlyList<UserCardDto>>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Search([FromQuery] string? q, [FromQuery] int? languageId, CancellationToken ct) =>
         OkData(await social.SearchAsync(CurrentUserId, q, languageId, ct));
 
     [HttpGet("users/{userId:guid}/profile")]
-    [ProducesResponseType<ApiResponse<PublicProfileDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<PublicProfileDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Profile(Guid userId, CancellationToken ct) => FromResult(await social.ProfileAsync(CurrentUserId, userId, ct));
 
     [HttpGet("friends")]
-    [ProducesResponseType<ApiResponse<FriendsDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<FriendsDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Friends(CancellationToken ct) => OkData(await social.FriendsAsync(CurrentUserId, ct));
 
     /// <summary>Sending a request to someone who already asked you accepts theirs.</summary>
     [HttpPost("friends/requests")]
-    [ProducesResponseType<ApiResponse<FriendRequestDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<FriendRequestDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> SendRequest(SendFriendRequest request, CancellationToken ct) =>
         FromResult(await social.SendRequestAsync(CurrentUserId, request.UserId, ct));
 
@@ -45,7 +45,7 @@ public sealed class SocialController(ISocialService social, IModerationService m
     public async Task<IActionResult> RemoveFriend(Guid userId, CancellationToken ct) => FromResult(await social.RemoveFriendAsync(CurrentUserId, userId, ct));
 
     [HttpGet("blocks")]
-    [ProducesResponseType<ApiResponse<IReadOnlyList<BlockedUserDto>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<IReadOnlyList<BlockedUserDto>>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Blocked(CancellationToken ct) => OkData(await social.BlockedAsync(CurrentUserId, ct));
 
     /// <summary>FR-S22: they can't message, challenge or find you; the friendship ends.</summary>
@@ -61,17 +61,17 @@ public sealed class SocialController(ISocialService social, IModerationService m
         FromResult(await social.ReportAsync(CurrentUserId, request, ct), "Thanks — a moderator will look at it.");
 
     [HttpGet("me/privacy")]
-    [ProducesResponseType<ApiResponse<PrivacyDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<PrivacyDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Privacy(CancellationToken ct) => OkData(await social.PrivacyAsync(CurrentUserId, ct));
 
     [HttpPut("me/privacy")]
-    [ProducesResponseType<ApiResponse<PrivacyDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<PrivacyDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> UpdatePrivacy(PrivacyDto request, CancellationToken ct) =>
         FromResult(await social.UpdatePrivacyAsync(CurrentUserId, request, ct));
 
     /// <summary>FR-M12: my strikes, suspension and any warning I still have to accept.</summary>
     [HttpGet("me/moderation")]
-    [ProducesResponseType<ApiResponse<MyModerationDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<MyModerationDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> MyModeration(CancellationToken ct)
     {
         var s = await moderation.StatusAsync(CurrentUserId, ct);
@@ -88,44 +88,44 @@ public sealed class SocialController(ISocialService social, IModerationService m
 public sealed class ConversationsController(IChatService chat) : ApiControllerBase
 {
     [HttpGet("conversations")]
-    [ProducesResponseType<ApiResponse<IReadOnlyList<ConversationSummaryDto>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<IReadOnlyList<ConversationSummaryDto>>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> List([FromQuery] bool archived = false, CancellationToken ct = default) =>
         OkData(await chat.ConversationsAsync(CurrentUserId, archived, ct));
 
     /// <summary>Opens (or creates) the one direct chat with a learner. Their privacy setting and blocks apply.</summary>
     [HttpPost("conversations/direct")]
-    [ProducesResponseType<ApiResponse<ConversationDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<ConversationDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Direct(CreateDirectRequest request, CancellationToken ct) =>
         FromResult(await chat.OpenDirectAsync(CurrentUserId, request.UserId, ct));
 
     [HttpPost("conversations/groups")]
-    [ProducesResponseType<ApiResponse<ConversationDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<ConversationDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> CreateGroup(CreateGroupRequest request, CancellationToken ct) =>
         FromResult(await chat.CreateGroupAsync(CurrentUserId, request, ct));
 
     [HttpGet("conversations/{id:int}")]
-    [ProducesResponseType<ApiResponse<ConversationDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<ConversationDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Get(int id, CancellationToken ct) => FromResult(await chat.GetAsync(CurrentUserId, id, ct));
 
     /// <summary>Group settings (owner/admins) and my own mute/archive; leave a field null to keep it.</summary>
     [HttpPatch("conversations/{id:int}")]
-    [ProducesResponseType<ApiResponse<ConversationDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<ConversationDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Update(int id, UpdateConversationRequest request, CancellationToken ct) =>
         FromResult(await chat.UpdateAsync(CurrentUserId, id, request, ct));
 
     /// <summary>Newest first pages: pass the smallest id you have as "before". Returned oldest → newest.</summary>
     [HttpGet("conversations/{id:int}/messages")]
-    [ProducesResponseType<ApiResponse<IReadOnlyList<MessageDto>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<IReadOnlyList<MessageDto>>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Messages(int id, [FromQuery] long? before, [FromQuery] int take = 40, CancellationToken ct = default) =>
         FromResult(await chat.MessagesAsync(CurrentUserId, id, before, take, ct));
 
     [HttpPost("conversations/{id:int}/messages")]
-    [ProducesResponseType<ApiResponse<MessageDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<MessageDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Send(int id, SendMessageRequest request, CancellationToken ct) =>
         FromResult(await chat.SendAsync(CurrentUserId, id, request, ct));
 
     [HttpPost("conversations/{id:int}/seen")]
-    [ProducesResponseType<ApiResponse<SeenDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<SeenDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Seen(int id, [FromQuery] long upTo, CancellationToken ct) =>
         FromResult(await chat.MarkSeenAsync(CurrentUserId, id, upTo, ct));
 
@@ -138,7 +138,7 @@ public sealed class ConversationsController(IChatService chat) : ApiControllerBa
 
     /// <summary>Public groups: join at once, or ask when the group needs approval (409 join_pending).</summary>
     [HttpPost("conversations/{id:int}/join")]
-    [ProducesResponseType<ApiResponse<ConversationDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<ConversationDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Join(int id, CancellationToken ct) => FromResult(await chat.JoinAsync(CurrentUserId, id, ct));
 
     [HttpPost("conversations/{id:int}/members")]
@@ -159,7 +159,7 @@ public sealed class ConversationsController(IChatService chat) : ApiControllerBa
         FromResult(await chat.ChangeRoleAsync(CurrentUserId, id, userId, request.Role, ct));
 
     [HttpGet("groups/public")]
-    [ProducesResponseType<ApiResponse<IReadOnlyList<PublicGroupDto>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<IReadOnlyList<PublicGroupDto>>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> PublicGroups([FromQuery] string? q, [FromQuery] int? languageId, CancellationToken ct) =>
         OkData(await chat.PublicGroupsAsync(CurrentUserId, q, languageId, ct));
 
@@ -176,16 +176,16 @@ public sealed class ConversationsController(IChatService chat) : ApiControllerBa
     public async Task<IActionResult> Unreact(long id, CancellationToken ct) => FromResult(await chat.ReactAsync(CurrentUserId, id, null, ct));
 
     [HttpGet("messages/{id:long}/seen-by")]
-    [ProducesResponseType<ApiResponse<IReadOnlyList<SeenByDto>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<IReadOnlyList<SeenByDto>>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> SeenBy(long id, CancellationToken ct) => FromResult(await chat.SeenByAsync(CurrentUserId, id, ct));
 
     /// <summary>FR-C30: into my native language unless "to" is given. Counts toward the daily translation limit.</summary>
     [HttpPost("messages/{id:long}/translate")]
-    [ProducesResponseType<ApiResponse<TranslatedMessageDto>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<TranslatedMessageDto>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Translate(long id, [FromQuery] string? to, CancellationToken ct) =>
         FromResult(await chat.TranslateAsync(CurrentUserId, id, to, ct));
 
     [HttpGet("messages/search")]
-    [ProducesResponseType<ApiResponse<IReadOnlyList<MessageSearchHitDto>>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<MyApiResponse<IReadOnlyList<MessageSearchHitDto>>>(StatusCodes.Status200OK)]
     public async Task<IActionResult> Search([FromQuery] string q, CancellationToken ct) => OkData(await chat.SearchAsync(CurrentUserId, q, ct));
 }

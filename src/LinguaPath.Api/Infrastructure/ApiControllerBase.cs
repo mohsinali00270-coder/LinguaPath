@@ -14,7 +14,7 @@ public abstract class ApiControllerBase : ControllerBase
             ? id
             : throw new UnauthorizedAccessException("No user id in token.");
 
-    protected IActionResult OkData<T>(T data, string? message = null) => Ok(ApiResponse<T>.Ok(data, message));
+    protected IActionResult OkData<T>(T data, string? message = null) => Ok(MyApiResponse<T>.Ok(data, message));
 
     protected IActionResult FromResult<T>(Result<T> result, string? message = null) =>
         result.IsSuccess ? OkData(result.Value, message) : ProblemResults.ToResult(HttpContext, result.Error!);
